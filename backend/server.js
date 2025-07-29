@@ -110,6 +110,11 @@ app.use((req, res, next) => {
   next()
 })
 
+// Simple test endpoint (no middleware)
+app.get('/test', (req, res) => {
+  res.json({ status: 'ok', message: 'Server is running', timestamp: new Date().toISOString() })
+})
+
 // Monitoring routes (public)
 app.use('/health', monitoringRoutes)
 app.use('/monitoring', monitoringRoutes)
