@@ -118,6 +118,24 @@ app.use((req, res, next) => {
   next()
 })
 
+// Root endpoint - API information
+app.get('/', (req, res) => {
+  res.json({
+    name: 'AutoGitPilot API',
+    version: '1.0.0',
+    status: 'running',
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/health',
+      monitoring: '/monitoring/health',
+      api: '/api',
+      scheduler: '/api/scheduler/status'
+    },
+    message: 'Welcome to AutoGitPilot API. This is a backend service.'
+  })
+})
+
 // Simple test endpoint (no middleware)
 app.get('/test', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running', timestamp: new Date().toISOString() })
