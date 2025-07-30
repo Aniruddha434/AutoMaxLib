@@ -68,6 +68,14 @@ router.post('/clerk', express.raw({ type: 'application/json' }), async (req, res
       // Convert buffer to string for Svix verification
       const body = req.body.toString()
       console.log('Webhook body length:', body.length)
+      console.log('Webhook body content:', body.substring(0, 100) + (body.length > 100 ? '...' : ''))
+      console.log('Request headers:', JSON.stringify({
+        'svix-id': svix_id,
+        'svix-timestamp': svix_timestamp,
+        'svix-signature': svix_signature,
+        'content-type': req.headers['content-type'],
+        'content-length': req.headers['content-length']
+      }, null, 2))
 
       evt = wh.verify(body, {
         'svix-id': svix_id,
