@@ -120,6 +120,18 @@ app.use((req, res, next) => {
 
 // Root endpoint - API information
 app.get('/', (req, res) => {
+  // Log webhook verification attempts
+  const userAgent = req.get('User-Agent')
+  if (userAgent && userAgent.includes('Go-http-client')) {
+    logger.info('Webhook verification request detected', {
+      userAgent,
+      ip: req.ip,
+      headers: req.headers,
+      path: req.path,
+      method: req.method
+    })
+  }
+
   res.json({
     name: 'AutoGitPilot API',
     version: '1.0.0',
@@ -130,7 +142,12 @@ app.get('/', (req, res) => {
       health: '/health',
       monitoring: '/monitoring/health',
       api: '/api',
-      scheduler: '/api/scheduler/status'
+      scheduler: '/api/scheduler/status',
+      webhooks: {
+        clerk: '/api/webhook/clerk',
+        razorpay: '/api/webhook/razorpay',
+        github: '/api/webhook/github'
+      }
     },
     message: 'Welcome to AutoGitPilot API. This is a backend service.'
   })
@@ -163,11 +180,34 @@ app.use('/api/payment', paymentRateLimit, paymentRoutes)
 app.use('/api/pattern', patternRateLimit, patternRoutes)
 app.use('/api/profile', profileRoutes)
 
-// 404 handler
+// 404 handler with enhanced logging for webhook debugging
 app.use('*', (req, res) => {
+  const userAgent = req.get('User-Agent')
+
+  // Enhanced logging for potential webhook requests
+  if (userAgent && (userAgent.includes('Go-http-client') || userAgent.includes('Svix'))) {
+    logger.warn('Webhook request to unknown route', {
+      method: req.method,
+      path: req.path,
+      userAgent,
+      ip: req.ip,
+      headers: req.headers,
+      query: req.query,
+      body: req.body
+    })
+  }
+
   res.status(404).json({
     success: false,
-    message: 'Route not found'
+    message: 'Route not found',
+    path: req.path,
+    method: req.method,
+    availableWebhooks: {
+      clerk: '/api/webhook/clerk',
+      razorpay: '/api/webhook/razorpay',
+      github: '/api/webhook/github',
+      health: '/api/webhook/health'
+    }
   })
 })
 

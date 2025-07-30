@@ -3,8 +3,27 @@ import crypto from 'crypto'
 import { Webhook } from 'svix'
 import User from '../models/User.js'
 import paymentService from '../services/paymentService.js'
+import logger from '../config/logger.js'
 
 const router = express.Router()
+
+// Webhook request size limit (1MB)
+const WEBHOOK_SIZE_LIMIT = '1mb'
+
+// Retry configuration
+const RETRY_ATTEMPTS = 3
+const RETRY_DELAY = 1000 // 1 second
+
+// Clerk webhook verification endpoint (GET request)
+router.get('/clerk', (req, res) => {
+  // Clerk sometimes sends GET requests to verify the webhook endpoint
+  res.json({
+    success: true,
+    message: 'Clerk webhook endpoint is active',
+    timestamp: new Date().toISOString(),
+    service: 'autogitpilot-backend'
+  })
+})
 
 // Clerk webhook handler
 router.post('/clerk', express.raw({ type: 'application/json' }), async (req, res) => {
