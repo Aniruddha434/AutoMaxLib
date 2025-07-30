@@ -37,7 +37,9 @@ router.post('/clerk', express.raw({ type: 'application/json' }), async (req, res
 
     let evt
     try {
-      evt = wh.verify(req.body, {
+      // Convert buffer to string for Svix verification
+      const body = req.body.toString()
+      evt = wh.verify(body, {
         'svix-id': svix_id,
         'svix-timestamp': svix_timestamp,
         'svix-signature': svix_signature,
