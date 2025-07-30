@@ -43,8 +43,17 @@ router.post('/clerk', express.raw({ type: 'application/json' }), async (req, res
     const svix_timestamp = req.headers['svix-timestamp']
     const svix_signature = req.headers['svix-signature']
 
+    // Log webhook details for debugging
+    console.log('Webhook headers:', {
+      'svix-id': svix_id,
+      'svix-timestamp': svix_timestamp,
+      'svix-signature': svix_signature ? 'present' : 'missing',
+      'user-agent': req.headers['user-agent']
+    })
+
     // If there are no headers, error out
     if (!svix_id || !svix_timestamp || !svix_signature) {
+      console.log('Missing required svix headers')
       return res.status(400).json({
         success: false,
         message: 'Missing svix headers'
@@ -58,13 +67,19 @@ router.post('/clerk', express.raw({ type: 'application/json' }), async (req, res
     try {
       // Convert buffer to string for Svix verification
       const body = req.body.toString()
+      console.log('Webhook body length:', body.length)
+
       evt = wh.verify(body, {
         'svix-id': svix_id,
         'svix-timestamp': svix_timestamp,
         'svix-signature': svix_signature,
       })
+
+      console.log('Webhook verification successful')
     } catch (err) {
-      console.error('Error verifying webhook:', err)
+      console.error('Error verifying webhook:', err.message)
+      console.error('Webhook secret length:', WEBHOOK_SECRET.length)
+      console.error('Webhook secret starts with whsec_:', WEBHOOK_SECRET.startsWith('whsec_'))
       return res.status(400).json({
         success: false,
         message: 'Invalid webhook signature'
