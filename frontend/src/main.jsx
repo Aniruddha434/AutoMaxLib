@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ClerkProvider } from '@clerk/clerk-react'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, useNavigate } from 'react-router-dom'
 import App from './App.jsx'
 import './index.css'
 
@@ -11,19 +11,30 @@ if (!clerkPubKey) {
   throw new Error("Missing Publishable Key")
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+// Wrapper component to provide navigate function to Clerk
+const ClerkProviderWithRouter = ({ children }) => {
+  const navigate = useNavigate()
+
+  return (
     <ClerkProvider
       publishableKey={clerkPubKey}
-      navigate={(to) => window.location.href = to}
+      navigate={(to) => navigate(to)}
       afterSignInUrl="/dashboard"
       afterSignUpUrl="/dashboard"
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
     >
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      {children}
     </ClerkProvider>
+  )
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <ClerkProviderWithRouter>
+        <App />
+      </ClerkProviderWithRouter>
+    </BrowserRouter>
   </React.StrictMode>,
 )

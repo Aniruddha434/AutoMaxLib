@@ -36,10 +36,44 @@ class UserService {
     )
   }
 
-  // Sync user with backend
-  async syncUser(userData) {
-    const response = await this.api.post('/auth/sync', userData)
-    return response.user
+  // Sync user with backend with retry logic
+  async syncUser(userData, retryCount = 0) {
+    const maxRetries = 3
+    const retryDelay = 1000 * Math.pow(2, retryCount) // Exponential backoff
+
+    try {
+      console.log(`[UserService] Syncing user (attempt ${retryCount + 1}/${maxRetries + 1}):`, {
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName
+      })
+
+      const response = await this.api.post('/auth/sync', userData)
+      console.log('[UserService] User sync successful:', response.user)
+      return response.user
+    } catch (error) {
+      console.error(`[UserService] User sync failed (attempt ${retryCount + 1}):`, {
+        message: error.message,
+        status: error.status,
+        code: error.code,
+        requestId: error.requestId
+      })
+
+      // Retry on server errors or network issues
+      if (retryCount < maxRetries && (
+        error.status >= 500 ||
+        error.message.includes('Network Error') ||
+        error.message.includes('timeout') ||
+        error.code === 'DB_DISCONNECTED' ||
+        error.code === 'CLERK_AUTH_ERROR'
+      )) {
+        console.log(`[UserService] Retrying user sync in ${retryDelay}ms...`)
+        await new Promise(resolve => setTimeout(resolve, retryDelay))
+        return this.syncUser(userData, retryCount + 1)
+      }
+
+      throw error
+    }
   }
 
   // Get current user

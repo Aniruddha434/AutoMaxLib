@@ -27,9 +27,11 @@ import {
 import { connectDB } from './config/database.js'
 import { initializeScheduler } from './services/schedulerService.js'
 import { errorHandler } from './middleware/errorHandler.js'
-import { clerkMiddleware } from './middleware/clerkMiddleware.js'
+import { enhancedClerkMiddleware } from './middleware/clerkMiddleware.js'
 import logger, { morganStream, logRequest } from './config/logger.js'
 import monitoringService from './services/monitoringService.js'
+import User from './models/User.js'
+import mongoose from 'mongoose'
 
 // Import routes
 import authRoutes from './routes/auth.js'
@@ -158,6 +160,106 @@ app.get('/test', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running', timestamp: new Date().toISOString() })
 })
 
+// Comprehensive debug endpoint for production troubleshooting
+app.get('/debug', async (req, res) => {
+  try {
+    const debugInfo = {
+      server: {
+        status: 'running',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        nodeVersion: process.version,
+        environment: process.env.NODE_ENV,
+        port: PORT
+      },
+      database: {
+        connected: mongoose.connection.readyState === 1,
+        state: mongoose.connection.readyState,
+        host: mongoose.connection.host,
+        name: mongoose.connection.name
+      },
+      environment: {
+        clerkConfigured: !!process.env.CLERK_SECRET_KEY,
+        mongoConfigured: !!process.env.MONGODB_URI,
+        frontendUrl: process.env.FRONTEND_URL,
+        allowedOrigins: process.env.ALLOWED_ORIGINS
+      },
+      memory: {
+        used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + ' MB',
+        total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024) + ' MB'
+      }
+    }
+
+    // Test database connection
+    if (mongoose.connection.readyState === 1) {
+      try {
+        await mongoose.connection.db.admin().ping()
+        debugInfo.database.ping = 'success'
+      } catch (pingError) {
+        debugInfo.database.ping = 'failed'
+        debugInfo.database.pingError = pingError.message
+      }
+    }
+
+    res.json(debugInfo)
+  } catch (error) {
+    res.status(500).json({
+      error: 'Debug endpoint failed',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    })
+  }
+})
+
+// Auth debug endpoint (with Clerk middleware)
+app.get('/api/debug/auth', enhancedClerkMiddleware, async (req, res) => {
+  try {
+    const authDebug = {
+      timestamp: new Date().toISOString(),
+      auth: {
+        present: !!req.auth,
+        userId: req.auth?.userId,
+        sessionId: req.auth?.sessionId
+      },
+      headers: {
+        authorization: req.headers.authorization ? 'Bearer [PRESENT]' : 'MISSING',
+        origin: req.headers.origin,
+        'user-agent': req.headers['user-agent']?.substring(0, 100)
+      },
+      database: {
+        connected: mongoose.connection.readyState === 1,
+        state: mongoose.connection.readyState
+      }
+    }
+
+    // Try to find user in database
+    if (req.auth?.userId) {
+      try {
+        const user = await User.findOne({ clerkId: req.auth.userId })
+        authDebug.user = {
+          found: !!user,
+          id: user?._id,
+          email: user?.email,
+          plan: user?.plan
+        }
+      } catch (dbError) {
+        authDebug.user = {
+          found: false,
+          error: dbError.message
+        }
+      }
+    }
+
+    res.json(authDebug)
+  } catch (error) {
+    res.status(500).json({
+      error: 'Auth debug failed',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    })
+  }
+})
+
 // Monitoring routes (public)
 app.use('/health', monitoringRoutes)
 app.use('/monitoring', monitoringRoutes)
@@ -168,8 +270,8 @@ app.use('/api/webhook', webhookRoutes)
 // Scheduler routes (public for debugging)
 app.use('/api/scheduler', schedulerRoutes)
 
-// Clerk middleware for protected routes
-app.use('/api', clerkMiddleware)
+// Clerk middleware for protected routes with enhanced error handling
+app.use('/api', enhancedClerkMiddleware)
 
 // API routes with specific rate limiting
 app.use('/api/auth', authRateLimit, authRoutes)
