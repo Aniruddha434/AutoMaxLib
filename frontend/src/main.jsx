@@ -23,6 +23,20 @@ const ClerkProviderWithRouter = ({ children }) => {
       afterSignUpUrl="/dashboard"
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
+      appearance={{
+        baseTheme: undefined,
+        variables: {
+          colorPrimary: '#6366f1'
+        }
+      }}
+      localization={{
+        signUp: {
+          start: {
+            title: "Create your account",
+            subtitle: "to continue to AutoMaxLib"
+          }
+        }
+      }}
     >
       {children}
     </ClerkProvider>
