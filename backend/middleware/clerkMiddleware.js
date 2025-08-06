@@ -1,4 +1,4 @@
-import { clerkClient } from '@clerk/clerk-sdk-node'
+import { clerkClient } from '../config/clerk.js'
 import logger from '../config/logger.js'
 
 export const clerkMiddleware = async (req, res, next) => {
