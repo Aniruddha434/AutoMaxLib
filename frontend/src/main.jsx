@@ -12,9 +12,26 @@ if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Clerk Publishable Key")
 }
 
+// Add error handling for Clerk
+const handleClerkError = (error) => {
+  console.error('Clerk Error:', error)
+  // You can add additional error reporting here
+}
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+    <ClerkProvider
+      publishableKey={PUBLISHABLE_KEY}
+      afterSignOutUrl="/"
+      onError={handleClerkError}
+      appearance={{
+        elements: {
+          // Ensure OTP inputs are properly styled and stable
+          formFieldInput: 'focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+          otpCodeFieldInput: 'focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center',
+        }
+      }}
+    >
       <BrowserRouter>
         <App />
       </BrowserRouter>
