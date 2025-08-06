@@ -88,10 +88,19 @@ router.post('/sync', async (req, res) => {
         })
 
         if (existingUser) {
-          console.log('Email already taken by another user:', email)
+          console.log('Email already taken by another user:', email, 'Existing user ID:', existingUser._id)
           return res.status(400).json({
             success: false,
-            message: 'Email address is already in use by another account'
+            message: 'Email address is already in use by another account',
+            error: 'EMAIL_CONFLICT',
+            details: {
+              email: email,
+              suggestions: [
+                'Sign in to your existing account instead',
+                'Use a different email address',
+                'Contact support if you believe this is an error'
+              ]
+            }
           })
         }
 
@@ -118,7 +127,16 @@ router.post('/sync', async (req, res) => {
             console.error('Duplicate key error during user update:', saveError)
             return res.status(400).json({
               success: false,
-              message: 'Email address is already in use'
+              message: 'Email address is already in use by another account',
+              error: 'EMAIL_CONFLICT',
+              details: {
+                email: email,
+                suggestions: [
+                  'Sign in to your existing account instead',
+                  'Use a different email address',
+                  'Contact support if you believe this is an error'
+                ]
+              }
             })
           }
           throw saveError // Re-throw other errors

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useUser } from '@clerk/clerk-react'
 import { userService } from '../services/userService'
+import EmailConflictModal from '../components/auth/EmailConflictModal'
 
 const UserContext = createContext()
 
@@ -19,6 +20,7 @@ export const UserProvider = ({ children }) => {
   const [error, setError] = useState(null)
   const [retryCount, setRetryCount] = useState(0)
   const [authStateReady, setAuthStateReady] = useState(false)
+  const [emailConflict, setEmailConflict] = useState(null)
 
   useEffect(() => {
     let isMounted = true
@@ -86,10 +88,22 @@ export const UserProvider = ({ children }) => {
           code: err.code,
           requestId: err.requestId,
           stack: err.stack,
-          attempt: retryCount + 1
+          attempt: retryCount + 1,
+          type: err.type
         })
 
         if (!isMounted) return
+
+        // Handle email conflict errors specifically
+        if (err.type === 'EMAIL_CONFLICT') {
+          console.log(`[${sessionId}] UserContext: Email conflict detected`)
+          setEmailConflict({
+            email: err.email,
+            message: err.message
+          })
+          setLoading(false)
+          return
+        }
 
         // Enhanced error handling with retry logic
         const shouldRetry = retryCount < 3 && (
@@ -194,7 +208,7 @@ export const UserProvider = ({ children }) => {
 
   const refreshUserData = async () => {
     if (!user) return
-    
+
     try {
       setLoading(true)
       const data = await userService.getUserProfile()
@@ -208,6 +222,17 @@ export const UserProvider = ({ children }) => {
     }
   }
 
+  const handleEmailConflictClose = () => {
+    setEmailConflict(null)
+  }
+
+  const handleEmailConflictRetry = () => {
+    setEmailConflict(null)
+    setRetryCount(0)
+    // This will trigger the user to go through the sign-up process again
+    // with a different email address
+  }
+
   return (
     <UserContext.Provider value={{
       userData,
@@ -219,6 +244,12 @@ export const UserProvider = ({ children }) => {
       isPremium: userData?.plan === 'premium'
     }}>
       {children}
+      <EmailConflictModal
+        isOpen={!!emailConflict}
+        onClose={handleEmailConflictClose}
+        onRetry={handleEmailConflictRetry}
+        email={emailConflict?.email}
+      />
     </UserContext.Provider>
   )
 }

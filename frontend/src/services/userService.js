@@ -59,6 +59,16 @@ class UserService {
         requestId: error.requestId
       })
 
+      // Handle email conflict errors specifically (don't retry these)
+      if (error.status === 400 && error.message.includes('Email address is already in use')) {
+        const emailConflictError = new Error(error.message)
+        emailConflictError.type = 'EMAIL_CONFLICT'
+        emailConflictError.status = error.status
+        emailConflictError.email = userData.email
+        emailConflictError.originalError = error
+        throw emailConflictError
+      }
+
       // Retry on server errors or network issues
       if (retryCount < maxRetries && (
         error.status >= 500 ||
