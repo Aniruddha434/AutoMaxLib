@@ -78,10 +78,27 @@ router.post('/sync', async (req, res) => {
     } else {
       // Update user info if changed
       let updated = false
+
+      // Check if email needs to be updated and if it's available
       if (email && user.email !== email) {
+        // Check if the new email is already taken by another user
+        const existingUser = await User.findOne({
+          email: email,
+          clerkId: { $ne: req.auth.userId }
+        })
+
+        if (existingUser) {
+          console.log('Email already taken by another user:', email)
+          return res.status(400).json({
+            success: false,
+            message: 'Email address is already in use by another account'
+          })
+        }
+
         user.email = email
         updated = true
       }
+
       if (firstName && user.firstName !== firstName) {
         user.firstName = firstName
         updated = true
@@ -92,8 +109,20 @@ router.post('/sync', async (req, res) => {
       }
 
       if (updated) {
-        await user.save()
-        console.log('User updated successfully:', user._id)
+        try {
+          await user.save()
+          console.log('User updated successfully:', user._id)
+        } catch (saveError) {
+          // Handle duplicate key errors specifically
+          if (saveError.code === 11000) {
+            console.error('Duplicate key error during user update:', saveError)
+            return res.status(400).json({
+              success: false,
+              message: 'Email address is already in use'
+            })
+          }
+          throw saveError // Re-throw other errors
+        }
       }
     }
 
