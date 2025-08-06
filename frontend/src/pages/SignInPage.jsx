@@ -56,19 +56,8 @@ const SignInPage = () => {
             afterSignInUrl="/dashboard"
             routing="path"
             path="/sign-in"
+            redirectUrl="/dashboard"
           />
-        </div>
-        
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Don't have an account?{' '}
-            <Link 
-              to="/sign-up" 
-              className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400"
-            >
-              Sign up for free
-            </Link>
-          </p>
         </div>
       </div>
     </div>

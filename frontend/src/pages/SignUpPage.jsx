@@ -38,7 +38,7 @@ const SignUpPage = () => {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
-          <SignUp 
+          <SignUp
             appearance={{
               elements: {
                 formButtonPrimary: 'bg-primary-600 hover:bg-primary-700 text-sm normal-case',
@@ -56,19 +56,8 @@ const SignUpPage = () => {
             afterSignUpUrl="/dashboard"
             routing="path"
             path="/sign-up"
+            redirectUrl="/dashboard"
           />
-        </div>
-        
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Already have an account?{' '}
-            <Link 
-              to="/sign-in" 
-              className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400"
-            >
-              Sign in
-            </Link>
-          </p>
         </div>
       </div>
     </div>
