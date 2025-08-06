@@ -1,18 +1,33 @@
-import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node'
+import { clerkClient } from '@clerk/clerk-sdk-node'
 import logger from '../config/logger.js'
 
-export const clerkMiddleware = ClerkExpressRequireAuth({
-  onError: (error) => {
-    console.error('Clerk authentication error:', error)
-    return {
-      status: 401,
-      message: 'Unauthorized'
+export const clerkMiddleware = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '')
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authorization token required',
+        error: 'MISSING_TOKEN'
+      })
     }
+
+    const session = await clerkClient.verifyToken(token)
+    req.auth = { userId: session.sub }
+    next()
+  } catch (error) {
+    console.error('Clerk authentication error:', error)
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid token',
+      error: 'INVALID_TOKEN'
+    })
   }
-})
+}
 
 // Enhanced Clerk middleware with better error handling and logging
-export const enhancedClerkMiddleware = (req, res, next) => {
+export const enhancedClerkMiddleware = async (req, res, next) => {
   const requestId = Math.random().toString(36).substring(7)
 
   try {
@@ -25,72 +40,59 @@ export const enhancedClerkMiddleware = (req, res, next) => {
       }
     })
 
-    ClerkExpressRequireAuth({
-      onError: (error) => {
-        logger.error(`[${requestId}] Clerk authentication error:`, {
-          error: error.message,
-          stack: error.stack,
-          path: req.path,
-          method: req.method,
-          headers: {
-            authorization: req.headers.authorization ? 'Bearer [PRESENT]' : 'MISSING',
-            origin: req.headers.origin
-          }
-        })
+    const token = req.headers.authorization?.replace('Bearer ', '')
 
-        // Return structured error response
-        return res.status(401).json({
-          success: false,
-          message: 'Authentication required',
-          error: 'CLERK_AUTH_ERROR',
-          requestId
-        })
-      }
-    })(req, res, (err) => {
-      if (err) {
-        logger.error(`[${requestId}] Clerk middleware error:`, err)
-        return res.status(401).json({
-          success: false,
-          message: 'Authentication failed',
-          error: 'CLERK_MIDDLEWARE_ERROR',
-          requestId
-        })
-      }
+    if (!token) {
+      logger.error(`[${requestId}] Missing authorization token`)
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required',
+        error: 'MISSING_TOKEN',
+        requestId
+      })
+    }
 
-      // Log successful authentication
-      if (req.auth?.userId) {
-        logger.debug(`[${requestId}] Authentication successful for user: ${req.auth.userId}`)
-      }
+    const session = await clerkClient.verifyToken(token)
+    req.auth = { userId: session.sub }
 
-      next()
-    })
+    // Log successful authentication
+    logger.debug(`[${requestId}] Authentication successful for user: ${req.auth.userId}`)
+    next()
+
   } catch (error) {
-    logger.error(`[${requestId}] Clerk middleware exception:`, {
+    logger.error(`[${requestId}] Clerk authentication error:`, {
       error: error.message,
       stack: error.stack,
       path: req.path,
-      method: req.method
+      method: req.method,
+      headers: {
+        authorization: req.headers.authorization ? 'Bearer [PRESENT]' : 'MISSING',
+        origin: req.headers.origin
+      }
     })
 
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
-      message: 'Authentication service error',
-      error: 'CLERK_SERVICE_ERROR',
+      message: 'Authentication failed',
+      error: 'CLERK_MIDDLEWARE_ERROR',
       requestId
     })
   }
 }
 
 // Optional middleware for routes that don't require auth
-export const optionalClerkMiddleware = (req, res, next) => {
+export const optionalClerkMiddleware = async (req, res, next) => {
   try {
-    ClerkExpressRequireAuth()(req, res, (err) => {
-      if (err) {
-        // Continue without auth if there's an error
-        req.auth = null
-      }
-      next()
-    })
+    const token = req.headers.authorization?.replace('Bearer ', '')
+
+    if (token) {
+      const session = await clerkClient.verifyToken(token)
+      req.auth = { userId: session.sub }
+    } else {
+      req.auth = null
+    }
+
+    next()
   } catch (error) {
     req.auth = null
     next()
