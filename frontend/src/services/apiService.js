@@ -1,4 +1,5 @@
 import axios from 'axios'
+import authTokenService from './authTokenService.js'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
 
@@ -11,27 +12,70 @@ class ApiService {
       },
     })
 
-    // Add auth token to requests
+    // Add auth token to requests with enhanced error handling
     this.api.interceptors.request.use(async (config) => {
+      const requestId = Math.random().toString(36).substring(7)
+      config.metadata = { requestId, startTime: Date.now() }
+
       try {
-        if (window.Clerk?.session) {
-          const token = await window.Clerk.session.getToken()
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`
-          }
+        console.log(`[${requestId}] API Request: ${config.method?.toUpperCase()} ${config.url}`)
+
+        const token = await authTokenService.getToken()
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`
+          console.log(`[${requestId}] Auth token added`)
+        } else {
+          console.warn(`[${requestId}] No auth token available`)
         }
       } catch (error) {
-        console.warn('Failed to get Clerk token:', error)
+        console.error(`[${requestId}] Failed to get auth token:`, {
+          message: error.message,
+          name: error.name,
+          isAuthenticated: authTokenService.isAuthenticated()
+        })
       }
       return config
     })
 
-    // Handle response errors
+    // Handle response errors with enhanced logging
     this.api.interceptors.response.use(
-      (response) => response.data,
+      (response) => {
+        const requestId = response.config.metadata?.requestId
+        const duration = Date.now() - (response.config.metadata?.startTime || 0)
+        console.log(`[${requestId}] API Success: ${response.status} in ${duration}ms`)
+        return response.data
+      },
       (error) => {
-        console.error('API Error:', error.response?.data || error.message)
-        throw error.response?.data || error
+        const requestId = error.config?.metadata?.requestId
+        const duration = Date.now() - (error.config?.metadata?.startTime || 0)
+
+        const errorInfo = {
+          requestId,
+          duration: `${duration}ms`,
+          method: error.config?.method?.toUpperCase(),
+          url: error.config?.url,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          message: error.message,
+          name: error.name
+        }
+
+        console.error(`[${requestId}] API Error:`, errorInfo)
+
+        // Enhanced error object with more context
+        const enhancedError = error.response?.data || {
+          message: error.message,
+          status: error.response?.status,
+          code: 'NETWORK_ERROR'
+        }
+
+        // Add request context to error
+        enhancedError.requestId = requestId
+        enhancedError.duration = duration
+        enhancedError.url = error.config?.url
+
+        throw enhancedError
       }
     )
   }

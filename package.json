@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Automate your GitHub commits and maintain your contribution streak",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "install:all": "npm run install:frontend && npm run install:backend",
     "install:frontend": "cd frontend && npm install",
