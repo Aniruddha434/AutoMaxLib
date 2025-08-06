@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/clerk-react"
 import { BrowserRouter } from "react-router-dom"
 import App from "./App.jsx"
 import "./index.css"
+import "./services/errorLogger.js" // Initialize error logger
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 

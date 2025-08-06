@@ -318,23 +318,39 @@ app.use(errorHandler)
 
 // Start server
 const startServer = async () => {
+  let dbConnected = false
+
   try {
-    // Connect to database
+    // Try to connect to database
     await connectDB()
-    
-    // Initialize scheduler
-    initializeScheduler()
-    
+    dbConnected = true
+    logger.info('✅ Database connected successfully')
+  } catch (error) {
+    logger.error('❌ Database connection failed, starting server without database', {
+      error: error.message
+    })
+    console.error('❌ Database connection failed, starting server without database:', error.message)
+    dbConnected = false
+  }
+
+  try {
+    // Initialize scheduler only if database is connected
+    if (dbConnected) {
+      initializeScheduler()
+    }
+
     app.listen(PORT, () => {
       logger.info('🚀 Server started successfully', {
         port: PORT,
         environment: process.env.NODE_ENV,
         nodeVersion: process.version,
-        pid: process.pid
+        pid: process.pid,
+        databaseConnected: dbConnected
       })
 
       console.log(`🚀 Server running on port ${PORT}`)
       console.log(`📊 Environment: ${process.env.NODE_ENV}`)
+      console.log(`💾 Database: ${dbConnected ? '✅ Connected' : '❌ Disconnected'}`)
       console.log(`🔗 Health check: http://localhost:${PORT}/health`)
       console.log(`📊 Monitoring: http://localhost:${PORT}/monitoring/health`)
       console.log(`🔧 Scheduler debug: http://localhost:${PORT}/api/scheduler/status`)

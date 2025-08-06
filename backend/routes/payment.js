@@ -21,13 +21,20 @@ router.post('/create-order', [
     }
 
     const { amount, planId } = req.body
-    const user = await User.findOne({ clerkId: req.auth.userId })
-    
+    let user = await User.findOne({ clerkId: req.auth.userId })
+
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
+      // Auto-create user if they don't exist
+      console.log('Auto-creating user for payment request, Clerk ID:', req.auth.userId)
+      user = new User({
+        clerkId: req.auth.userId,
+        email: 'unknown@example.com',
+        firstName: 'User',
+        lastName: 'Name',
+        plan: 'free'
       })
+      await user.save()
+      console.log('User auto-created for payment:', user._id)
     }
 
     // Create order with user info in receipt (max 40 chars for Razorpay)

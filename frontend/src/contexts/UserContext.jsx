@@ -40,13 +40,13 @@ export const UserProvider = ({ children }) => {
         return
       }
 
+      const sessionId = Math.random().toString(36).substring(7)
+
       try {
         if (isMounted) {
           setLoading(true)
           setError(null)
         }
-
-        const sessionId = Math.random().toString(36).substring(7)
         console.log(`[${sessionId}] UserContext: Starting user data fetch for:`, {
           userId: user.id,
           email: user.emailAddresses[0]?.emailAddress,

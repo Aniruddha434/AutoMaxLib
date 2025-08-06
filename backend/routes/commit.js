@@ -9,12 +9,19 @@ const router = express.Router()
 // Trigger manual commit
 router.post('/manual', async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.auth.userId })
+    let user = await User.findOne({ clerkId: req.auth.userId })
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
+      // Auto-create user if they don't exist
+      console.log('Auto-creating user for manual commit, Clerk ID:', req.auth.userId)
+      user = new User({
+        clerkId: req.auth.userId,
+        email: 'unknown@example.com',
+        firstName: 'User',
+        lastName: 'Name',
+        plan: 'free'
       })
+      await user.save()
+      console.log('User auto-created for manual commit:', user._id)
     }
 
     // Check if user can use commit feature (trial period check for free users)

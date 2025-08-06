@@ -27,13 +27,20 @@ router.get('/readme/templates', async (req, res) => {
 // Get user's README generation history
 router.get('/readme/history', async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.auth.userId })
-    
+    let user = await User.findOne({ clerkId: req.auth.userId })
+
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
+      // Auto-create user if they don't exist
+      console.log('Auto-creating user for README history request, Clerk ID:', req.auth.userId)
+      user = new User({
+        clerkId: req.auth.userId,
+        email: 'unknown@example.com',
+        firstName: 'User',
+        lastName: 'Name',
+        plan: 'free'
       })
+      await user.save()
+      console.log('User auto-created for README history:', user._id)
     }
 
     const readmeHistory = user.readmeGeneration.generatedReadmes.map(readme => ({

@@ -1,14 +1,56 @@
 import express from 'express'
 import User from '../models/User.js'
+import mongoose from 'mongoose'
 
 const router = express.Router()
+
+// Health check endpoint for auth service
+router.get('/health', async (req, res) => {
+  try {
+    // Check database connection
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+
+    // Check if we can query the database
+    const userCount = await User.countDocuments()
+
+    res.json({
+      success: true,
+      status: 'healthy',
+      database: {
+        status: dbStatus,
+        userCount
+      },
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 'unhealthy',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    })
+  }
+})
 
 // Verify user session and sync with database
 router.post('/sync', async (req, res) => {
   try {
+    console.log('Auth sync request received:', {
+      body: req.body,
+      auth: req.auth,
+      headers: {
+        authorization: req.headers.authorization ? 'Bearer [PRESENT]' : 'MISSING',
+        origin: req.headers.origin
+      }
+    })
+
     const { email, firstName, lastName } = req.body
 
     if (!req.auth?.userId) {
+      console.error('Auth sync failed: No user ID in request', {
+        auth: req.auth,
+        headers: req.headers.authorization ? 'Bearer [PRESENT]' : 'MISSING'
+      })
       return res.status(401).json({
         success: false,
         message: 'No user ID found in request'
@@ -86,13 +128,20 @@ router.post('/sync', async (req, res) => {
 // Get current user session info
 router.get('/me', async (req, res) => {
   try {
-    const user = await User.findOne({ clerkId: req.auth.userId })
-    
+    let user = await User.findOne({ clerkId: req.auth.userId })
+
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
+      // Auto-create user if they don't exist
+      console.log('Auto-creating user for /me request, Clerk ID:', req.auth.userId)
+      user = new User({
+        clerkId: req.auth.userId,
+        email: 'unknown@example.com',
+        firstName: 'User',
+        lastName: 'Name',
+        plan: 'free'
       })
+      await user.save()
+      console.log('User auto-created for /me:', user._id)
     }
 
     res.json({

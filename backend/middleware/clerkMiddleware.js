@@ -65,17 +65,35 @@ export const enhancedClerkMiddleware = async (req, res, next) => {
       stack: error.stack,
       path: req.path,
       method: req.method,
+      errorCode: error.code,
+      errorStatus: error.status,
       headers: {
         authorization: req.headers.authorization ? 'Bearer [PRESENT]' : 'MISSING',
         origin: req.headers.origin
       }
     })
 
+    // Provide more specific error messages based on error type
+    let errorMessage = 'Authentication failed'
+    let errorCode = 'CLERK_MIDDLEWARE_ERROR'
+
+    if (error.message.includes('Invalid token')) {
+      errorMessage = 'Invalid or expired authentication token'
+      errorCode = 'INVALID_TOKEN'
+    } else if (error.message.includes('Token expired')) {
+      errorMessage = 'Authentication token has expired'
+      errorCode = 'TOKEN_EXPIRED'
+    } else if (error.message.includes('Network')) {
+      errorMessage = 'Authentication service temporarily unavailable'
+      errorCode = 'AUTH_SERVICE_ERROR'
+    }
+
     return res.status(401).json({
       success: false,
-      message: 'Authentication failed',
-      error: 'CLERK_MIDDLEWARE_ERROR',
-      requestId
+      message: errorMessage,
+      error: errorCode,
+      requestId,
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     })
   }
 }

@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { UserProvider } from './contexts/UserContext'
+import ErrorBoundary from './components/ErrorBoundary'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import LandingPage from './pages/LandingPage'
@@ -26,9 +27,10 @@ import AboutUs from './pages/AboutUs'
 
 function App() {
   return (
-    <ThemeProvider>
-      <UserProvider>
-        <div className="min-h-screen flex flex-col">
+    <ErrorBoundary>
+      <ThemeProvider>
+        <UserProvider>
+          <div className="min-h-screen flex flex-col">
             <Navbar />
             <main className="flex-1">
               <Routes>
@@ -84,8 +86,9 @@ function App() {
             </main>
             <Footer />
           </div>
-      </UserProvider>
-    </ThemeProvider>
+        </UserProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   )
 }
 
