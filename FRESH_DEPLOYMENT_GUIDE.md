@@ -2,12 +2,13 @@
 
 ## 🎯 Overview
 
-This guide will help you deploy a clean AutoMaxLib project to new Vercel (frontend) and Render (backend) instances after deleting the old cluttered deployments.
+Your AutoMaxLib project has been completely cleaned and restructured following official best practices. This guide will help you deploy a fresh, clean version to new Vercel (frontend) and Render (backend) instances.
 
 ## 🧹 Project Cleanup Completed
 
 ✅ **Removed Unnecessary Files**:
-- All debug/test scripts (test-*.js, debug-*.js, etc.)
+
+- All debug/test scripts (test-_.js, debug-_.js, etc.)
 - Documentation clutter (18 markdown files)
 - Temporary files (bash.exe.stackdump, temp_gitignore)
 - Root-level node_modules and package files
@@ -15,6 +16,7 @@ This guide will help you deploy a clean AutoMaxLib project to new Vercel (fronte
 - Duplicate configuration files
 
 ✅ **Clean Project Structure**:
+
 ```
 AutoMaxLib/
 ├── frontend/                 # React frontend (Vercel)
@@ -37,6 +39,7 @@ AutoMaxLib/
 ## 🗑️ Step 1: Delete Old Deployments
 
 ### Delete Vercel Project
+
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
 2. Find your old AutoMaxLib frontend project
 3. Click on project → **Settings** → **Advanced**
@@ -44,6 +47,7 @@ AutoMaxLib/
 5. Type project name to confirm → **Delete**
 
 ### Delete Render Service
+
 1. Go to [Render Dashboard](https://dashboard.render.com)
 2. Find your old AutoMaxLib backend service
 3. Click on service → **Settings**
@@ -51,6 +55,7 @@ AutoMaxLib/
 5. Type service name to confirm → **Delete**
 
 ### Keep Clerk App (Update URLs Later)
+
 - **Don't delete** your Clerk application
 - We'll update the URLs after new deployment
 - This preserves your user data and configuration
@@ -58,6 +63,7 @@ AutoMaxLib/
 ## 🚀 Step 2: Deploy Frontend to Vercel
 
 ### Create New Vercel Project
+
 1. **Go to Vercel Dashboard**: https://vercel.com/dashboard
 2. **Click "New Project"**
 3. **Import Git Repository**:
@@ -66,7 +72,9 @@ AutoMaxLib/
    - Click **Import**
 
 ### Configure Vercel Settings
+
 4. **Project Configuration**:
+
    - **Project Name**: `automaxlib-frontend` (or your choice)
    - **Framework Preset**: `Vite`
    - **Root Directory**: `frontend`
@@ -75,6 +83,7 @@ AutoMaxLib/
    - **Install Command**: `npm install`
 
 5. **Environment Variables**:
+
    ```env
    VITE_CLERK_PUBLISHABLE_KEY=pk_live_YOUR_ACTUAL_KEY
    VITE_API_BASE_URL=https://YOUR_RENDER_URL/api
@@ -85,12 +94,14 @@ AutoMaxLib/
 6. **Click "Deploy"**
 
 ### Get Frontend URL
+
 - After deployment: `https://automaxlib-frontend.vercel.app`
 - Or use custom domain if configured
 
 ## 🚀 Step 3: Deploy Backend to Render
 
 ### Create New Render Service
+
 1. **Go to Render Dashboard**: https://dashboard.render.com
 2. **Click "New +"** → **Web Service**
 3. **Connect Repository**:
@@ -99,7 +110,9 @@ AutoMaxLib/
    - Click **Connect**
 
 ### Configure Render Settings
+
 4. **Service Configuration**:
+
    - **Name**: `automaxlib-backend`
    - **Root Directory**: `backend`
    - **Environment**: `Node`
@@ -108,6 +121,7 @@ AutoMaxLib/
    - **Instance Type**: `Free` (or paid for better performance)
 
 5. **Environment Variables**:
+
    ```env
    NODE_ENV=production
    CLERK_SECRET_KEY=sk_live_YOUR_ACTUAL_SECRET
@@ -125,11 +139,13 @@ AutoMaxLib/
 6. **Click "Create Web Service"**
 
 ### Get Backend URL
+
 - After deployment: `https://automaxlib-backend.onrender.com`
 
 ## 🔧 Step 4: Update Configurations
 
 ### Update Frontend Environment
+
 1. **In Vercel Dashboard** → Your Project → **Settings** → **Environment Variables**
 2. **Update `VITE_API_BASE_URL`**:
    ```env
@@ -138,6 +154,7 @@ AutoMaxLib/
 3. **Redeploy** (automatic after env change)
 
 ### Update Clerk Configuration
+
 1. **Go to Clerk Dashboard**: https://dashboard.clerk.com
 2. **Your App** → **Domains**:
    - Add: `automaxlib-frontend.vercel.app`
@@ -150,6 +167,7 @@ AutoMaxLib/
 ## 🧪 Step 5: Test Deployment
 
 ### Test Frontend
+
 1. **Go to**: `https://automaxlib-frontend.vercel.app`
 2. **Check**:
    - ✅ Page loads correctly
@@ -158,11 +176,13 @@ AutoMaxLib/
    - ✅ API calls work
 
 ### Test Backend
+
 1. **Health Check**: `https://automaxlib-backend.onrender.com/health`
 2. **API Test**: `https://automaxlib-backend.onrender.com/api/webhook/clerk`
 3. **Check Logs** in Render dashboard
 
 ### Test Authentication Flow
+
 1. **Sign up** with new account
 2. **Check** user appears in database
 3. **Test** all major features
@@ -171,11 +191,13 @@ AutoMaxLib/
 ## 📋 Step 6: Final Configuration
 
 ### Custom Domains (Optional)
+
 1. **Vercel**: Add custom domain in project settings
 2. **Render**: Add custom domain in service settings
 3. **Update Clerk** with new domains
 
 ### Monitoring Setup
+
 1. **Vercel**: Built-in analytics and monitoring
 2. **Render**: Built-in logs and metrics
 3. **Clerk**: User analytics and logs
@@ -196,11 +218,13 @@ AutoMaxLib/
 ## 🎯 Expected Results
 
 ### Clean URLs
+
 - **Frontend**: `https://automaxlib-frontend.vercel.app`
 - **Backend**: `https://automaxlib-backend.onrender.com`
 - **API**: `https://automaxlib-backend.onrender.com/api`
 
 ### Performance
+
 - **Frontend**: Fast loading with Vercel CDN
 - **Backend**: Reliable API with Render hosting
 - **Database**: MongoDB Atlas connectivity
@@ -209,6 +233,7 @@ AutoMaxLib/
 ## 🆘 Troubleshooting
 
 ### Common Issues
+
 1. **Build Failures**: Check build logs in dashboard
 2. **Environment Variables**: Ensure all required vars are set
 3. **CORS Errors**: Update ALLOWED_ORIGINS in backend
@@ -216,6 +241,7 @@ AutoMaxLib/
 5. **Database Connection**: Check MongoDB URI and network access
 
 ### Support Resources
+
 - **Vercel Docs**: https://vercel.com/docs
 - **Render Docs**: https://render.com/docs
 - **Clerk Docs**: https://clerk.com/docs
