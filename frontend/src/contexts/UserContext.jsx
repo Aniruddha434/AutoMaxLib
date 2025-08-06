@@ -18,6 +18,7 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [retryCount, setRetryCount] = useState(0)
+  const [authStateReady, setAuthStateReady] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -34,6 +35,7 @@ export const UserProvider = ({ children }) => {
           setUserData(null)
           setError(null)
           setRetryCount(0)
+          setAuthStateReady(true) // Mark auth state as ready even when no user
         }
         return
       }
@@ -72,6 +74,8 @@ export const UserProvider = ({ children }) => {
         if (isMounted) {
           setUserData(data)
           setRetryCount(0) // Reset retry count on success
+          setAuthStateReady(true) // Mark auth state as ready
+          setLoading(false) // Ensure loading is false
         }
 
         console.log(`[${sessionId}] UserContext: User data fetch completed successfully`)
@@ -209,6 +213,7 @@ export const UserProvider = ({ children }) => {
       userData,
       loading,
       error,
+      authStateReady,
       updateUserData,
       refreshUserData,
       isPremium: userData?.plan === 'premium'

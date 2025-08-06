@@ -1,8 +1,23 @@
-import { SignIn } from '@clerk/clerk-react'
-import { Link } from 'react-router-dom'
+import { SignIn, useAuth } from '@clerk/clerk-react'
+import { Link, useNavigate } from 'react-router-dom'
 import { GitBranch } from 'lucide-react'
+import { useEffect } from 'react'
 
 const SignInPage = () => {
+  const { isLoaded, isSignedIn } = useAuth()
+  const navigate = useNavigate()
+
+  // Handle successful authentication
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      console.log('SignInPage: User authenticated, redirecting to dashboard')
+      // Use a small delay to ensure authentication state is fully settled
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true })
+      }, 100)
+    }
+  }, [isLoaded, isSignedIn, navigate])
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -23,7 +38,7 @@ const SignInPage = () => {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
-          <SignIn 
+          <SignIn
             appearance={{
               elements: {
                 formButtonPrimary: 'bg-primary-600 hover:bg-primary-700 text-sm normal-case',
@@ -37,8 +52,10 @@ const SignInPage = () => {
                 footerActionLink: 'text-primary-600 hover:text-primary-500'
               }
             }}
-            redirectUrl="/dashboard"
             signUpUrl="/sign-up"
+            afterSignInUrl="/dashboard"
+            routing="path"
+            path="/sign-in"
           />
         </div>
         

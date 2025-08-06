@@ -15,10 +15,38 @@ if (!clerkPubKey) {
 const ClerkProviderWithRouter = ({ children }) => {
   const navigate = useNavigate()
 
+  // Enhanced navigation function with better error handling and logging
+  const handleNavigation = (to) => {
+    console.log('Clerk navigation requested:', to)
+
+    try {
+      // Ensure the path is valid
+      if (!to || typeof to !== 'string') {
+        console.error('Invalid navigation path:', to)
+        navigate('/dashboard') // Fallback to dashboard
+        return
+      }
+
+      // Handle relative paths
+      const path = to.startsWith('/') ? to : `/${to}`
+
+      // Add a small delay to ensure authentication state is settled
+      setTimeout(() => {
+        console.log('Executing navigation to:', path)
+        navigate(path, { replace: true })
+      }, 100)
+
+    } catch (error) {
+      console.error('Navigation error:', error)
+      // Fallback navigation
+      navigate('/dashboard', { replace: true })
+    }
+  }
+
   return (
     <ClerkProvider
       publishableKey={clerkPubKey}
-      navigate={(to) => navigate(to)}
+      navigate={handleNavigation}
       afterSignInUrl="/dashboard"
       afterSignUpUrl="/dashboard"
       signInUrl="/sign-in"

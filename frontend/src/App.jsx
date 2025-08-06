@@ -15,6 +15,8 @@ import SignUpPage from './pages/SignUpPage'
 import PatternGenerator from './components/PatternGenerator'
 import ReadmeGeneratorPage from './pages/ReadmeGeneratorPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
+import AuthenticationWrapper from './components/auth/AuthenticationWrapper'
+import AuthDebugger from './components/auth/AuthDebugger'
 import ImageTest from './components/ImageTest'
 import PremiumFeatureTest from './components/PremiumFeatureTest'
 import PrivacyPolicy from './pages/PrivacyPolicy'
@@ -27,10 +29,11 @@ function App() {
   return (
     <ThemeProvider>
       <UserProvider>
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
-          <main className="flex-1">
-            <Routes>
+        <AuthenticationWrapper>
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main className="flex-1">
+              <Routes>
               {/* Public routes */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/sign-in" element={<SignInPage />} />
@@ -80,9 +83,11 @@ function App() {
                 </ProtectedRoute>
               } />
             </Routes>
-          </main>
-          <Footer />
-        </div>
+            </main>
+            <Footer />
+            <AuthDebugger />
+          </div>
+        </AuthenticationWrapper>
       </UserProvider>
     </ThemeProvider>
   )
