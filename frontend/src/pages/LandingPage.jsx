@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '@clerk/clerk-react'
+import { useEffect, useRef } from 'react'
 import ContributionGraph from '../components/ui/ContributionGraph'
 import FeatureShowcase from '../components/FeatureShowcase'
+import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import {
   GitBranch,
   Clock,
@@ -31,6 +33,16 @@ import {
 
 const LandingPage = () => {
   const { isSignedIn } = useAuth()
+
+  // Scroll animation refs
+  const heroRef = useScrollAnimation()
+  const featuresRef = useScrollAnimation()
+  const premiumRef = useScrollAnimation()
+  const benefitsRef = useScrollAnimation()
+  const transformationRef = useScrollAnimation()
+  const testimonialsRef = useScrollAnimation()
+  const pricingRef = useScrollAnimation()
+  const ctaRef = useScrollAnimation()
 
   const features = [
     {
@@ -164,44 +176,44 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gray-50 py-16 md:py-32 dark:bg-transparent">
+      <section ref={heroRef} className="bg-gray-50 py-16 md:py-32 dark:bg-transparent">
         <div className="mx-auto max-w-3xl lg:max-w-5xl px-6">
           <div className="text-center space-y-8">
             {/* Main Headline */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 dark:text-white leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 dark:text-white leading-tight animate-fade-in-up">
               Never Break Your Coding Streak Again
             </h1>
 
             {/* Subheadline */}
-            <p className="text-lg text-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-foreground max-w-2xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               AutoMaxLib intelligently maintains your contribution graph with meaningful commits,
               helping you build consistent coding habits and showcase your dedication to potential employers.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
               {isSignedIn ? (
                 <Link
                   to="/dashboard"
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-lg font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover-glow px-8 py-4"
                 >
                   Go to Dashboard
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
                 </Link>
               ) : (
                 <>
                   <Link
                     to="/sign-up"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-lg font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover-glow px-8 py-4 group"
                   >
                     Start Free Trial
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
                   </Link>
                   <Link
                     to="/sign-in"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-lg font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:scale-105 hover-glow-secondary px-8 py-4 group"
                   >
-                    <Play className="w-4 h-4 mr-2" />
+                    <Play className="w-5 h-5 mr-2 transition-transform group-hover:scale-110" />
                     Watch Demo
                   </Link>
                 </>
@@ -209,10 +221,14 @@ const LandingPage = () => {
             </div>
 
             {/* Social Proof Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
               {stats.slice(0, 4).map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-1">
+                <div
+                  key={index}
+                  className="text-center transform transition-all duration-300 hover:scale-105 animate-fade-in-up"
+                  style={{ animationDelay: `${0.8 + index * 0.1}s` }}
+                >
+                  <div className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-1 bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
                     {stat.number}
                   </div>
                   <div className="text-sm text-muted-foreground">
@@ -227,9 +243,9 @@ const LandingPage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="bg-gray-50 py-16 md:py-32 dark:bg-transparent">
+      <section ref={featuresRef} className="bg-gray-50 py-16 md:py-32 dark:bg-transparent">
         <div className="mx-auto max-w-3xl lg:max-w-5xl px-6">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 animate-fade-in-up">
             <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6">
               Everything You Need to Succeed
             </h2>
@@ -243,15 +259,16 @@ const LandingPage = () => {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="col-span-full sm:col-span-3 lg:col-span-2"
+                className="col-span-full sm:col-span-3 lg:col-span-2 animate-fade-in-up"
+                style={{ animationDelay: `${0.2 + index * 0.1}s` }}
               >
-                <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
+                <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 hover-glow group">
                   <div className="p-6 pt-6">
-                    <div className="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5 mb-6">
-                      <feature.icon className="m-auto size-5" strokeWidth={1} />
+                    <div className="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5 mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <feature.icon className="m-auto size-5 group-hover:text-primary-600 transition-colors duration-300" strokeWidth={1} />
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-lg font-medium transition">
+                      <h3 className="text-lg font-medium transition group-hover:text-primary-600">
                         {feature.title}
                       </h3>
                       <p className="text-foreground text-sm">

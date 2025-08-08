@@ -50,8 +50,6 @@ export const DialogContent = ({
   const { isOpen, onOpenChange, modal } = useContext(DialogContext)
   const contentRef = useRef(null)
 
-  if (!isOpen) return null
-
   const handleBackdropClick = (e) => {
     if (closeOnBackdropClick && e.target === e.currentTarget) {
       onOpenChange(false)
@@ -65,11 +63,11 @@ export const DialogContent = ({
   }
 
   useEffect(() => {
-    if (closeOnEscape) {
+    if (closeOnEscape && isOpen) {
       document.addEventListener('keydown', handleKeyDown)
       return () => document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [closeOnEscape])
+  }, [closeOnEscape, isOpen])
 
   // Focus management
   useEffect(() => {
@@ -82,6 +80,8 @@ export const DialogContent = ({
       }
     }
   }, [isOpen])
+
+  if (!isOpen) return null
 
   const sizes = {
     xs: 'max-w-xs',
