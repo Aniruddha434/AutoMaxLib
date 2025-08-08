@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useUserData } from '../contexts/UserContext'
 import profileService from '../services/profileService'
+import { OrbitalLoader } from './ui/orbital-loader'
 import {
   FileText,
   Download,
@@ -595,31 +596,27 @@ const ReadmeGenerator = () => {
               </div>
             )}
 
-            <div className="flex justify-between">
-              <button
-                onClick={() => setCurrentStep(2)}
-                className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
-              >
-                Back: Edit Profile
-              </button>
-              <button
-                onClick={generateReadme}
-                disabled={loading}
-                className="btn-primary px-6 py-2 disabled:opacity-50 flex items-center"
-              >
-                {loading ? (
-                  <>
-                    <Loader className="animate-spin h-4 w-4 mr-2" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    Generate README
-                  </>
-                )}
-              </button>
-            </div>
+            {loading ? (
+              <div className="text-center py-8">
+                <OrbitalLoader message="Generating your professional README..." />
+              </div>
+            ) : (
+              <div className="flex justify-between">
+                <button
+                  onClick={() => setCurrentStep(2)}
+                  className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Back: Edit Profile
+                </button>
+                <button
+                  onClick={generateReadme}
+                  className="btn-primary px-6 py-2 flex items-center"
+                >
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Generate README
+                </button>
+              </div>
+            )}
           </div>
         )}
 

@@ -69,3 +69,4 @@ export {
 } from './EmptyState'
 
 export { CircularTestimonials } from './circular-testimonials'
+export { OrbitalLoader } from './orbital-loader'

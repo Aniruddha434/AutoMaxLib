@@ -433,16 +433,16 @@ const LandingPage = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="bg-blue-600">
+      <section className="bg-gray-50 dark:bg-transparent">
         <div className="container-custom section text-center">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
               Ready to Transform Your{" "}
-              <span className="text-blue-200">
+              <span className="gradient-text">
                 Developer Profile?
               </span>
             </h2>
-            <p className="text-lg md:text-xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
               Join thousands of developers who've already elevated their coding consistency
               and professional presence with AutoMaxLib. Start your journey today.
             </p>
@@ -467,7 +467,7 @@ const LandingPage = () => {
             )}
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-blue-200">
+            <div className="flex flex-wrap justify-center items-center gap-8 text-gray-600 dark:text-gray-400">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4" />
                 <span className="text-sm">Secure & Private</span>

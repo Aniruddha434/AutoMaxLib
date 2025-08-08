@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useUserData } from '../contexts/UserContext'
 import repositoryService from '../services/repositoryService'
 import PremiumFeaturePreview from './PremiumFeaturePreview'
+import { OrbitalLoader } from './ui/orbital-loader'
 import {
   FileText,
   Download,
@@ -425,23 +426,18 @@ const RepositoryReadmeGenerator = () => {
                     </button>
                   )}
                 </div>
+              ) : analyzing ? (
+                <div className="text-center py-8">
+                  <OrbitalLoader message="Analyzing repository structure..." />
+                </div>
               ) : (
                 <button
                   onClick={analyzeRepository}
-                  disabled={!repositoryUrl || !urlValidation?.isValid || analyzing}
+                  disabled={!repositoryUrl || !urlValidation?.isValid}
                   className="btn-primary flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {analyzing ? (
-                    <>
-                      <Loader className="h-4 w-4 mr-2 animate-spin" />
-                      Analyzing Repository...
-                    </>
-                  ) : (
-                    <>
-                      <Search className="h-4 w-4 mr-2" />
-                      Analyze Repository
-                    </>
-                  )}
+                  <Search className="h-4 w-4 mr-2" />
+                  Analyze Repository
                 </button>
               )}
             </div>
@@ -661,23 +657,17 @@ const RepositoryReadmeGenerator = () => {
                     </button>
                   )}
                 </div>
+              ) : loading ? (
+                <div className="text-center py-8">
+                  <OrbitalLoader message="Generating your repository README..." />
+                </div>
               ) : (
                 <button
                   onClick={generateReadme}
-                  disabled={loading}
-                  className="btn-primary flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary flex items-center"
                 >
-                  {loading ? (
-                    <>
-                      <Loader className="h-4 w-4 mr-2 animate-spin" />
-                      Generating README...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Generate README
-                    </>
-                  )}
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Generate README
                 </button>
               )}
             </div>
