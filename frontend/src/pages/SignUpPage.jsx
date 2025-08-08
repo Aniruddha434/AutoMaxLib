@@ -1,8 +1,9 @@
 import { SignUp, useAuth } from '@clerk/clerk-react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { GitBranch } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ClerkErrorBoundary from '../components/auth/ClerkErrorBoundary'
+import { useTheme } from '../contexts/ThemeContext'
 
 const SignUpPage = () => {
   const { isLoaded, isSignedIn } = useAuth()
@@ -36,6 +37,51 @@ const SignUpPage = () => {
     }
   }, [isLoaded])
 
+  const { isDark } = useTheme()
+
+  const clerkAppearance = useMemo(() => ({
+    colorScheme: isDark ? 'dark' : 'light',
+    variables: isDark
+      ? {
+          colorBackground: '#111827',
+          colorText: '#e5e7eb',
+          colorInputBackground: '#374151',
+          colorInputText: '#ffffff',
+          colorInputBorder: '#4b5563',
+          colorPrimary: '#0284c7',
+          colorDanger: '#ef4444',
+          borderRadius: '0.75rem',
+        }
+      : {
+          colorBackground: '#ffffff',
+          colorText: '#111827',
+          colorInputBackground: '#ffffff',
+          colorInputText: '#111827',
+          colorInputBorder: '#d1d5db',
+          colorPrimary: '#0284c7',
+          colorDanger: '#dc2626',
+          borderRadius: '0.75rem',
+        },
+    elements: {
+      formButtonPrimary: 'bg-primary-600 hover:bg-primary-700 text-sm normal-case',
+      card: 'shadow-none',
+      headerTitle: 'hidden',
+      headerSubtitle: 'hidden',
+      socialButtonsBlockButton:
+        'border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700',
+      socialButtonsBlockButtonText: 'text-gray-600 dark:text-gray-300',
+      formFieldInput:
+        'border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-500',
+      formFieldLabel: 'text-gray-700 dark:text-gray-300',
+      footerActionLink: 'text-primary-600 hover:text-primary-500',
+      otpCodeFieldInput:
+        'border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-center font-mono',
+      verificationCodeField: 'space-x-2',
+      verificationCodeFieldInput:
+        'w-12 h-12 text-center border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-lg',
+    },
+  }), [isDark])
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -45,7 +91,7 @@ const SignUpPage = () => {
             AutoGitPilot
           </span>
         </Link>
-        
+
         <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Create your account
         </h2>
@@ -71,23 +117,7 @@ const SignUpPage = () => {
           ) : (
             <ClerkErrorBoundary>
               <SignUp
-                appearance={{
-                  elements: {
-                    formButtonPrimary: 'bg-primary-600 hover:bg-primary-700 text-sm normal-case',
-                    card: 'shadow-none',
-                    headerTitle: 'hidden',
-                    headerSubtitle: 'hidden',
-                    socialButtonsBlockButton: 'border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700',
-                    socialButtonsBlockButtonText: 'text-gray-600 dark:text-gray-300',
-                    formFieldInput: 'border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500',
-                    formFieldLabel: 'text-gray-700 dark:text-gray-300',
-                    footerActionLink: 'text-primary-600 hover:text-primary-500',
-                    // Specific styling for OTP inputs to prevent disappearing
-                    otpCodeFieldInput: 'border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-center font-mono',
-                    verificationCodeField: 'space-x-2',
-                    verificationCodeFieldInput: 'w-12 h-12 text-center border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-lg'
-                  }
-                }}
+                appearance={clerkAppearance}
                 signInUrl="/sign-in"
                 routing="path"
                 path="/sign-up"
