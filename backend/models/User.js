@@ -213,6 +213,95 @@ const userSchema = new mongoose.Schema({
       default: 0
     }
   },
+  repositoryReadmeGeneration: {
+    generatedReadmes: [{
+      id: {
+        type: String,
+        default: () => new Date().getTime().toString()
+      },
+      template: {
+        type: String,
+        enum: ['web-application', 'library-package', 'cli-tool', 'api-service', 'mobile-app', 'data-science', 'game-entertainment', 'educational'],
+        default: 'web-application'
+      },
+      content: {
+        type: String,
+        required: true
+      },
+      repositoryData: {
+        owner: String,
+        name: String,
+        fullName: String,
+        description: String,
+        language: String,
+        languages: [String],
+        topics: [String],
+        license: String,
+        homepage: String,
+        size: Number,
+        stargazersCount: Number,
+        forksCount: Number,
+        openIssuesCount: Number,
+        defaultBranch: String
+      },
+      analysisData: {
+        projectType: String,
+        technologies: [String],
+        frameworks: [String],
+        buildTools: [String],
+        packageManagers: [String],
+        databases: [String],
+        deploymentPlatforms: [String],
+        mainFiles: [String],
+        configFiles: [String],
+        hasTests: Boolean,
+        hasDocumentation: Boolean,
+        hasCI: Boolean,
+        estimatedComplexity: String,
+        codeStructure: {
+          type: mongoose.Schema.Types.Mixed,
+          default: {}
+        }
+      },
+      customSections: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+      },
+      generatedAt: {
+        type: Date,
+        default: Date.now
+      },
+      wordCount: {
+        type: Number,
+        default: 0
+      },
+      isDeployed: {
+        type: Boolean,
+        default: false
+      },
+      deployedAt: {
+        type: Date,
+        default: null
+      },
+      deployedToRepository: {
+        owner: String,
+        name: String,
+        branch: String
+      }
+    }],
+    monthlyUsage: {
+      type: Number,
+      default: 0
+    },
+    lastUsageReset: {
+      type: Date,
+      default: Date.now
+    },
+    totalGenerations: {
+      type: Number,
+      default: 0
+    }
+  },
   isActive: {
     type: Boolean,
     default: true
@@ -369,6 +458,119 @@ userSchema.methods.markReadmeAsDeployed = function(readmeId) {
     return true
   }
   return false
+}
+
+// Repository README Generation Methods
+
+// Method to check if user can generate repository README (free users: 2 lifetime, premium: 10 per month)
+userSchema.methods.canGenerateRepositoryReadme = function() {
+  const now = new Date()
+
+  if (!this.isPremium()) {
+    // Free users: 2 lifetime repository README generations
+    const freeUserLimit = 2
+    const totalUsage = this.repositoryReadmeGeneration.totalGenerations || 0
+
+    if (totalUsage >= freeUserLimit) {
+      return {
+        canGenerate: false,
+        reason: `Free plan limit reached. You've used ${totalUsage} of ${freeUserLimit} lifetime repository README generations. Upgrade to Premium for unlimited monthly access.`,
+        usage: totalUsage,
+        limit: freeUserLimit,
+        remaining: 0,
+        isPremium: false,
+        limitType: 'lifetime'
+      }
+    }
+
+    return {
+      canGenerate: true,
+      usage: totalUsage,
+      limit: freeUserLimit,
+      remaining: freeUserLimit - totalUsage,
+      isPremium: false,
+      limitType: 'lifetime'
+    }
+  }
+
+  // Premium users: 10 repository README generations per month
+  // Reset monthly usage if needed
+  const lastReset = this.repositoryReadmeGeneration.lastUsageReset
+  const monthsDiff = (now.getFullYear() - lastReset.getFullYear()) * 12 + (now.getMonth() - lastReset.getMonth())
+
+  if (monthsDiff >= 1) {
+    this.repositoryReadmeGeneration.monthlyUsage = 0
+    this.repositoryReadmeGeneration.lastUsageReset = now
+  }
+
+  // Check monthly limit for premium users
+  const monthlyLimit = 10
+  const monthlyUsage = this.repositoryReadmeGeneration.monthlyUsage || 0
+
+  if (monthlyUsage >= monthlyLimit) {
+    return {
+      canGenerate: false,
+      reason: `Monthly limit reached (${monthlyLimit} repository README generations per month)`,
+      usage: monthlyUsage,
+      limit: monthlyLimit,
+      remaining: 0,
+      isPremium: true,
+      limitType: 'monthly'
+    }
+  }
+
+  return {
+    canGenerate: true,
+    usage: monthlyUsage,
+    limit: monthlyLimit,
+    remaining: monthlyLimit - monthlyUsage,
+    isPremium: true,
+    limitType: 'monthly'
+  }
+}
+
+// Method to add a generated repository README
+userSchema.methods.addGeneratedRepositoryReadme = function(readmeData) {
+  // Increment usage counters
+  this.repositoryReadmeGeneration.monthlyUsage += 1
+  this.repositoryReadmeGeneration.totalGenerations += 1
+
+  // Add the new README
+  this.repositoryReadmeGeneration.generatedReadmes.push(readmeData)
+
+  // Keep only the last 15 repository READMEs to prevent excessive storage
+  if (this.repositoryReadmeGeneration.generatedReadmes.length > 15) {
+    this.repositoryReadmeGeneration.generatedReadmes = this.repositoryReadmeGeneration.generatedReadmes.slice(-15)
+  }
+
+  return this.repositoryReadmeGeneration.generatedReadmes[this.repositoryReadmeGeneration.generatedReadmes.length - 1]
+}
+
+// Method to get latest repository README
+userSchema.methods.getLatestRepositoryReadme = function() {
+  if (this.repositoryReadmeGeneration.generatedReadmes.length === 0) {
+    return null
+  }
+  return this.repositoryReadmeGeneration.generatedReadmes[this.repositoryReadmeGeneration.generatedReadmes.length - 1]
+}
+
+// Method to mark repository README as deployed
+userSchema.methods.markRepositoryReadmeAsDeployed = function(readmeId, deploymentInfo) {
+  const readme = this.repositoryReadmeGeneration.generatedReadmes.find(r => r.id === readmeId)
+  if (readme) {
+    readme.isDeployed = true
+    readme.deployedAt = new Date()
+    if (deploymentInfo) {
+      readme.deployedToRepository = deploymentInfo
+    }
+    return true
+  }
+  return false
+}
+
+// Method to get repository README by ID
+userSchema.methods.getRepositoryReadmeById = function(readmeId) {
+  return this.repositoryReadmeGeneration.generatedReadmes.find(r => r.id === readmeId)
 }
 
 export default mongoose.model('User', userSchema)

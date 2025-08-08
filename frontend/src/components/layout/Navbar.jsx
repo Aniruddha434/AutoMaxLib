@@ -109,7 +109,16 @@ const Navbar = () => {
                     isActiveRoute('/readme-generator') && 'nav-link-active'
                   )}
                 >
-                  README AI
+                  Profile README
+                </Link>
+                <Link
+                  to="/repository-readme-generator"
+                  className={cn(
+                    'nav-link',
+                    isActiveRoute('/repository-readme-generator') && 'nav-link-active'
+                  )}
+                >
+                  Repository README
                 </Link>
                 <Link
                   to="/settings"
@@ -261,7 +270,17 @@ const Navbar = () => {
                     )}
                     onClick={handleToggleMenu}
                   >
-                    README AI
+                    Profile README
+                  </Link>
+                  <Link
+                    to="/repository-readme-generator"
+                    className={cn(
+                      'nav-link block transform transition-all duration-200',
+                      isActiveRoute('/repository-readme-generator') && 'nav-link-active'
+                    )}
+                    onClick={handleToggleMenu}
+                  >
+                    Repository README
                   </Link>
                   <Link
                     to="/settings"

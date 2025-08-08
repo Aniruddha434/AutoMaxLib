@@ -15,6 +15,7 @@ import SignInPage from './pages/SignInPage'
 import SignUpPage from './pages/SignUpPage'
 import PatternGenerator from './components/PatternGenerator'
 import ReadmeGeneratorPage from './pages/ReadmeGeneratorPage'
+import RepositoryReadmeGeneratorPage from './pages/RepositoryReadmeGeneratorPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 
 import ImageTest from './components/ImageTest'
@@ -82,6 +83,11 @@ function App() {
               <Route path="/readme-generator" element={
                 <ProtectedRoute>
                   <ReadmeGeneratorPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/repository-readme-generator" element={
+                <ProtectedRoute>
+                  <RepositoryReadmeGeneratorPage />
                 </ProtectedRoute>
               } />
             </Routes>

@@ -42,6 +42,7 @@ import paymentRoutes from './routes/payment.js'
 import webhookRoutes from './routes/webhook.js'
 import patternRoutes from './routes/pattern.js'
 import profileRoutes from './routes/profile.js'
+import repositoryRoutes from './routes/repository.js'
 import schedulerRoutes from './routes/scheduler.js'
 import monitoringRoutes from './routes/monitoring.js'
 
@@ -287,6 +288,7 @@ app.use('/api/commit', commitRoutes)
 app.use('/api/payment', paymentRateLimit, paymentRoutes)
 app.use('/api/pattern', patternRateLimit, patternRoutes)
 app.use('/api/profile', profileRoutes)
+app.use('/api/repository', repositoryRoutes)
 
 // 404 handler with enhanced logging for webhook debugging
 app.use('*', (req, res) => {

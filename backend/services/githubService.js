@@ -575,6 +575,196 @@ I'm a developer who loves to code and build amazing things!
         return `Daily update - ${now.toDateString()}`
     }
   }
+
+  // Repository Analysis Methods for Repository README Generation
+
+  // Get detailed repository information for analysis
+  async getRepositoryInfo(token, owner, repo) {
+    try {
+      const client = this.createClient(token)
+      const response = await client.get(`/repos/${owner}/${repo}`)
+
+      const repoData = response.data
+
+      return {
+        success: true,
+        data: {
+          owner: repoData.owner.login,
+          name: repoData.name,
+          fullName: repoData.full_name,
+          description: repoData.description,
+          language: repoData.language,
+          languages: null, // Will be fetched separately
+          topics: repoData.topics || [],
+          license: repoData.license?.name || null,
+          homepage: repoData.homepage,
+          size: repoData.size,
+          stargazersCount: repoData.stargazers_count,
+          forksCount: repoData.forks_count,
+          openIssuesCount: repoData.open_issues_count,
+          defaultBranch: repoData.default_branch,
+          createdAt: repoData.created_at,
+          updatedAt: repoData.updated_at,
+          pushedAt: repoData.pushed_at,
+          isPrivate: repoData.private,
+          isFork: repoData.fork,
+          isArchived: repoData.archived
+        }
+      }
+    } catch (error) {
+      console.error(`Error fetching repository info for ${owner}/${repo}:`, error.message)
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to fetch repository information'
+      }
+    }
+  }
+
+  // Get repository file structure for analysis
+  async getRepositoryFileStructure(token, owner, repo, path = '', maxDepth = 3, currentDepth = 0) {
+    try {
+      if (currentDepth >= maxDepth) {
+        return { success: true, data: [] }
+      }
+
+      const client = this.createClient(token)
+      const response = await client.get(`/repos/${owner}/${repo}/contents/${path}`)
+
+      const items = Array.isArray(response.data) ? response.data : [response.data]
+      const structure = []
+
+      for (const item of items) {
+        const structureItem = {
+          name: item.name,
+          path: item.path,
+          type: item.type,
+          size: item.size,
+          sha: item.sha
+        }
+
+        // If it's a directory and we haven't reached max depth, get its contents
+        if (item.type === 'dir' && currentDepth < maxDepth - 1) {
+          const subStructure = await this.getRepositoryFileStructure(
+            token, owner, repo, item.path, maxDepth, currentDepth + 1
+          )
+          if (subStructure.success) {
+            structureItem.children = subStructure.data
+          }
+        }
+
+        structure.push(structureItem)
+      }
+
+      return {
+        success: true,
+        data: structure
+      }
+    } catch (error) {
+      console.error(`Error fetching repository structure for ${owner}/${repo}:`, error.message)
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to fetch repository structure'
+      }
+    }
+  }
+
+  // Get key repository files for analysis
+  async getKeyRepositoryFiles(token, owner, repo) {
+    try {
+      const client = this.createClient(token)
+      const keyFiles = {}
+
+      // List of important files to analyze
+      const importantFiles = [
+        'package.json',
+        'requirements.txt',
+        'Cargo.toml',
+        'go.mod',
+        'pom.xml',
+        'build.gradle',
+        'composer.json',
+        'Gemfile',
+        'setup.py',
+        'pyproject.toml',
+        'Dockerfile',
+        'docker-compose.yml',
+        '.github/workflows',
+        'README.md',
+        'LICENSE',
+        'CONTRIBUTING.md'
+      ]
+
+      for (const fileName of importantFiles) {
+        try {
+          const response = await client.get(`/repos/${owner}/${repo}/contents/${fileName}`)
+
+          if (response.data.type === 'file' && response.data.content) {
+            // Decode base64 content
+            const content = Buffer.from(response.data.content, 'base64').toString('utf-8')
+            keyFiles[fileName] = {
+              content: content.substring(0, 5000), // Limit content size
+              size: response.data.size,
+              path: response.data.path
+            }
+          }
+        } catch (error) {
+          // File doesn't exist, continue
+          continue
+        }
+      }
+
+      return keyFiles
+    } catch (error) {
+      console.error(`Error fetching key files for ${owner}/${repo}:`, error.message)
+      return null
+    }
+  }
+
+  // Update repository file (wrapper for repository README deployment)
+  async updateRepositoryFile(token, owner, repo, path, content, message, branch = 'main') {
+    try {
+      const result = await this.createOrUpdateFile(
+        token,
+        owner,
+        repo,
+        path,
+        content,
+        message,
+        branch
+      )
+
+      return {
+        success: true,
+        commitSha: result.commit?.sha,
+        message: 'File updated successfully'
+      }
+    } catch (error) {
+      console.error(`Error updating repository file ${owner}/${repo}/${path}:`, error.message)
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to update repository file'
+      }
+    }
+  }
+
+  // Get repository languages
+  async getRepositoryLanguages(token, owner, repo) {
+    try {
+      const client = this.createClient(token)
+      const response = await client.get(`/repos/${owner}/${repo}/languages`)
+
+      return {
+        success: true,
+        data: Object.keys(response.data)
+      }
+    } catch (error) {
+      console.error(`Error fetching repository languages for ${owner}/${repo}:`, error.message)
+      return {
+        success: false,
+        data: []
+      }
+    }
+  }
 }
 
 export default new GitHubService()
