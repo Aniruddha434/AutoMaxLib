@@ -1,7 +1,7 @@
 // UI Components Index
 export { Button } from './Button'
 export { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, StatCard } from './Card'
-export { Badge, StatusBadge, NotificationBadge } from './badge'
+export { Badge } from './badge'
 export { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogBody, DialogFooter } from './dialog'
 export { Separator } from './separator'
 export { default as ContributionGraph } from './ContributionGraph'

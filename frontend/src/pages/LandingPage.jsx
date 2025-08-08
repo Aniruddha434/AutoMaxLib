@@ -164,177 +164,100 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-neutral-50 via-white to-primary-50/30 dark:from-neutral-950 dark:via-neutral-900 dark:to-primary-950/20">
-        {/* Dynamic Background Elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary-200/20 dark:bg-primary-800/10 rounded-full blur-3xl animate-float"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary-200/20 dark:bg-secondary-800/10 rounded-full blur-3xl animate-float" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent-200/10 dark:bg-accent-800/5 rounded-full blur-3xl animate-pulse-slow"></div>
-        </div>
+      <section className="bg-gray-50 py-16 md:py-32 dark:bg-transparent">
+        <div className="mx-auto max-w-3xl lg:max-w-5xl px-6">
+          <div className="text-center space-y-8">
+            {/* Main Headline */}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 dark:text-white leading-tight">
+              Never Break Your Coding Streak Again
+            </h1>
 
-        <div className="relative container-custom py-20 lg:py-32">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Column - Content */}
-            <div className="lg:text-left text-center space-y-8">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-primary-100/80 dark:bg-primary-900/30 border border-primary-200/50 dark:border-primary-800/50 rounded-xl px-4 py-2 mb-6 backdrop-blur-sm shadow-elegant">
-                <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
-                <span className="text-xs font-semibold text-primary-700 dark:text-primary-300">
-                  ✨ Trusted by 10K+ developers worldwide
-                </span>
-              </div>
+            {/* Subheadline */}
+            <p className="text-lg text-foreground max-w-2xl mx-auto leading-relaxed">
+              AutoMaxLib intelligently maintains your contribution graph with meaningful commits,
+              helping you build consistent coding habits and showcase your dedication to potential employers.
+            </p>
 
-              {/* Main Headline */}
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 dark:text-white mb-6 leading-tight tracking-tight">
-                Never Break Your{" "}
-                <span className="gradient-text relative">
-                  Coding Streak
-                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                </span>{" "}
-                Again
-              </h1>
-
-              {/* Subheadline */}
-              <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-300 mb-10 leading-relaxed font-body">
-                AutoMaxLib intelligently maintains your contribution graph with meaningful commits,
-                helping you build consistent coding habits and showcase your dedication to potential employers.
-              </p>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 lg:justify-start justify-center items-center mb-12">
-                {isSignedIn ? (
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              {isSignedIn ? (
+                <Link
+                  to="/dashboard"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                >
+                  Go to Dashboard
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              ) : (
+                <>
                   <Link
-                    to="/dashboard"
-                    className="btn-primary text-base px-6 py-3 inline-flex items-center gap-2 group shadow-floating"
+                    to="/sign-up"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                   >
-                    🚀 Go to Dashboard
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    Start Free Trial
+                    <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
-                ) : (
-                  <>
-                    <Link
-                      to="/sign-up"
-                      className="btn-primary text-base px-6 py-3 inline-flex items-center gap-2 group shadow-floating"
-                    >
-                      🎯 Start Free Trial
-                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                    <Link
-                      to="/sign-in"
-                      className="btn-outline text-base px-6 py-3 inline-flex items-center gap-2 group"
-                    >
-                      <Play className="w-4 h-4" />
-                      Watch Demo
-                    </Link>
+                  <Link
+                    to="/sign-in"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    Watch Demo
+                  </Link>
                 </>
               )}
-              </div>
-
-              {/* Social Proof Stats */}
-              <div className="grid grid-cols-2 gap-6 lg:gap-8">
-                {stats.slice(0, 4).map((stat, index) => (
-                  <div key={index} className="text-center lg:text-left">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl mb-4 shadow-elegant">
-                      <stat.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-2">
-                      {stat.number}
-                    </div>
-                    <div className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
 
-            {/* Right Column - Visual Element */}
-            <div className="relative lg:block hidden">
-              <div className="relative">
-                {/* Main Visual Card */}
-                <div className="bg-white dark:bg-neutral-800 rounded-3xl shadow-floating p-8 transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-accent-500 to-accent-600 rounded-2xl flex items-center justify-center">
-                        <GitBranch className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-neutral-900 dark:text-white">GitHub Activity</h3>
-                        <p className="text-sm text-neutral-600 dark:text-neutral-400">Consistent commits</p>
-                      </div>
-                    </div>
-                    <ContributionGraph />
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-neutral-600 dark:text-neutral-400">365 day streak</span>
-                      <div className="flex items-center gap-1">
-                        <Flame className="w-4 h-4 text-secondary-500" />
-                        <span className="text-sm font-semibold text-secondary-600 dark:text-secondary-400">On fire!</span>
-                      </div>
-                    </div>
+            {/* Social Proof Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
+              {stats.slice(0, 4).map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-1">
+                    {stat.number}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {stat.label}
                   </div>
                 </div>
-
-                {/* Floating Elements */}
-                <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-secondary-400 to-secondary-600 rounded-2xl shadow-glow-secondary animate-bounce-gentle flex items-center justify-center">
-                  <Star className="w-8 h-8 text-white" />
-                </div>
-
-                <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-accent-400 to-accent-600 rounded-2xl shadow-glow-accent animate-float flex items-center justify-center">
-                  <Award className="w-6 h-6 text-white" />
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
 
-
       </section>
 
       {/* Features Section */}
-      <section id="features" className="section bg-gradient-to-br from-neutral-50 to-primary-50/20 dark:from-neutral-900 dark:to-primary-950/10 relative overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-secondary-200/10 dark:bg-secondary-800/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent-200/10 dark:bg-accent-800/5 rounded-full blur-3xl"></div>
-
-        <div className="container-custom relative">
+      <section className="bg-gray-50 py-16 md:py-32 dark:bg-transparent">
+        <div className="mx-auto max-w-3xl lg:max-w-5xl px-6">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-primary-100/80 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-xl px-4 py-2 mb-6 backdrop-blur-sm shadow-elegant">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-xs font-bold">✨ Powerful Features</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6 leading-tight">
-              Everything You Need to{" "}
-              <span className="gradient-text">Succeed</span>
+            <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6">
+              Everything You Need to Succeed
             </h2>
-            <p className="text-lg text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed font-body">
+            <p className="text-lg text-foreground max-w-2xl mx-auto">
               From intelligent automation to beautiful analytics, AutoMaxLib provides all the tools
               you need to maintain consistency and build a professional developer profile.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-6 gap-3">
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="group relative"
+                className="col-span-full sm:col-span-3 lg:col-span-2"
               >
-                {/* Tilted Card Effect */}
-                <div className={`card-feature transform transition-all duration-500 hover:scale-105 ${
-                  index % 2 === 0 ? 'hover:rotate-1' : 'hover:-rotate-1'
-                } relative overflow-hidden`}>
-                  {/* Gradient Border */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 via-secondary-500/20 to-accent-500/20 rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                  <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-8 h-full">
-                    <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl mb-6 shadow-elegant group-hover:shadow-glow transition-all duration-300`}>
-                      <feature.icon className="w-8 h-8 text-white" />
+                <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
+                  <div className="p-6 pt-6">
+                    <div className="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5 mb-6">
+                      <feature.icon className="m-auto size-5" strokeWidth={1} />
                     </div>
-                    <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
-                      {feature.title}
-                    </h3>
-                    <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed text-sm font-body">
-                      {feature.description}
-                    </p>
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-medium transition">
+                        {feature.title}
+                      </h3>
+                      <p className="text-foreground text-sm">
+                        {feature.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

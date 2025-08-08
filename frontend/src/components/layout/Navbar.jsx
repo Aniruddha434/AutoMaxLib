@@ -56,17 +56,17 @@ const Navbar = () => {
   return (
     <nav className={cn(
       'sticky top-0 z-50 transition-all duration-300',
-      'glass border-b border-neutral-200/50 dark:border-neutral-800/50',
-      isScrolled && 'shadow-elegant backdrop-blur-xl'
+      'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border',
+      isScrolled && 'shadow-sm'
     )}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-2xl flex items-center justify-center shadow-elegant group-hover:shadow-glow transition-all duration-300 group-hover:scale-110 transform">
-              <GitBranch className="h-5 w-5 text-white group-hover:rotate-12 transition-transform duration-300" />
+          <Link to="/" className="flex items-center space-x-2 group">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <GitBranch className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-neutral-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+            <span className="text-lg font-semibold text-foreground">
               AutoMaxLib
             </span>
           </Link>

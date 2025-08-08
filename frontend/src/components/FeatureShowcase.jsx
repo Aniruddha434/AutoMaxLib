@@ -53,105 +53,62 @@ const FeatureShowcase = ({ onUpgrade }) => {
 
   return (
     <>
-      <section className="py-16 bg-gradient-to-br from-gray-50 to-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+      <section className="bg-gray-50 py-16 md:py-32 dark:bg-transparent">
+        <div className="mx-auto max-w-3xl lg:max-w-5xl px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6">
               Premium Features
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-foreground max-w-2xl mx-auto">
               Unlock powerful tools to enhance your GitHub profile and showcase your coding journey like never before.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-6 gap-3">
             {features.map((feature) => {
               const IconComponent = feature.icon
-              
+
               return (
-                <Card 
+                <Card
                   key={feature.id}
-                  className="group overflow-hidden border-2 hover:border-gray-300 transition-all duration-300 hover:shadow-xl cursor-pointer"
+                  className="col-span-full lg:col-span-3 overflow-hidden cursor-pointer transition"
                   onClick={() => handleFeatureClick(feature.id)}
                 >
-                  <CardContent className="p-0">
-                    {/* Image Section */}
-                    <div className="relative overflow-hidden">
-                      <img
-                        src={feature.image}
-                        alt={feature.imageAlt}
-                        className="w-full h-48 sm:h-56 md:h-64 object-cover transition-transform duration-500 group-hover:scale-110"
-                        loading="lazy"
-                        onError={(e) => {
-                          console.error('Failed to load feature image:', feature.image)
-                          e.target.style.display = 'none'
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                      
-                      {/* Premium Badge */}
-                      <div className="absolute top-4 right-4">
-                        <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0">
-                          <Crown className="h-3 w-3 mr-1" />
-                          Premium
-                        </Badge>
-                      </div>
-
-                      {/* Feature Icon */}
-                      <div className="absolute bottom-4 left-4">
-                        <div className={`p-3 rounded-lg bg-gradient-to-r ${feature.color} shadow-lg`}>
-                          <IconComponent className="h-6 w-6 text-white" />
-                        </div>
-                      </div>
-
-                      {/* Hover Overlay */}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <Button 
-                          size="lg" 
-                          className="bg-white text-gray-900 hover:bg-gray-100 font-semibold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
-                        >
-                          <Sparkles className="h-4 w-4 mr-2" />
-                          Preview Feature
-                        </Button>
-                      </div>
+                  <CardContent className="p-6 pt-6">
+                    <div className="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5 mb-6">
+                      <IconComponent className="m-auto size-5" strokeWidth={1} />
                     </div>
-
-                    {/* Content Section */}
-                    <div className="p-6">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-gray-700 transition-colors">
+                    <div className="space-y-2 mb-6">
+                      <h3 className="text-lg font-medium transition">
                         {feature.title}
                       </h3>
-                      <p className="text-gray-600 mb-4 leading-relaxed">
+                      <p className="text-foreground text-sm">
                         {feature.description}
                       </p>
-
-                      {/* Benefits List */}
-                      <ul className="space-y-2 mb-6">
-                        {feature.benefits.slice(0, 3).map((benefit, index) => (
-                          <li key={index} className="flex items-center text-sm text-gray-600">
-                            <div className="h-1.5 w-1.5 bg-green-500 rounded-full mr-3 flex-shrink-0" />
-                            {benefit}
-                          </li>
-                        ))}
-                        {feature.benefits.length > 3 && (
-                          <li className="text-sm text-gray-500 italic">
-                            + {feature.benefits.length - 3} more features...
-                          </li>
-                        )}
-                      </ul>
-
-                      {/* CTA Button */}
-                      <Button 
-                        className={`w-full bg-gradient-to-r ${feature.color} hover:opacity-90 text-white border-0 group-hover:shadow-lg transition-all duration-300`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleFeatureClick(feature.id)
-                        }}
-                      >
-                        View Premium Preview
-                        <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                      </Button>
                     </div>
+
+                    {/* Benefits List */}
+                    <ul className="space-y-1 mb-6">
+                      {feature.benefits.slice(0, 3).map((benefit, index) => (
+                        <li key={index} className="flex items-center text-sm text-muted-foreground">
+                          <div className="h-1 w-1 bg-current rounded-full mr-2 flex-shrink-0" />
+                          {benefit}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="w-full"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleFeatureClick(feature.id)
+                      }}
+                    >
+                      <Crown className="h-4 w-4 mr-2" />
+                      View Premium Preview
+                    </Button>
                   </CardContent>
                 </Card>
               )
@@ -159,16 +116,14 @@ const FeatureShowcase = ({ onUpgrade }) => {
           </div>
 
           {/* Bottom CTA */}
-          <div className="text-center mt-12">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full text-sm font-medium mb-4">
-              <Crown className="h-4 w-4" />
-              Limited Time: Get Premium for just $6/month
-            </div>
-            <div>
-              <Button 
-                size="lg" 
+          <div className="text-center mt-16">
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Limited Time: Get Premium for just $6/month
+              </p>
+              <Button
+                size="lg"
                 onClick={onUpgrade}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-8"
               >
                 Upgrade to Premium
                 <ArrowRight className="h-4 w-4 ml-2" />
