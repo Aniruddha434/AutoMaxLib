@@ -1,5 +1,5 @@
 import { SignUp, useAuth } from '@clerk/clerk-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { GitBranch } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import ClerkErrorBoundary from '../components/auth/ClerkErrorBoundary'
@@ -7,18 +7,20 @@ import ClerkErrorBoundary from '../components/auth/ClerkErrorBoundary'
 const SignUpPage = () => {
   const { isLoaded, isSignedIn } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const [clerkError, setClerkError] = useState(null)
 
   // Handle successful authentication
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      console.log('SignUpPage: User authenticated, redirecting to dashboard')
+      const redirectTo = location.state?.from?.pathname || '/dashboard'
+      console.log('SignUpPage: User authenticated, redirecting to', redirectTo)
       // Use a small delay to ensure authentication state is fully settled
       setTimeout(() => {
-        navigate('/dashboard', { replace: true })
+        navigate(redirectTo, { replace: true })
       }, 100)
     }
-  }, [isLoaded, isSignedIn, navigate])
+  }, [isLoaded, isSignedIn, navigate, location.state])
 
   // Handle Clerk loading errors
   useEffect(() => {
@@ -92,10 +94,8 @@ const SignUpPage = () => {
                   }
                 }}
                 signInUrl="/sign-in"
-                afterSignUpUrl="/dashboard"
                 routing="path"
                 path="/sign-up"
-                redirectUrl="/dashboard"
               />
             </ClerkErrorBoundary>
           )}
