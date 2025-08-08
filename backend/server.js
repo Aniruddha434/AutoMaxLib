@@ -49,7 +49,8 @@ const app = express()
 const PORT = process.env.PORT || 5000
 
 // Trust proxy for production (behind load balancer/reverse proxy)
-if (process.env.TRUST_PROXY === 'true') {
+// Enable automatically in production unless explicitly disabled
+if (process.env.NODE_ENV === 'production' || process.env.TRUST_PROXY === 'true') {
   app.set('trust proxy', 1)
 }
 

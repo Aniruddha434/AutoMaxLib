@@ -18,9 +18,32 @@ export const helmetConfig = helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:"],
-      scriptSrc: ["'self'"],
-      connectSrc: ["'self'", "https://api.clerk.dev", "https://clerk.autogitpilot.com"],
-      frameSrc: ["'none'"],
+      scriptSrc: [
+        "'self'",
+        "https://*.clerk.dev",
+        "https://*.clerk.com",
+        "https://clerk.autogitpilot.com",
+        "https://accounts.google.com",
+        "https://apis.google.com"
+      ],
+      connectSrc: [
+        "'self'",
+        "https://api.clerk.dev",
+        "https://*.clerk.dev",
+        "https://*.clerk.com",
+        "https://clerk.autogitpilot.com",
+        "https://accounts.google.com",
+        "https://apis.google.com",
+        "wss:",
+        "https:"
+      ],
+      frameSrc: [
+        "'self'",
+        "https://*.clerk.dev",
+        "https://*.clerk.com",
+        "https://accounts.google.com"
+      ],
+      formAction: ["'self'", "https://*.clerk.dev", "https://*.clerk.com", "https://accounts.google.com"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
     },
@@ -48,13 +71,15 @@ export const createRateLimit = (windowMs = 15 * 60 * 1000, max = 100, message = 
     },
     standardHeaders: true,
     legacyHeaders: false,
+    // Prefer per-user limiting when authenticated; otherwise fall back to IP
+    keyGenerator: (req) => (req.auth?.userId ? `user:${req.auth.userId}` : `ip:${req.ip}`),
     handler: (req, res) => {
       logSecurity('rate_limit_exceeded', {
         ip: req.ip,
         userAgent: req.get('User-Agent'),
         endpoint: req.path
       }, req)
-      
+
       res.status(429).json({
         success: false,
         error: message,
@@ -84,7 +109,7 @@ export const createSlowDown = (windowMs = 15 * 60 * 1000, delayAfter = 5, maxDel
 // Specific rate limits for different endpoints
 export const authRateLimit = createRateLimit(
   15 * 60 * 1000, // 15 minutes
-  5, // 5 attempts
+  60, // allow more auth/sync requests per user to prevent accidental lockouts
   'Too many authentication attempts, please try again later'
 )
 

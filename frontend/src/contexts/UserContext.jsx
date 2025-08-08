@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useUser } from '@clerk/clerk-react'
 import { userService } from '../services/userService'
 import EmailConflictModal from '../components/auth/EmailConflictModal'
@@ -25,6 +25,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     let isMounted = true
     let retryTimeout = null
+    const isFetchingRef = useRef(false)
 
     const fetchUserData = async () => {
       if (!isLoaded) {
@@ -45,6 +46,12 @@ export const UserProvider = ({ children }) => {
       const sessionId = Math.random().toString(36).substring(7)
 
       try {
+        if (isFetchingRef.current) {
+          console.log(`[${sessionId}] UserContext: Fetch already in progress, skipping duplicate call`)
+          return
+        }
+        isFetchingRef.current = true
+
         if (isMounted) {
           setLoading(true)
           setError(null)
@@ -178,6 +185,7 @@ export const UserProvider = ({ children }) => {
           setError('Server temporarily unavailable. Please try again in a few moments.')
         }
       } finally {
+        isFetchingRef.current = false
         if (isMounted) {
           setLoading(false)
         }

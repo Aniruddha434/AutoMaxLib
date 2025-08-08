@@ -76,6 +76,19 @@ class UserService {
         throw emailConflictError
       }
 
+      // Handle rate limiting explicitly (HTTP 429)
+      if (error.status === 429) {
+        if (retryCount >= maxRetries) {
+          console.warn('[UserService] Rate limited (429) and max retries reached. Aborting.')
+          throw error
+        }
+        const serverRetryAfterSec = error.response?.data?.retryAfter
+        const delayMs = (serverRetryAfterSec ? serverRetryAfterSec : Math.min(60, Math.pow(2, retryCount + 3))) * 1000
+        console.warn(`[UserService] Rate limited (429). Retrying after ${delayMs}ms...`)
+        await new Promise(resolve => setTimeout(resolve, delayMs))
+        return this.syncUser(userData, retryCount + 1)
+      }
+
       // Retry on server errors or network issues
       if (retryCount < maxRetries && (
         error.status >= 500 ||
