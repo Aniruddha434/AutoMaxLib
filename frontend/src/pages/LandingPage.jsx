@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '@clerk/clerk-react'
 import { useEffect, useRef } from 'react'
-import ContributionGraph from '../components/ui/ContributionGraph'
 import FeatureShowcase from '../components/FeatureShowcase'
 import { PricingCard } from '../components/ui/pricing'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
@@ -24,7 +23,6 @@ import {
   Activity,
   Award,
   Briefcase,
-  Eye,
   ChevronRight,
   Play,
   Github,
@@ -40,7 +38,6 @@ const LandingPage = () => {
   const featuresRef = useScrollAnimation()
   const premiumRef = useScrollAnimation()
   const benefitsRef = useScrollAnimation()
-  const transformationRef = useScrollAnimation()
   const testimonialsRef = useScrollAnimation()
   const pricingRef = useScrollAnimation()
   const ctaRef = useScrollAnimation()
@@ -340,125 +337,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Contribution Graph Comparison */}
-      <section className="section bg-white dark:bg-neutral-900">
-        <div className="container-custom">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mb-6">
-              See the{" "}
-              <span className="gradient-text">Transformation</span>
-            </h2>
-            <p className="text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed">
-              Watch how AutoMaxLib transforms sparse, inconsistent contribution patterns
-              into professional, reliable activity that catches recruiters' attention.
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Before */}
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className="inline-flex items-center gap-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full px-4 py-2 mb-4">
-                  <Eye className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Before AutoMaxLib</span>
-                </div>
-                <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-                  Inconsistent Activity
-                </h3>
-                <p className="text-neutral-600 dark:text-neutral-400">
-                  Sporadic commits that don't reflect your true dedication
-                </p>
-              </div>
-
-              <div className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6">
-                <ContributionGraph type="before" animated={true} />
-
-                <div className="grid grid-cols-3 gap-4 mt-6 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-red-600">23</div>
-                    <div className="text-sm text-neutral-500">Total Contributions</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-red-600">3</div>
-                    <div className="text-sm text-neutral-500">Longest Streak</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-red-600">12%</div>
-                    <div className="text-sm text-neutral-500">Active Days</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-red-100 dark:bg-red-900/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-red-600 dark:text-red-400 text-sm">😔</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-red-800 dark:text-red-200 mb-1">
-                      Recruiter's Perspective
-                    </p>
-                    <p className="text-sm text-red-700 dark:text-red-300">
-                      "Inconsistent activity suggests unreliable work habits. This profile gets overlooked in our screening process."
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* After */}
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full px-4 py-2 mb-4">
-                  <Sparkles className="w-4 h-4" />
-                  <span className="text-sm font-semibold">After AutoMaxLib</span>
-                </div>
-                <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-                  Professional Consistency
-                </h3>
-                <p className="text-neutral-600 dark:text-neutral-400">
-                  Reliable daily activity that showcases your commitment
-                </p>
-              </div>
-
-              <div className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6">
-                <ContributionGraph type="after" animated={true} />
-
-                <div className="grid grid-cols-3 gap-4 mt-6 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-green-600">1,247</div>
-                    <div className="text-sm text-neutral-500">Total Contributions</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-green-600">365</div>
-                    <div className="text-sm text-neutral-500">Longest Streak</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-green-600">94%</div>
-                    <div className="text-sm text-neutral-500">Active Days</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-green-600 dark:text-green-400 text-sm">🎯</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-green-800 dark:text-green-200 mb-1">
-                      Recruiter's Perspective
-                    </p>
-                    <p className="text-sm text-green-700 dark:text-green-300">
-                      "This level of consistency demonstrates discipline and reliability. This candidate gets priority consideration for our positions."
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Testimonials Section */}
       <section className="section bg-gradient-to-br from-neutral-50 to-primary-50/30 dark:from-neutral-900 dark:to-primary-950/30">
