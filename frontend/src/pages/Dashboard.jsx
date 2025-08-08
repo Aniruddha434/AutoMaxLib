@@ -234,7 +234,7 @@ const Dashboard = () => {
   const renderOverviewTab = () => (
     <div className="space-y-8">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-primary-950/20 dark:to-secondary-950/20 rounded-2xl p-8 border border-primary-200/50 dark:border-primary-800/50">
+      <div className="card">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
@@ -245,18 +245,18 @@ const Dashboard = () => {
             </p>
           </div>
           <div className="hidden md:block">
-            <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center">
+            <div className="w-20 h-20 bg-primary rounded-lg flex items-center justify-center">
               <Sparkles className="w-10 h-10 text-white" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Stats Cards */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="group bg-white dark:bg-neutral-800 rounded-2xl shadow-soft hover:shadow-medium p-6 border border-neutral-200 dark:border-neutral-700 transition-all duration-300 hover:scale-[1.02]">
+        <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
               <GitBranch className="h-6 w-6 text-white" />
             </div>
             <div className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-100 dark:bg-primary-900/30 px-2 py-1 rounded-full">
@@ -274,9 +274,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="group bg-white dark:bg-neutral-800 rounded-2xl shadow-soft hover:shadow-medium p-6 border border-neutral-200 dark:border-neutral-700 transition-all duration-300 hover:scale-[1.02]">
+        <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
               <Flame className="h-6 w-6 text-white" />
             </div>
             <div className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full">
@@ -295,9 +295,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="group bg-white dark:bg-neutral-800 rounded-2xl shadow-soft hover:shadow-medium p-6 border border-neutral-200 dark:border-neutral-700 transition-all duration-300 hover:scale-[1.02]">
+        <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center">
               <Award className="h-6 w-6 text-white" />
             </div>
             <div className="text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded-full">
@@ -316,9 +316,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="group bg-white dark:bg-neutral-800 rounded-2xl shadow-soft hover:shadow-medium p-6 border border-neutral-200 dark:border-neutral-700 transition-all duration-300 hover:scale-[1.02]">
+        <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
               <Clock className="h-6 w-6 text-white" />
             </div>
             <div className="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
@@ -342,8 +342,8 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Repository Status */}
         <div className="lg:col-span-2">
-          <div className="card p-8">
-            <div className="flex items-center justify-between mb-8">
+          <div className="card">
+            <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
                 Connected Repository
               </h2>
@@ -356,10 +356,10 @@ const Dashboard = () => {
             {dashboardData?.activeRepository ? (
               <div className="space-y-6">
                 {/* Repository Header */}
-                <div className="group bg-gradient-to-br from-neutral-50 to-primary-50/30 dark:from-neutral-800 dark:to-primary-950/30 rounded-2xl p-6 border border-neutral-200/50 dark:border-neutral-700/50 hover:shadow-medium transition-all duration-300">
+                <div className="bg-gray-50 dark:bg-neutral-800 rounded-lg p-6 border border-neutral-200 dark:border-neutral-700">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                      <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-14 h-14 bg-primary rounded-lg flex items-center justify-center">
                         <GitBranch className="h-7 w-7 text-white" />
                       </div>
                       <div>
@@ -375,7 +375,7 @@ const Dashboard = () => {
                       href={dashboardData.activeRepository.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 bg-white dark:bg-neutral-700 rounded-xl flex items-center justify-center text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 hover:shadow-medium transition-all duration-300 hover:scale-110"
+                      className="w-10 h-10 bg-white dark:bg-neutral-700 rounded-lg flex items-center justify-center text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                       title="View on GitHub"
                     >
                       <ExternalLink className="h-5 w-5" />
@@ -383,11 +383,11 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                {/* Enhanced Status Cards */}
+                {/* Status Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white dark:bg-neutral-700 rounded-xl p-6 border border-neutral-200 dark:border-neutral-600 shadow-sm hover:shadow-medium transition-all duration-300">
+                  <div className="card">
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                      <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
                         <Clock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                       </div>
                       <div className="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
@@ -418,9 +418,9 @@ const Dashboard = () => {
                     )}
                   </div>
 
-                  <div className="bg-white dark:bg-neutral-700 rounded-xl p-6 border border-neutral-200 dark:border-neutral-600 shadow-sm hover:shadow-medium transition-all duration-300">
+                  <div className="card">
                     <div className="flex items-center justify-between mb-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                         dashboardData.todayCommit
                           ? 'bg-green-100 dark:bg-green-900/30'
                           : 'bg-orange-100 dark:bg-orange-900/30'
@@ -514,7 +514,7 @@ const Dashboard = () => {
 
         {/* Recent Commits */}
         <div>
-          <div className="card p-6">
+          <div className="card">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
               Recent Commits
             </h2>
@@ -587,8 +587,8 @@ const Dashboard = () => {
 
       {/* Connected Repositories */}
       {userData?.repositories?.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="card">
+          <div className="card-header">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Connected Repositories
             </h3>
@@ -1354,16 +1354,16 @@ const Dashboard = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50/20 dark:from-neutral-950 dark:to-primary-950/10">
+    <div className="min-h-screen bg-gray-50 dark:bg-neutral-950">
       {/* Header */}
-      <div className="glass border-b border-neutral-200/50 dark:border-neutral-800/50">
+      <div className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white mb-2">
-                Welcome back, <span className="gradient-text">{dashboardData?.user?.name?.split(' ')[0] || 'Developer'}</span> 👋
+                Welcome back, {dashboardData?.user?.name?.split(' ')[0] || 'Developer'} 👋
               </h1>
-              <p className="text-base text-neutral-600 dark:text-neutral-400 font-body">
+              <p className="text-base text-neutral-600 dark:text-neutral-400">
                 Manage your GitHub automation and track your coding progress
               </p>
             </div>
@@ -1391,13 +1391,12 @@ const Dashboard = () => {
                   key={tab.id}
                   onClick={() => !isDisabled && setActiveTab(tab.id)}
                   disabled={isDisabled}
-                  className={`flex items-center space-x-3 py-3 px-6 rounded-2xl font-medium text-sm whitespace-nowrap transition-all duration-200 transform hover:scale-105 ${
+                  className={`flex items-center space-x-3 py-3 px-6 rounded-md font-medium text-sm whitespace-nowrap transition-colors ${
                     isActive
-
-                      ? 'bg-primary-600 text-white shadow-glow'
+                      ? 'bg-primary text-primary-foreground'
                       : isDisabled
                       ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 cursor-not-allowed'
-                      : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-primary-100 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400'
+                      : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
