@@ -9,6 +9,7 @@ export { default as FormField } from './FormField'
 export { default as LoadingSpinner, InlineSpinner, LoadingOverlay } from './LoadingSpinner'
 export { default as LoadingState } from './LoadingState'
 export { default as Toggle } from './Toggle'
+export { PricingCard } from './pricing'
 
 // New Enhanced Components
 export {

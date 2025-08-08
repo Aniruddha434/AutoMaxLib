@@ -3,6 +3,7 @@ import { useAuth } from '@clerk/clerk-react'
 import { useEffect, useRef } from 'react'
 import ContributionGraph from '../components/ui/ContributionGraph'
 import FeatureShowcase from '../components/FeatureShowcase'
+import { PricingCard } from '../components/ui/pricing'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import {
   GitBranch,
@@ -138,8 +139,14 @@ const LandingPage = () => {
   const pricingPlans = [
     {
       name: "Free",
+      title: "Free",
       price: "$0",
       period: "forever",
+      description: "Perfect for testing the automated commit experience",
+      buttonText: "Start 15-Day Free Trial",
+      buttonVariant: "outline",
+      cta: "Start 15-Day Free Trial",
+      popular: false,
       features: [
         "15-day free trial with auto-commits",
         "Daily auto-commit (10 AM IST)",
@@ -148,14 +155,19 @@ const LandingPage = () => {
         "7-day commit history",
         "Manual commit button",
         "Dark mode support"
-      ],
-      cta: "Start 15-Day Free Trial",
-      popular: false
+      ]
     },
     {
       name: "Premium",
+      title: "Premium",
       price: "$6",
       period: "per month",
+      description: "For developers serious about consistency",
+      buttonText: "Start Premium Trial",
+      buttonVariant: "default",
+      cta: "Start Premium Trial",
+      highlight: true,
+      popular: true,
       features: [
         "Custom commit scheduling",
         "Multiple repositories",
@@ -167,9 +179,7 @@ const LandingPage = () => {
         "Full analytics dashboard",
         "GitHub OAuth support",
         "Priority support"
-      ],
-      cta: "Start Premium Trial",
-      popular: true
+      ]
     }
   ]
 
@@ -508,88 +518,39 @@ const LandingPage = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="section bg-white dark:bg-neutral-900">
-        <div className="container-custom">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-full px-4 py-2 mb-6">
+      <section ref={pricingRef} className="py-16 md:py-32" id="pricing">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto flex max-w-3xl flex-col text-left md:text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-full px-4 py-2 mb-6 mx-auto animate-fade-in-up">
               <Award className="w-4 h-4" />
               <span className="text-sm font-semibold">Simple Pricing</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mb-6">
-              Choose Your{" "}
-              <span className="gradient-text">Perfect Plan</span>
+            <h2 className="mb-3 text-3xl font-semibold md:mb-4 lg:mb-6 lg:text-4xl animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              Plans made for every developer
             </h2>
-            <p className="text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed">
-              Start with a 15-day free trial and upgrade when you're ready. No hidden fees, no surprises—just transparent pricing that grows with your needs.
+            <p className="text-muted-foreground lg:text-lg mb-6 md:mb-8 lg:mb-12 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+              Start managing your coding consistency in one place. Upgrade anytime as your needs grow.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {pricingPlans.map((plan, index) => (
-              <div
-                key={index}
-                className={`relative card-interactive ${
-                  plan.popular
-                    ? 'ring-2 ring-primary-500 shadow-glow-lg'
-                    : 'hover:ring-1 hover:ring-primary-200 dark:hover:ring-primary-800'
-                } animate-fade-in-up`}
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                    <div className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-medium">
-                      ⭐ Most Popular
-                    </div>
-                  </div>
-                )}
-
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">
-                    {plan.name}
-                  </h3>
-                  <div className="flex items-baseline justify-center mb-2">
-                    <span className="text-5xl font-bold text-neutral-900 dark:text-white">
-                      {plan.price}
-                    </span>
-                    <span className="text-neutral-600 dark:text-neutral-400 ml-2 text-lg">
-                      {plan.period}
-                    </span>
-                  </div>
-                  {plan.popular && (
-                    <div className="text-sm text-primary-600 dark:text-primary-400 font-medium">
-                      Save 40% with annual billing
-                    </div>
-                  )}
-                </div>
-
-                <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-5 h-5 bg-accent-100 dark:bg-accent-900/30 rounded-full flex items-center justify-center mt-0.5">
-                        <Check className="w-3 h-3 text-accent-600 dark:text-accent-400" />
-                      </div>
-                      <span className="text-neutral-600 dark:text-neutral-300 leading-relaxed">
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  to={isSignedIn ? "/dashboard" : "/sign-up"}
-                  className={`w-full text-center block ${
-                    plan.popular
-                      ? 'btn-primary text-lg py-4'
-                      : 'btn-outline text-lg py-4'
-                  } group`}
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    {plan.cta}
-                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Link>
-              </div>
-            ))}
+          <div className="rounded-xl flex flex-col justify-between border p-1 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+            <div className="flex flex-col gap-4 md:flex-row">
+              {pricingPlans.map((plan, index) => (
+                <PricingCard
+                  key={index}
+                  title={plan.title}
+                  price={`${plan.price} / ${plan.period}`}
+                  description={plan.description}
+                  buttonText={plan.buttonText}
+                  buttonVariant={plan.buttonVariant}
+                  highlight={plan.highlight}
+                  popular={plan.popular}
+                  features={plan.features}
+                  className="animate-fade-in-up"
+                  style={{ animationDelay: `${0.8 + index * 0.2}s` }}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Pricing Footer */}
