@@ -88,24 +88,16 @@ router.post('/sync', async (req, res) => {
         })
 
         if (existingUser) {
-          console.log('Email already taken by another user:', email, 'Existing user ID:', existingUser._id)
-          return res.status(400).json({
-            success: false,
-            message: 'Email address is already in use by another account',
-            error: 'EMAIL_CONFLICT',
-            details: {
-              email: email,
-              suggestions: [
-                'Sign in to your existing account instead',
-                'Use a different email address',
-                'Contact support if you believe this is an error'
-              ]
-            }
+          console.warn('Email already taken by another user, keeping existing email on current account:', {
+            attemptedEmail: email,
+            existingUserId: existingUser._id,
+            currentUserId: user._id
           })
+          // Do NOT update email to avoid conflict; continue syncing other fields
+        } else {
+          user.email = email
+          updated = true
         }
-
-        user.email = email
-        updated = true
       }
 
       if (firstName && user.firstName !== firstName) {

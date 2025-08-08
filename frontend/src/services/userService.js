@@ -31,7 +31,14 @@ class UserService {
       (response) => response.data,
       (error) => {
         const message = error.response?.data?.message || error.message || 'An error occurred'
-        throw new Error(message)
+        const err = new Error(message)
+        err.status = error.response?.status
+        err.code = error.response?.data?.error || error.code
+        err.requestId = error.response?.data?.requestId
+        // Preserve backend payload for callers that need more details
+        err.details = error.response?.data?.details
+        err.response = error.response
+        throw err
       }
     )
   }
