@@ -34,6 +34,7 @@ const Button = forwardRef(({
     `,
     link: `
       text-primary underline-offset-4 hover:underline
+    `
   }
 
   const sizes = {

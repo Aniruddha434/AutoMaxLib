@@ -3,7 +3,7 @@ import { useUserData } from '../contexts/UserContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { userService } from '../services/userService'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
-import Card, { CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card'
 import FormField from '../components/ui/FormField'
 import Toggle, { ToggleGroup } from '../components/ui/Toggle'
 import {
