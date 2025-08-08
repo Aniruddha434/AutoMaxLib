@@ -36,8 +36,8 @@ function App() {
               <Routes>
               {/* Public routes */}
               <Route path="/" element={<LandingPage />} />
-              <Route path="/sign-in" element={<SignInPage />} />
-              <Route path="/sign-up" element={<SignUpPage />} />
+              <Route path="/sign-in/*" element={<SignInPage />} />
+              <Route path="/sign-up/*" element={<SignUpPage />} />
               <Route path="/badge/:userId" element={<PublicBadge />} />
               <Route path="/image-test" element={<ImageTest />} />
               <Route path="/premium-test" element={<PremiumFeatureTest />} />

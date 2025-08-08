@@ -228,8 +228,9 @@ router.post('/clerk', express.raw({ type: 'application/json' }), async (req, res
     let verificationMethod = 'svix'
 
     try {
-      // Convert buffer to string for Svix verification
-      const body = req.body.toString()
+      // Use the raw body captured by global body parser for Svix verification
+      const bodyBuffer = req.rawBody || (Buffer.isBuffer(req.body) ? req.body : Buffer.from(JSON.stringify(req.body || {})))
+      const body = bodyBuffer.toString('utf8')
 
       logger.info(`[${requestId}] Processing webhook body`, {
         bodyLength: body.length,
@@ -266,7 +267,8 @@ router.post('/clerk', express.raw({ type: 'application/json' }), async (req, res
       // Fallback verification method
       try {
         verificationMethod = 'manual'
-        const body = req.body.toString()
+        const bodyBuffer = req.rawBody || (Buffer.isBuffer(req.body) ? req.body : Buffer.from(JSON.stringify(req.body || {})))
+        const body = bodyBuffer.toString('utf8')
 
         // Manual signature verification as fallback
         const secretPrefix = 'wh' + 'sec_'
