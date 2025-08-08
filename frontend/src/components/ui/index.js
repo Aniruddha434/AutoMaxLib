@@ -67,3 +67,5 @@ export {
   NoUsersEmptyState,
   IllustratedEmptyState
 } from './EmptyState'
+
+export { CircularTestimonials } from './circular-testimonials'

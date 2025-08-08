@@ -3,6 +3,7 @@ import { useAuth } from '@clerk/clerk-react'
 import { useEffect, useRef } from 'react'
 import FeatureShowcase from '../components/FeatureShowcase'
 import { PricingCard } from '../components/ui/pricing'
+import { CircularTestimonials } from '../components/ui/circular-testimonials'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import {
   GitBranch,
@@ -11,7 +12,6 @@ import {
   Shield,
   BarChart3,
   Mail,
-  Star,
   Check,
   ArrowRight,
   Calendar,
@@ -108,28 +108,22 @@ const LandingPage = () => {
 
   const testimonials = [
     {
-      name: "Alex Chen",
-      role: "Senior Software Engineer",
-      company: "TechFlow",
-      content: "AutoMaxLib has been a game-changer for maintaining my coding consistency. The intelligent scheduling means I never have to worry about breaking my streak, even during busy periods.",
-      avatar: "AC",
-      rating: 5
+      quote: "AutoMaxLib has been a game-changer for maintaining my coding consistency. The intelligent scheduling means I never have to worry about breaking my streak, even during busy periods.",
+      name: "Aniruddha Gayki",
+      designation: "Senior Software Engineer",
+      src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1368&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     {
-      name: "Sarah Kim",
-      role: "Full Stack Developer",
-      company: "StartupLab",
-      content: "As someone who juggles multiple projects, AutoMaxLib helps me maintain a professional profile that truly reflects my dedication to coding. The AI-generated content is surprisingly thoughtful.",
-      avatar: "SK",
-      rating: 5
+      quote: "As someone who juggles multiple projects, AutoMaxLib helps me maintain a professional profile that truly reflects my dedication to coding. The AI-generated content is surprisingly thoughtful.",
+      name: "Lucky More",
+      designation: "Full Stack Developer",
+      src: "https://images.unsplash.com/photo-1628749528992-f5702133b686?q=80&w=1368&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D"
     },
     {
-      name: "Marcus Rodriguez",
-      role: "DevOps Engineer",
-      company: "CloudScale",
-      content: "The analytics dashboard gives me insights into my coding patterns I never had before. It's not just about streaks—it's about building better habits.",
-      avatar: "MR",
-      rating: 5
+      quote: "The analytics dashboard gives me insights into my coding patterns I never had before. It's not just about streaks—it's about building better habits and professional growth.",
+      name: "Anand Harle",
+      designation: "DevOps Engineer",
+      src: "https://images.unsplash.com/photo-1524267213992-b76e8577d046?q=80&w=1368&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     }
   ]
 
@@ -357,42 +351,25 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="card group hover:shadow-glow animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                {/* Rating */}
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-
-                {/* Content */}
-                <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed mb-6">
-                  "{testimonial.content}"
-                </p>
-
-                {/* Author */}
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white font-semibold">
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-neutral-900 dark:text-white">
-                      {testimonial.name}
-                    </p>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                      {testimonial.role} at {testimonial.company}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <CircularTestimonials
+            testimonials={testimonials}
+            autoplay={true}
+            autoplayInterval={6000}
+            colors={{
+              name: "rgb(10, 10, 10)",
+              designation: "rgb(115, 115, 115)",
+              testimony: "rgb(64, 64, 64)",
+              arrowBackground: "rgb(59, 130, 246)",
+              arrowForeground: "rgb(255, 255, 255)",
+              arrowHoverBackground: "rgb(37, 99, 235)",
+            }}
+            fontSizes={{
+              name: "24px",
+              designation: "16px",
+              quote: "18px",
+            }}
+            className="animate-fade-in-up"
+          />
         </div>
       </section>
 
