@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Sparkles, Eye, Zap, AlertTriangle, CheckCircle, Info, Crown, Lock } from 'lucide-react'
+import { Sparkles, Eye, Zap, AlertTriangle, CheckCircle, Info, Crown } from 'lucide-react'
 import { apiService } from '../services/apiService'
 import { useUserData } from '../contexts/UserContext'
-import { Link } from 'react-router-dom'
-import PremiumFeaturePreview from './PremiumFeaturePreview'
 
 const PatternGenerator = () => {
   const { userData, loading: userLoading, isPremium } = useUserData()
@@ -11,7 +9,7 @@ const PatternGenerator = () => {
   const [intensity, setIntensity] = useState(3)
   const [alignment, setAlignment] = useState('center')
   const [spacing, setSpacing] = useState(1)
-  const [showPremiumPreview, setShowPremiumPreview] = useState(false)
+
   const [endDate, setEndDate] = useState('')
   const [preview, setPreview] = useState(null)
   const [templates, setTemplates] = useState([])
@@ -19,14 +17,14 @@ const PatternGenerator = () => {
   const [generating, setGenerating] = useState(false)
   const [validation, setValidation] = useState(null)
   const [showConfirmation, setShowConfirmation] = useState(false)
+  const [showUpgradeMessage, setShowUpgradeMessage] = useState(false)
 
   useEffect(() => {
-    if (isPremium) {
-      loadTemplates()
-    }
+    // Load templates for all users to allow try-before-buy experience
+    loadTemplates()
     // Set default end date to today
     setEndDate(new Date().toISOString().split('T')[0])
-  }, [isPremium])
+  }, [])
 
   useEffect(() => {
     if (text) {
@@ -89,6 +87,12 @@ const PatternGenerator = () => {
 
   const generatePattern = async () => {
     if (!preview || generating) return
+
+    // Show professional upgrade message for free users
+    if (!isPremium) {
+      setShowUpgradeMessage(true)
+      return
+    }
 
     setGenerating(true)
     try {
@@ -241,129 +245,7 @@ const PatternGenerator = () => {
     )
   }
 
-  // Show premium required message for non-premium users
-  if (!isPremium) {
-    return (
-      <>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              GitHub Pattern Generator
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Create stunning visual patterns in your GitHub contribution graph.
-            </p>
-          </div>
-
-          {/* Premium Feature Preview Card */}
-          <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-900/20 dark:to-neutral-800/20 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
-            {/* Preview Image */}
-            <div className="relative">
-              <img
-                src="/patternEX.png"
-                alt="GitHub contribution pattern example showing AUTOMAX text pattern"
-                className="w-full h-48 sm:h-56 md:h-64 object-cover transition-transform duration-300 hover:scale-105"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute top-4 right-4">
-                <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                  <Crown className="h-3 w-3" />
-                  Premium Preview
-                </div>
-              </div>
-              <div className="absolute bottom-4 left-4">
-                <div className="bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-lg">
-                  <div className="text-sm font-medium">AUTOMAX Pattern</div>
-                  <div className="text-xs text-gray-600">Custom GitHub contribution design</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-8 text-center">
-              <div className="flex justify-center mb-4">
-                <div className="p-3 bg-green-100 dark:bg-green-800 rounded-full">
-                  <Sparkles className="h-8 w-8 text-neutral-700 dark:text-neutral-300" />
-                </div>
-              </div>
-
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Premium Feature: GitHub Pattern Generator
-              </h3>
-
-              <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto">
-                Create custom visual patterns in your GitHub contribution graph that spell out words, showcase your brand,
-                and make your profile stand out to recruiters and employers.
-              </p>
-
-              <div className="grid md:grid-cols-3 gap-4 mb-8 text-sm">
-                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
-                  <CheckCircle className="h-4 w-4" />
-                  Custom text patterns
-                </div>
-                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
-                  <CheckCircle className="h-4 w-4" />
-                  Backfill historical data
-                </div>
-                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
-                  <CheckCircle className="h-4 w-4" />
-                  Smart scheduling
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button
-                  onClick={() => setShowPremiumPreview(true)}
-                  className="btn-outline px-6 py-3"
-                >
-                  <Eye className="h-5 w-5 mr-2" />
-                  View Full Preview
-                </button>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="card p-4">
-              <Sparkles className="h-6 w-6 text-neutral-700 dark:text-neutral-300 mx-auto mb-2" />
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Custom Patterns</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Create any text pattern using letters and numbers</p>
-            </div>
-            <div className="card p-4">
-              <Eye className="h-6 w-6 text-neutral-700 dark:text-neutral-300 mx-auto mb-2" />
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Live Preview</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">See exactly how your pattern will look</p>
-            </div>
-            <div className="card p-4">
-              <Zap className="h-6 w-6 text-neutral-700 dark:text-neutral-300 mx-auto mb-2" />
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Smart Generation</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Automated commit creation with custom dates</p>
-            </div>
-          </div>
-
-                <Link
-                  to="/upgrade"
-                  className="btn-primary px-6 py-3"
-                >
-                  <Crown className="h-5 w-5 mr-2" />
-                  Upgrade to Premium
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Premium Feature Preview Modal */}
-        <PremiumFeaturePreview
-          isOpen={showPremiumPreview}
-          onClose={() => setShowPremiumPreview(false)}
-          featureType="pattern"
-          onUpgrade={() => {
-            setShowPremiumPreview(false)
-            window.location.href = '/upgrade'
-          }}
-        />
-      </>
-    )
-  }
+  // Remove upfront blocking - let free users experience the workflow
 
   return (
     <div className="space-y-6">
@@ -376,6 +258,23 @@ const PatternGenerator = () => {
           Create stunning visual patterns in your GitHub contribution graph.
           Perfect for showcasing your brand, skills, or promotional messages to recruiters and employers.
         </p>
+
+        {/* Free User Try-Before-Buy Message */}
+        {!isPremium && (
+          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg max-w-2xl mx-auto">
+            <div className="flex items-center justify-center">
+              <Eye className="h-5 w-5 text-gray-600 dark:text-gray-400 mr-2" />
+              <div className="text-center">
+                <span className="text-gray-800 dark:text-gray-200 font-medium">
+                  Try Before You Buy
+                </span>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Design your pattern, see the preview, and experience the full workflow. Upgrade only when you're ready to generate!
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Templates */}
@@ -561,6 +460,39 @@ const PatternGenerator = () => {
           </div>
         </div>
       )}
+
+      {/* Professional Upgrade Message */}
+      {showUpgradeMessage && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+              Premium Feature Required
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              Pattern generation requires a Premium subscription. Upgrade to create your GitHub contribution pattern.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowUpgradeMessage(false)}
+                className="flex-1 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowUpgradeMessage(false)
+                  window.location.href = '/upgrade'
+                }}
+                className="flex-1 px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                Upgrade
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   )
 }

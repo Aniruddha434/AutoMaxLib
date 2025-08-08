@@ -40,70 +40,84 @@ const SignInPage = () => {
   const { isDark } = useTheme()
 
   const clerkAppearance = useMemo(() => ({
-    // Help Clerk select internal defaults correctly
     colorScheme: isDark ? 'dark' : 'light',
     variables: isDark
       ? {
-          colorBackground: '#111827', // gray-900
-          colorText: '#e5e7eb', // gray-200
-          colorInputBackground: '#374151', // gray-700
-          colorInputText: '#ffffff',
-          colorInputBorder: '#4b5563', // gray-600
-          colorPrimary: '#0284c7', // primary-600
-          colorDanger: '#ef4444',
-          borderRadius: '0.75rem',
+          colorBackground: '#0f172a', // slate-900
+          colorText: '#e2e8f0', // slate-200
+          colorInputBackground: '#1e293b', // slate-800
+          colorInputText: '#f1f5f9', // slate-100
+          colorInputBorder: '#475569', // slate-600
+          colorPrimary: '#4f46e5', // indigo-600
+          colorPrimaryHover: '#4338ca', // indigo-700
+          colorDanger: '#ef4444', // red-500
+          borderRadius: '0.5rem',
+          fontFamily: '"Inter", "Poppins", sans-serif',
         }
       : {
           colorBackground: '#ffffff',
-          colorText: '#111827',
+          colorText: '#0f172a', // slate-900
           colorInputBackground: '#ffffff',
-          colorInputText: '#111827',
-          colorInputBorder: '#d1d5db', // gray-300
-          colorPrimary: '#0284c7',
-          colorDanger: '#dc2626',
-          borderRadius: '0.75rem',
+          colorInputText: '#0f172a', // slate-900
+          colorInputBorder: '#cbd5e1', // slate-300
+          colorPrimary: '#4f46e5', // indigo-600
+          colorPrimaryHover: '#4338ca', // indigo-700
+          colorDanger: '#dc2626', // red-600
+          borderRadius: '0.5rem',
+          fontFamily: '"Inter", "Poppins", sans-serif',
         },
     elements: {
-      formButtonPrimary: 'bg-primary-600 hover:bg-primary-700 text-sm normal-case',
-      card: 'shadow-none',
+      formButtonPrimary: 'bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm hover:shadow-md',
+      card: 'shadow-none border-0',
       headerTitle: 'hidden',
       headerSubtitle: 'hidden',
       socialButtonsBlockButton:
-        'border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700',
-      socialButtonsBlockButtonText: 'text-gray-600 dark:text-gray-300',
+        'border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md transition-all duration-200 hover:shadow-sm',
+      socialButtonsBlockButtonText: 'text-slate-600 dark:text-slate-300 font-medium',
       formFieldInput:
-        'border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 focus:ring-2 focus:ring-primary-500',
-      formFieldLabel: 'text-gray-700 dark:text-gray-300',
-      footerActionLink: 'text-primary-600 hover:text-primary-500',
+        'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md transition-colors duration-200',
+      formFieldLabel: 'text-slate-700 dark:text-slate-300 font-medium text-sm',
+      footerActionLink: 'text-indigo-600 hover:text-indigo-700 font-medium transition-colors duration-200',
+      dividerLine: 'bg-slate-200 dark:bg-slate-700',
+      dividerText: 'text-slate-500 dark:text-slate-400 text-sm',
       // Specific styling for OTP inputs to prevent disappearing
       otpCodeFieldInput:
-        'border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-center font-mono',
+        'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-center font-mono rounded-md',
       verificationCodeField: 'space-x-2',
       verificationCodeFieldInput:
-        'w-12 h-12 text-center border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-lg',
+        'w-12 h-12 text-center border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-lg rounded-md',
     },
   }), [isDark])
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link to="/" className="flex items-center justify-center space-x-2 mb-8">
-          <GitBranch className="h-8 w-8 text-primary-600" />
-          <span className="text-2xl font-bold text-gray-900 dark:text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-400/10 dark:bg-indigo-400/5 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400/10 dark:bg-purple-400/5 rounded-full blur-3xl"></div>
+      </div>
+      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <Link to="/" className="flex items-center justify-center space-x-3 mb-8 group">
+          <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg group-hover:bg-indigo-200 dark:group-hover:bg-indigo-900/50 transition-colors duration-200">
+            <GitBranch className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+          </div>
+          <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200">
             AutoGitPilot
           </span>
         </Link>
 
-        <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Welcome back
-        </h2>
-        <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
-          Sign in to your account to continue automating your GitHub commits
-        </p>
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+            Welcome back
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Sign in to your account to continue automating your GitHub commits
+          </p>
+        </div>
       </div>
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <div className="bg-white dark:bg-slate-800 py-8 px-6 shadow-xl border border-slate-200 dark:border-slate-700 sm:rounded-xl sm:px-10 backdrop-blur-sm">
           {clerkError ? (
             <div className="text-center">
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
@@ -111,7 +125,7 @@ const SignInPage = () => {
               </div>
               <button
                 onClick={() => window.location.reload()}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
               >
                 Refresh Page
               </button>

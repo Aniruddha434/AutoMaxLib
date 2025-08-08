@@ -286,7 +286,7 @@ app.use('/api/user', userRoutes)
 app.use('/api/github', githubRoutes)
 app.use('/api/commit', commitRoutes)
 app.use('/api/payment', paymentRateLimit, paymentRoutes)
-app.use('/api/pattern', patternRateLimit, patternRoutes)
+app.use('/api/pattern', patternRoutes)
 app.use('/api/profile', profileRoutes)
 app.use('/api/repository', repositoryRoutes)
 

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useUserData } from '../contexts/UserContext'
 import profileService from '../services/profileService'
-import PremiumFeaturePreview from './PremiumFeaturePreview'
 import {
   FileText,
   Download,
@@ -9,13 +8,11 @@ import {
   Eye,
   Sparkles,
   User,
-  Briefcase,
   Code,
   Globe,
   AlertCircle,
   CheckCircle,
-  Loader,
-  Crown
+  Loader
 } from 'lucide-react'
 
 const ReadmeGenerator = () => {
@@ -32,7 +29,6 @@ const ReadmeGenerator = () => {
   const [usage, setUsage] = useState(null)
   const [creatingRepo, setCreatingRepo] = useState(false)
   const [repoExists, setRepoExists] = useState(null)
-  const [showPremiumPreview, setShowPremiumPreview] = useState(false)
 
   useEffect(() => {
     loadTemplates()
@@ -143,7 +139,8 @@ const ReadmeGenerator = () => {
 
   const generateReadme = async () => {
     if (!isPremium) {
-      setError('README generation is a premium feature. Please upgrade your plan.')
+      // Show simple validation message instead of large popup
+      setError('README generation requires Premium. Upgrade to generate and download your professional README.')
       return
     }
 
@@ -246,109 +243,7 @@ const ReadmeGenerator = () => {
     setProfileData(profileService.getSampleProfileData())
   }
 
-  if (!isPremium) {
-    return (
-      <>
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              AI-Powered README Generator
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Generate professional GitHub profile READMEs with AI assistance.
-            </p>
-          </div>
-
-          {/* Premium Feature Preview Card */}
-          <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-900/20 dark:to-neutral-800/20 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
-            {/* Preview Image */}
-            <div className="relative">
-              <img
-                src="/ReadmiEX.png"
-                alt="Professional GitHub README example with modern design and statistics"
-                className="w-full h-48 sm:h-56 md:h-64 object-cover transition-transform duration-300 hover:scale-105"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute top-4 right-4">
-                <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                  <Crown className="h-3 w-3" />
-                  Premium Preview
-                </div>
-              </div>
-              <div className="absolute bottom-4 left-4">
-                <div className="bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-lg">
-                  <div className="text-sm font-medium">Modern Visual Template</div>
-                  <div className="text-xs text-gray-600">AI-generated professional README</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-8 text-center">
-              <div className="flex justify-center mb-4">
-                <div className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-full">
-                  <FileText className="h-8 w-8 text-neutral-700 dark:text-neutral-300" />
-                </div>
-              </div>
-
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Premium Feature: AI README Generator
-              </h3>
-
-              <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto">
-                Create stunning, professional GitHub profile READMEs with AI assistance. Choose from multiple templates,
-                get AI-generated content, and deploy with one click.
-              </p>
-
-              <div className="grid md:grid-cols-3 gap-4 mb-8 text-sm">
-                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
-                  <CheckCircle className="h-4 w-4" />
-                  AI-generated content
-                </div>
-                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
-                  <CheckCircle className="h-4 w-4" />
-                  Multiple templates
-                </div>
-                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
-                  <CheckCircle className="h-4 w-4" />
-                  One-click deployment
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button
-                  onClick={() => setShowPremiumPreview(true)}
-                  className="btn-outline px-6 py-3"
-                >
-                  <Eye className="h-5 w-5 mr-2" />
-                  View Full Preview
-                </button>
-                <button
-                  onClick={() => window.location.href = '/upgrade'}
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                >
-                  <Crown className="h-5 w-5 mr-2" />
-                  Upgrade to Premium
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Premium Feature Preview Modal */}
-        <PremiumFeaturePreview
-          isOpen={showPremiumPreview}
-          onClose={() => setShowPremiumPreview(false)}
-          featureType="readme"
-          onUpgrade={() => {
-            setShowPremiumPreview(false)
-            window.location.href = '/upgrade'
-          }}
-        />
-      </>
-    )
-  }
+  // Remove the upfront blocking - let free users experience the workflow
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -361,8 +256,25 @@ const ReadmeGenerator = () => {
           Create a professional GitHub profile README with AI assistance
         </p>
         
+        {/* Free User Try-Before-Buy Message */}
+        {!isPremium && (
+          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="flex items-center">
+              <Eye className="h-5 w-5 text-gray-600 dark:text-gray-400 mr-2" />
+              <div>
+                <span className="text-gray-800 dark:text-gray-200 font-medium">
+                  Try Before You Buy
+                </span>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Experience the full workflow! Configure your profile, choose templates, and see previews. Upgrade only when you're ready to generate.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Usage Info */}
-        {usage && (
+        {usage && isPremium && (
           <div className="mt-4 p-4 bg-neutral-50 dark:bg-neutral-900/20 rounded-lg border border-neutral-200 dark:border-neutral-800">
             <div className="flex items-center justify-between">
               <span className="text-sm text-neutral-800 dark:text-neutral-200">
@@ -414,10 +326,20 @@ const ReadmeGenerator = () => {
 
       {/* Error Display */}
       {error && (
-        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <div className="flex items-center">
-            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mr-2" />
-            <p className="text-red-800 dark:text-red-200">{error}</p>
+        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <AlertCircle className="h-5 w-5 text-gray-600 dark:text-gray-400 mr-2" />
+              <p className="text-gray-800 dark:text-gray-200">{error}</p>
+            </div>
+            {error.includes('Premium') && (
+              <button
+                onClick={() => window.location.href = '/upgrade'}
+                className="ml-4 px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+              >
+                Upgrade
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -815,6 +737,8 @@ const ReadmeGenerator = () => {
           </div>
         )}
       </div>
+
+
     </div>
   )
 }

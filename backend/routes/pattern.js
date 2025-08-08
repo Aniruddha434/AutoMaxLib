@@ -1,6 +1,7 @@
 import express from 'express'
 import { body, validationResult } from 'express-validator'
 import { patternService } from '../services/patternService.js'
+import { patternRateLimit } from '../middleware/security.js'
 import User from '../models/User.js'
 
 const router = express.Router()
@@ -55,12 +56,12 @@ router.post('/preview', [
       })
     }
 
-    // Check if user has premium access
+    // Allow all users to preview patterns (try-before-buy strategy)
     const user = await User.findOne({ clerkId: req.auth.userId })
-    if (!user || user.plan !== 'premium') {
-      return res.status(403).json({
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        message: 'Pattern generation is a premium feature'
+        message: 'User not found'
       })
     }
 
@@ -83,8 +84,8 @@ router.post('/preview', [
   }
 })
 
-// Generate pattern commits
-router.post('/generate', [
+// Generate pattern commits (with rate limiting)
+router.post('/generate', patternRateLimit, [
   body('text').notEmpty().withMessage('Text is required'),
   body('intensity').optional().isInt({ min: 1, max: 4 }).withMessage('Intensity must be between 1 and 4'),
   body('alignment').optional().isIn(['left', 'center', 'right']).withMessage('Alignment must be left, center, or right'),

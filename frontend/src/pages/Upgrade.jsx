@@ -231,46 +231,46 @@ const Upgrade = () => {
               </div>
               
               {/* Plan Toggle */}
-              <div className="flex items-center justify-center space-x-4 mb-4">
+              <div className="flex items-center justify-center space-x-3 mb-4">
                 <button
                   onClick={() => setSelectedPlan('monthly')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     selectedPlan === 'monthly'
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
                   }`}
                 >
                   Monthly
                 </button>
                 <button
                   onClick={() => setSelectedPlan('yearly')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors relative ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors relative ${
                     selectedPlan === 'yearly'
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
                   }`}
                 >
                   Yearly
-                  <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-1 rounded">
+                  <span className="absolute -top-1.5 -right-1.5 bg-emerald-500 text-white text-xs px-1 py-0.5 rounded text-[10px]">
                     Save 17%
                   </span>
                 </button>
               </div>
               
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">
+              <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 {plans[selectedPlan].currency || '₹'}{plans[selectedPlan].price}
-                <span className="text-lg text-gray-500">/{plans[selectedPlan].period}</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">/{plans[selectedPlan].period}</span>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                 {plans[selectedPlan].description}
               </p>
             </div>
             
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-2 mb-6">
               {features.premium.map((feature, index) => (
-                <li key={index} className="flex items-center space-x-3">
-                  <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                  <span className="text-gray-600 dark:text-gray-400">{feature}</span>
+                <li key={index} className="flex items-center space-x-2">
+                  <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                  <span className="text-xs text-slate-700 dark:text-slate-300">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -278,7 +278,7 @@ const Upgrade = () => {
             <button
               onClick={handleUpgrade}
               disabled={loading}
-              className="btn-primary w-full text-lg py-3"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Processing...' : 'Upgrade Now'}
             </button>

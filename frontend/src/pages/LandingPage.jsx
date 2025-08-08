@@ -376,21 +376,21 @@ const LandingPage = () => {
       {/* Pricing Section */}
       <section ref={pricingRef} className="py-16 md:py-32" id="pricing">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto flex max-w-3xl flex-col text-left md:text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-full px-4 py-2 mb-6 mx-auto animate-fade-in-up">
-              <Award className="w-4 h-4" />
-              <span className="text-sm font-semibold">Simple Pricing</span>
+          <div className="mx-auto flex max-w-3xl flex-col text-left md:text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 rounded-full px-3 py-1.5 mb-4 mx-auto animate-fade-in-up">
+              <Award className="w-3 h-3" />
+              <span className="text-xs font-medium">Simple Pricing</span>
             </div>
-            <h2 className="mb-3 text-3xl font-semibold md:mb-4 lg:mb-6 lg:text-4xl animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <h2 className="mb-2 text-2xl font-semibold md:mb-3 lg:mb-4 lg:text-3xl text-slate-900 dark:text-slate-100 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               Plans made for every developer
             </h2>
-            <p className="text-muted-foreground lg:text-lg mb-6 md:mb-8 lg:mb-12 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            <p className="text-slate-600 dark:text-slate-400 text-sm lg:text-base mb-4 md:mb-6 lg:mb-8 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
               Start managing your coding consistency in one place. Upgrade anytime as your needs grow.
             </p>
           </div>
 
-          <div className="rounded-xl flex flex-col justify-between border p-1 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-            <div className="flex flex-col gap-4 md:flex-row">
+          <div className="rounded-lg flex flex-col justify-between border border-slate-200 dark:border-slate-700 p-1 bg-slate-50/50 dark:bg-slate-900/50 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+            <div className="flex flex-col gap-3 md:flex-row">
               {pricingPlans.map((plan, index) => (
                 <PricingCard
                   key={index}
@@ -410,21 +410,21 @@ const LandingPage = () => {
           </div>
 
           {/* Pricing Footer */}
-          <div className="text-center mt-16">
-            <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+          <div className="text-center mt-12">
+            <p className="text-slate-600 dark:text-slate-400 mb-4 text-sm">
               All plans include our core features with no setup fees or hidden costs.
             </p>
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-neutral-500 dark:text-neutral-500">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4" />
+            <div className="flex flex-wrap justify-center items-center gap-6 text-xs text-slate-500 dark:text-slate-500">
+              <div className="flex items-center gap-1.5">
+                <Shield className="w-3 h-3" />
                 <span>Secure payment processing</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
+              <div className="flex items-center gap-1.5">
+                <Users className="w-3 h-3" />
                 <span>24/7 customer support</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4" />
+              <div className="flex items-center gap-1.5">
+                <Zap className="w-3 h-3" />
                 <span>Instant activation</span>
               </div>
             </div>
