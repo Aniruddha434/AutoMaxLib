@@ -21,11 +21,11 @@ export const UserProvider = ({ children }) => {
   const [retryCount, setRetryCount] = useState(0)
   const [authStateReady, setAuthStateReady] = useState(false)
   const [emailConflict, setEmailConflict] = useState(null)
+  const isFetchingRef = useRef(false)
 
   useEffect(() => {
     let isMounted = true
     let retryTimeout = null
-    const isFetchingRef = useRef(false)
 
     const fetchUserData = async () => {
       if (!isLoaded) {
