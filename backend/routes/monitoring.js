@@ -38,7 +38,7 @@ router.get('/health/detailed', async (req, res) => {
 router.get('/ready', async (req, res) => {
   try {
     const dbHealth = await monitoringService.checkDatabaseHealth()
-    
+
     if (dbHealth.status === 'healthy') {
       res.status(200).json({
         status: 'ready',
@@ -88,6 +88,28 @@ router.get('/metrics', (req, res) => {
     })
   }
 })
+
+// Client error intake from frontend (CORS-enabled via global middleware)
+router.post('/client-error', async (req, res) => {
+  try {
+    const { type, error, timestamp, userAgent, url, sessionId } = req.body || {}
+    logger.warn('Client error reported', {
+      type,
+      error,
+      timestamp,
+      userAgent: userAgent || req.get('User-Agent'),
+      url,
+      sessionId,
+      origin: req.get('Origin'),
+      ip: req.ip
+    })
+    res.status(200).json({ success: true })
+  } catch (e) {
+    logger.error('Failed to record client error', { error: e.message })
+    res.status(500).json({ success: false })
+  }
+})
+
 
 // System information endpoint
 router.get('/info', (req, res) => {

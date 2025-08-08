@@ -58,7 +58,10 @@ if (process.env.NODE_ENV === 'production' || process.env.TRUST_PROXY === 'true')
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'http://localhost:3001',
-  'http://localhost:3000'
+  'http://localhost:3000',
+  // Production domains
+  'https://www.automaxlib.online',
+  'https://automaxlib.online'
 ]
 
 // Add additional origins from ALLOWED_ORIGINS environment variable
@@ -264,6 +267,8 @@ app.get('/api/debug/auth', enhancedClerkMiddleware, async (req, res) => {
 // Monitoring routes (public)
 app.use('/health', monitoringRoutes)
 app.use('/monitoring', monitoringRoutes)
+// Support client error logging at /api/monitoring as used by frontend
+app.use('/api/monitoring', monitoringRoutes)
 
 // Webhook routes (before Clerk middleware)
 app.use('/api/webhook', webhookRoutes)
