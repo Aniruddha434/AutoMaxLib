@@ -166,6 +166,7 @@ const Navbar = () => {
                       avatarBox: "w-8 h-8"
                     }
                   }}
+                  userProfileMode="modal"
                   afterSignOutUrl="/"
                 />
               </div>
@@ -283,6 +284,7 @@ const Navbar = () => {
                           avatarBox: "w-8 h-8"
                         }
                       }}
+                      userProfileMode="modal"
                       afterSignOutUrl="/"
                     />
                   </div>
