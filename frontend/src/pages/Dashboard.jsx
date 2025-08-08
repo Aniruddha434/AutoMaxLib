@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useUserData } from '../contexts/UserContext'
 import { userService } from '../services/userService'
 import { githubService } from '../services/githubService'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import TrialStatus from '../components/TrialStatus'
+import Progress from '../components/ui/Progress'
 import {
   GitBranch,
   Clock,
@@ -27,6 +28,26 @@ import {
   Award,
   Sparkles
 } from 'lucide-react'
+  const AnimatedNumber = ({ value, duration = 800 }) => {
+    const [display, setDisplay] = useState(0)
+
+    useEffect(() => {
+      const start = display
+      const end = Number(value) || 0
+      const startTime = performance.now()
+      const frame = (now) => {
+        const t = Math.min((now - startTime) / duration, 1)
+        const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t // easeInOut
+        const current = Math.round(start + (end - start) * eased)
+        setDisplay(current)
+        if (t < 1) requestAnimationFrame(frame)
+      }
+      requestAnimationFrame(frame)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value])
+
+    return <span>{display.toLocaleString()}</span>
+  }
 
 const Dashboard = () => {
   const { userData, loading: userLoading, isPremium, updateUserData } = useUserData()
@@ -245,7 +266,7 @@ const Dashboard = () => {
           <div>
             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Total Commits</p>
             <p className="text-3xl font-bold text-neutral-900 dark:text-white">
-              {dashboardData?.user?.stats?.totalCommits?.toLocaleString() || '0'}
+              <AnimatedNumber value={dashboardData?.user?.stats?.totalCommits || 0} />
             </p>
             <p className="text-xs text-green-600 dark:text-green-400 mt-1">
               +{Math.floor(Math.random() * 20) + 5} this week
@@ -265,7 +286,7 @@ const Dashboard = () => {
           <div>
             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Current Streak</p>
             <p className="text-3xl font-bold text-neutral-900 dark:text-white">
-              {dashboardData?.user?.stats?.currentStreak || 0}
+              <AnimatedNumber value={dashboardData?.user?.stats?.currentStreak || 0} />
               <span className="text-lg font-normal text-neutral-500 ml-1">days</span>
             </p>
             <p className="text-xs text-green-600 dark:text-green-400 mt-1">
@@ -286,7 +307,7 @@ const Dashboard = () => {
           <div>
             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">Longest Streak</p>
             <p className="text-3xl font-bold text-neutral-900 dark:text-white">
-              {dashboardData?.user?.stats?.longestStreak || 0}
+              <AnimatedNumber value={dashboardData?.user?.stats?.longestStreak || 0} />
               <span className="text-lg font-normal text-neutral-500 ml-1">days</span>
             </p>
             <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
@@ -321,7 +342,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Repository Status */}
         <div className="lg:col-span-2">
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-soft p-8 border border-neutral-200 dark:border-neutral-700">
+          <div className="card p-8 animate-on-scroll">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
                 Connected Repository
@@ -493,7 +514,7 @@ const Dashboard = () => {
 
         {/* Recent Commits */}
         <div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+          <div className="card p-6 animate-on-scroll">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
               Recent Commits
             </h2>
@@ -941,7 +962,7 @@ const Dashboard = () => {
 
           {/* Progress */}
           {backfillProgress && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+            <div className="card p-6 animate-on-scroll">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Generation Progress
               </h3>
@@ -954,12 +975,13 @@ const Dashboard = () => {
                   </span>
                 </div>
 
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${(backfillProgress.current / backfillProgress.total) * 100}%` }}
-                  ></div>
-                </div>
+                <Progress
+                  value={backfillProgress.current}
+                  max={backfillProgress.total}
+                  size="md"
+                  variant="primary"
+                  showValue
+                />
 
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   {backfillProgress.status}
@@ -1312,7 +1334,7 @@ const Dashboard = () => {
               Error Loading Dashboard
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="btn-primary"
             >
@@ -1332,7 +1354,7 @@ const Dashboard = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50/20 dark:from-neutral-950 dark:to-primary-950/10">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50/20 dark:from-neutral-950 dark:to-primary-950/10 animate-on-scroll">
       {/* Header */}
       <div className="glass border-b border-neutral-200/50 dark:border-neutral-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1371,6 +1393,7 @@ const Dashboard = () => {
                   disabled={isDisabled}
                   className={`flex items-center space-x-3 py-3 px-6 rounded-2xl font-medium text-sm whitespace-nowrap transition-all duration-200 transform hover:scale-105 ${
                     isActive
+
                       ? 'bg-primary-600 text-white shadow-glow'
                       : isDisabled
                       ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 cursor-not-allowed'
@@ -1390,7 +1413,7 @@ const Dashboard = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="container-custom section">
 
         {/* Success/Error Messages */}
         {commitSuccess && (
@@ -1404,6 +1427,23 @@ const Dashboard = () => {
 
         {/* Trial Status Banner */}
         <TrialStatus userData={userData} />
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <button onClick={handleManualCommit} className="btn-primary btn-state">
+            <div className="flex items-center justify-center gap-2">
+              <Zap className="w-5 h-5" />
+              {committing ? 'Triggering Commit...' : 'Commit Now'}
+            </div>
+          </button>
+          <Link to="/connect" className="btn-outline btn-state flex items-center justify-center gap-2">
+            <GitBranch className="w-5 h-5" />
+            Connect Repo
+          </Link>
+          <Link to="/settings" className="btn-secondary btn-state flex items-center justify-center gap-2">
+            <Settings className="w-5 h-5" />
+            Settings
+          </Link>
+        </div>
 
         {error && (
           <div className="mb-8 p-6 bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800 rounded-2xl shadow-elegant">
@@ -1418,6 +1458,19 @@ const Dashboard = () => {
         {activeTab === 'overview' && renderOverviewTab()}
         {activeTab === 'repositories' && renderRepositoriesTab()}
         {activeTab === 'backfill' && isPremium && renderBackfillTab()}
+        {/* Tips Panel */}
+        <div className="card p-6 mb-8 animate-on-scroll">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">Tips to Improve Your Graph</h3>
+            <TrendingUp className="w-5 h-5 text-primary-600" />
+          </div>
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-neutral-700 dark:text-neutral-300">
+            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5" /> Connect more repositories to diversify activity</li>
+            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5" /> Enable AI messages for richer commit logs</li>
+            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5" /> Try past commit generation to fill gaps (Premium)</li>
+            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5" /> Keep a consistent daily window (e.g., 9AM–6PM)</li>
+          </ul>
+        </div>
         {activeTab === 'settings' && renderSettingsTab()}
 
 
