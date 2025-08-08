@@ -159,11 +159,13 @@ const Navbar = () => {
 
             {/* User Button */}
             {isSignedIn && (
-              <div className="ml-3">
+              <div className="ml-3 relative">
                 <UserButton
                   appearance={{
                     elements: {
-                      avatarBox: "w-8 h-8"
+                      avatarBox: "w-8 h-8",
+                      userButtonPopoverCard: "mt-2 right-0",
+                      userButtonPopoverActionButton: "text-left"
                     }
                   }}
                   userProfileMode="modal"
@@ -277,11 +279,13 @@ const Navbar = () => {
                   >
                     Upgrade
                   </Link>
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-800 mt-4">
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-800 mt-4 relative">
                     <UserButton
                       appearance={{
                         elements: {
-                          avatarBox: "w-8 h-8"
+                          avatarBox: "w-8 h-8",
+                          userButtonPopoverCard: "mt-2 left-0",
+                          userButtonPopoverActionButton: "text-left"
                         }
                       }}
                       userProfileMode="modal"

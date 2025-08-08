@@ -51,6 +51,72 @@
   opacity: 1 !important;
 }
 
+/* Fix UserButton dropdown positioning */
+.cl-userButtonPopoverCard {
+  position: absolute !important;
+  z-index: 99999 !important;
+  transform: none !important;
+  top: calc(100% + 0.5rem) !important;
+  right: 0 !important;
+  left: auto !important;
+}
+
+/* Ensure UserButton container has proper positioning context */
+.cl-userButtonTrigger {
+  position: relative !important;
+}
+
+/* Fix dropdown positioning relative to trigger */
+.cl-userButtonPopoverActionButton,
+.cl-userButtonPopoverActions {
+  position: relative !important;
+}
+
+/* Ensure proper z-index for all Clerk popover elements */
+.cl-popoverCard {
+  z-index: 99999 !important;
+  position: absolute !important;
+}
+
+/* Additional fixes for UserButton dropdown positioning */
+.cl-userButtonPopover {
+  position: relative !important;
+  z-index: 99999 !important;
+}
+
+/* Ensure the UserButton container creates proper stacking context */
+.cl-userButton {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Fix for mobile dropdown positioning */
+@media (max-width: 768px) {
+  .cl-userButtonPopoverCard {
+    position: absolute !important;
+    top: calc(100% + 0.5rem) !important;
+    right: 0 !important;
+    left: auto !important;
+    min-width: 200px !important;
+    transform: none !important;
+  }
+}
+
+/* Ensure UserButton dropdown is always visible and properly positioned */
+.cl-userButtonPopoverCard {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0.5rem !important;
+  background: white !important;
+  min-width: 200px !important;
+}
+
+/* Dark mode support for UserButton dropdown */
+.dark .cl-userButtonPopoverCard {
+  background: rgb(31, 41, 55) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

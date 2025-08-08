@@ -233,25 +233,6 @@ const Dashboard = () => {
 
   const renderOverviewTab = () => (
     <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="card">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
-              Welcome back, {userData?.firstName || 'Developer'}! 👋
-            </h1>
-            <p className="text-lg text-neutral-600 dark:text-neutral-300">
-              Your coding consistency is looking great. Keep up the momentum!
-            </p>
-          </div>
-          <div className="hidden md:block">
-            <div className="w-20 h-20 bg-primary rounded-lg flex items-center justify-center">
-              <Sparkles className="w-10 h-10 text-white" />
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="card">
