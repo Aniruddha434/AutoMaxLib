@@ -342,7 +342,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Repository Status */}
         <div className="lg:col-span-2">
-          <div className="card p-8 animate-on-scroll">
+          <div className="card p-8">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
                 Connected Repository
@@ -514,7 +514,7 @@ const Dashboard = () => {
 
         {/* Recent Commits */}
         <div>
-          <div className="card p-6 animate-on-scroll">
+          <div className="card p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
               Recent Commits
             </h2>
@@ -962,7 +962,7 @@ const Dashboard = () => {
 
           {/* Progress */}
           {backfillProgress && (
-            <div className="card p-6 animate-on-scroll">
+            <div className="card p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Generation Progress
               </h3>
@@ -1354,7 +1354,7 @@ const Dashboard = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50/20 dark:from-neutral-950 dark:to-primary-950/10 animate-on-scroll">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50/20 dark:from-neutral-950 dark:to-primary-950/10">
       {/* Header */}
       <div className="glass border-b border-neutral-200/50 dark:border-neutral-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1459,7 +1459,7 @@ const Dashboard = () => {
         {activeTab === 'repositories' && renderRepositoriesTab()}
         {activeTab === 'backfill' && isPremium && renderBackfillTab()}
         {/* Tips Panel */}
-        <div className="card p-6 mb-8 animate-on-scroll">
+        <div className="card p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold">Tips to Improve Your Graph</h3>
             <TrendingUp className="w-5 h-5 text-primary-600" />
