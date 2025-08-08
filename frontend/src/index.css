@@ -117,6 +117,24 @@
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+/* Navbar UserButton: pin popover to top-right (Option 1) */
+.navbar-user-popover {
+  position: fixed !important;
+  top: 64px !important; /* matches navbar height (h-16) */
+  right: 16px !important;
+  left: auto !important;
+  z-index: 60 !important; /* above content, below modals */
+  transform: none !important;
+}
+
+@media (max-width: 768px) {
+  .navbar-user-popover {
+    top: 56px !important;
+    right: 12px !important;
+  }
+}
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -1032,6 +1050,17 @@
   .focus-visible {
     @apply outline-none ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-neutral-900;
   }
+
+/* Stronger specificity to always pin Clerk popover */
+.cl-userButtonPopoverCard.navbar-user-popover {
+  position: fixed !important;
+  top: 64px !important;
+  right: 16px !important;
+  left: auto !important;
+  transform: none !important;
+  z-index: 60 !important;
+}
+
 
   /* Keyboard Navigation */
   .keyboard-navigation *:focus {

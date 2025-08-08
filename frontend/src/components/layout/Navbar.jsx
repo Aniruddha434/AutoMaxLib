@@ -164,7 +164,8 @@ const Navbar = () => {
                   appearance={{
                     elements: {
                       avatarBox: "w-8 h-8",
-                      userButtonPopoverCard: "mt-2 right-0",
+                      // Pin popover to top-right via custom class (CSS in index.css)
+                      userButtonPopoverCard: "navbar-user-popover",
                       userButtonPopoverActionButton: "text-left"
                     }
                   }}
@@ -284,7 +285,8 @@ const Navbar = () => {
                       appearance={{
                         elements: {
                           avatarBox: "w-8 h-8",
-                          userButtonPopoverCard: "mt-2 left-0",
+                          // Use same pinned class on mobile
+                          userButtonPopoverCard: "navbar-user-popover",
                           userButtonPopoverActionButton: "text-left"
                         }
                       }}
