@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0284c7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="200" height="200" rx="32" fill="url(#bgGradient)"/>
+  
+  <!-- GitBranch icon centered and larger -->
+  <g transform="translate(50, 50)">
+    <!-- Main branch line -->
+    <line x1="25" y1="15" x2="25" y2="85" stroke="white" stroke-width="8" stroke-linecap="round"/>
+    <!-- Branch line -->
+    <path d="M25 35 Q45 35 65 55 Q85 75 85 95" stroke="white" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <!-- Commit dots -->
+    <circle cx="25" cy="15" r="8" fill="white"/>
+    <circle cx="25" cy="50" r="8" fill="white"/>
+    <circle cx="85" cy="95" r="8" fill="white"/>
+  </g>
+</svg>
