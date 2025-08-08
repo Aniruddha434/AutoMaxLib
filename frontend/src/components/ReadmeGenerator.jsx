@@ -260,7 +260,7 @@ const ReadmeGenerator = () => {
           </div>
 
           {/* Premium Feature Preview Card */}
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700 rounded-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-900/20 dark:to-neutral-800/20 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
             {/* Preview Image */}
             <div className="relative">
               <img
@@ -287,8 +287,8 @@ const ReadmeGenerator = () => {
             {/* Content */}
             <div className="p-8 text-center">
               <div className="flex justify-center mb-4">
-                <div className="p-3 bg-blue-100 dark:bg-blue-800 rounded-full">
-                  <FileText className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                <div className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-full">
+                  <FileText className="h-8 w-8 text-neutral-700 dark:text-neutral-300" />
                 </div>
               </div>
 
@@ -302,15 +302,15 @@ const ReadmeGenerator = () => {
               </p>
 
               <div className="grid md:grid-cols-3 gap-4 mb-8 text-sm">
-                <div className="flex items-center justify-center gap-2 text-blue-600 dark:text-blue-400">
+                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
                   <CheckCircle className="h-4 w-4" />
                   AI-generated content
                 </div>
-                <div className="flex items-center justify-center gap-2 text-blue-600 dark:text-blue-400">
+                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
                   <CheckCircle className="h-4 w-4" />
                   Multiple templates
                 </div>
-                <div className="flex items-center justify-center gap-2 text-blue-600 dark:text-blue-400">
+                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
                   <CheckCircle className="h-4 w-4" />
                   One-click deployment
                 </div>
@@ -319,7 +319,7 @@ const ReadmeGenerator = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
                   onClick={() => setShowPremiumPreview(true)}
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  className="btn-outline px-6 py-3"
                 >
                   <Eye className="h-5 w-5 mr-2" />
                   View Full Preview
@@ -363,12 +363,12 @@ const ReadmeGenerator = () => {
         
         {/* Usage Info */}
         {usage && (
-          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <div className="mt-4 p-4 bg-neutral-50 dark:bg-neutral-900/20 rounded-lg border border-neutral-200 dark:border-neutral-800">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-blue-800 dark:text-blue-200">
+              <span className="text-sm text-neutral-800 dark:text-neutral-200">
                 Monthly Usage: {usage.monthly}/5 generations
               </span>
-              <span className="text-sm text-blue-600 dark:text-blue-300">
+              <span className="text-sm text-neutral-700 dark:text-neutral-300">
                 Total Generated: {usage.total}
               </span>
             </div>
@@ -388,7 +388,7 @@ const ReadmeGenerator = () => {
             <div key={step} className="flex items-center">
               <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
                 currentStep >= step 
-                  ? 'bg-blue-500 border-blue-500 text-white' 
+                  ? 'bg-primary border-primary text-primary-foreground'
                   : 'border-gray-300 text-gray-400'
               }`}>
                 {currentStep > step ? (
@@ -398,13 +398,13 @@ const ReadmeGenerator = () => {
                 )}
               </div>
               <span className={`ml-2 text-sm font-medium ${
-                currentStep >= step ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500'
+                currentStep >= step ? 'text-foreground' : 'text-gray-500'
               }`}>
                 {title}
               </span>
               {step < 4 && (
                 <div className={`w-16 h-0.5 ml-4 ${
-                  currentStep > step ? 'bg-blue-500' : 'bg-gray-300'
+                  currentStep > step ? 'bg-primary' : 'bg-gray-300'
                 }`} />
               )}
             </div>
@@ -423,7 +423,7 @@ const ReadmeGenerator = () => {
       )}
 
       {/* Step Content */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+      <div className="card">
         {/* Step 1: Template Selection */}
         {currentStep === 1 && (
           <div>
@@ -436,7 +436,7 @@ const ReadmeGenerator = () => {
                   key={template.id}
                   className={`p-6 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
                     selectedTemplate === template.id
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      ? 'border-primary bg-primary/5 dark:bg-primary/10'
                       : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                   }`}
                   onClick={() => setSelectedTemplate(template.id)}
@@ -463,7 +463,7 @@ const ReadmeGenerator = () => {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setCurrentStep(2)}
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                className="btn-primary px-6 py-2"
               >
                 Next: Profile Info
               </button>
@@ -482,7 +482,7 @@ const ReadmeGenerator = () => {
               </h2>
               <button
                 onClick={loadSampleData}
-                className="text-blue-500 hover:text-blue-600 text-sm font-medium"
+                className="text-primary hover:opacity-80 text-sm font-medium"
               >
                 Load Sample Data
               </button>
@@ -606,7 +606,7 @@ const ReadmeGenerator = () => {
               </button>
               <button
                 onClick={validateAndProceed}
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                className="btn-primary px-6 py-2"
               >
                 Next: Preview
               </button>
@@ -652,7 +652,7 @@ const ReadmeGenerator = () => {
             {validation && (
               <div className="mb-6">
                 <div className="flex items-center mb-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                  <CheckCircle className="h-5 w-5 text-emerald-500 mr-2" />
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Profile Completeness: {validation.completeness}%
                   </span>
@@ -683,7 +683,7 @@ const ReadmeGenerator = () => {
               <button
                 onClick={generateReadme}
                 disabled={loading}
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 flex items-center"
+                className="btn-primary px-6 py-2 disabled:opacity-50 flex items-center"
               >
                 {loading ? (
                   <>
@@ -733,22 +733,22 @@ const ReadmeGenerator = () => {
 
             {/* GitHub Profile Repository Info */}
             {userData?.githubUsername && (
-              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <div className="mb-6 p-4 bg-neutral-50 dark:bg-neutral-900/20 border border-neutral-200 dark:border-neutral-800 rounded-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start">
-                    <Globe className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2 mt-0.5" />
+                    <Globe className="h-5 w-5 text-neutral-700 dark:text-neutral-300 mr-2 mt-0.5" />
                     <div>
-                      <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-1">
+                      <h4 className="text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-1">
                         GitHub Profile Repository
                       </h4>
-                      <p className="text-sm text-blue-700 dark:text-blue-300">
+                      <p className="text-sm text-neutral-700 dark:text-neutral-300">
                         {repoExists ? (
-                          <>✅ Profile repository <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">{userData.githubUsername}</code> is ready for deployment!</>
+                          <>✅ Profile repository <code className="bg-neutral-100 dark:bg-neutral-800 px-1 rounded">{userData.githubUsername}</code> is ready for deployment!</>
                         ) : (
-                          <>You need a repository named <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">{userData.githubUsername}</code> in your GitHub account.</>
+                          <>You need a repository named <code className="bg-neutral-100 dark:bg-neutral-800 px-1 rounded">{userData.githubUsername}</code> in your GitHub account.</>
                         )}
                       </p>
-                      <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                      <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
                         This is a special repository that GitHub uses to display your profile README.
                       </p>
                     </div>
@@ -758,7 +758,7 @@ const ReadmeGenerator = () => {
                     <button
                       onClick={createProfileRepository}
                       disabled={creatingRepo}
-                      className="flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 ml-4"
+                      className="flex items-center px-3 py-1.5 btn-primary text-sm ml-4"
                     >
                       {creatingRepo ? (
                         <>
@@ -778,7 +778,7 @@ const ReadmeGenerator = () => {
             )}
 
             {/* README Preview */}
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mb-6">
+            <div className="card mb-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   README.md Preview
@@ -807,7 +807,7 @@ const ReadmeGenerator = () => {
                   setCurrentStep(1)
                   setGeneratedReadme(null)
                 }}
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                className="btn-primary px-6 py-2"
               >
                 Generate Another
               </button>

@@ -127,7 +127,7 @@ const PatternGenerator = () => {
     const { pattern, stats } = preview
     
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+      <div className="card">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Pattern Preview
         </h3>
@@ -163,7 +163,7 @@ const PatternGenerator = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            <div className="text-2xl font-semibold text-foreground">
               {stats.totalCommits}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -171,7 +171,7 @@ const PatternGenerator = () => {
             </div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+            <div className="text-2xl font-semibold text-foreground">
               {stats.text}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -179,7 +179,7 @@ const PatternGenerator = () => {
             </div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+            <div className="text-2xl font-semibold text-foreground">
               {stats.dimensions.width}×{stats.dimensions.height}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -187,7 +187,7 @@ const PatternGenerator = () => {
             </div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+            <div className="text-2xl font-semibold text-foreground">
               53 weeks
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -198,7 +198,7 @@ const PatternGenerator = () => {
 
         {/* Date Range */}
         {stats.dateRange.start && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+          <div className="bg-neutral-50 dark:bg-neutral-900/20 border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 mb-6">
             <div className="flex items-center text-blue-800 dark:text-blue-200">
               <Info className="w-5 h-5 mr-2" />
               <span className="font-medium">Date Range</span>
@@ -256,7 +256,7 @@ const PatternGenerator = () => {
           </div>
 
           {/* Premium Feature Preview Card */}
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-700 rounded-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-900/20 dark:to-neutral-800/20 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
             {/* Preview Image */}
             <div className="relative">
               <img
@@ -284,7 +284,7 @@ const PatternGenerator = () => {
             <div className="p-8 text-center">
               <div className="flex justify-center mb-4">
                 <div className="p-3 bg-green-100 dark:bg-green-800 rounded-full">
-                  <Sparkles className="h-8 w-8 text-green-600 dark:text-green-400" />
+                  <Sparkles className="h-8 w-8 text-neutral-700 dark:text-neutral-300" />
                 </div>
               </div>
 
@@ -298,15 +298,15 @@ const PatternGenerator = () => {
               </p>
 
               <div className="grid md:grid-cols-3 gap-4 mb-8 text-sm">
-                <div className="flex items-center justify-center gap-2 text-green-600 dark:text-green-400">
+                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
                   <CheckCircle className="h-4 w-4" />
                   Custom text patterns
                 </div>
-                <div className="flex items-center justify-center gap-2 text-green-600 dark:text-green-400">
+                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
                   <CheckCircle className="h-4 w-4" />
                   Backfill historical data
                 </div>
-                <div className="flex items-center justify-center gap-2 text-green-600 dark:text-green-400">
+                <div className="flex items-center justify-center gap-2 text-neutral-700 dark:text-neutral-300">
                   <CheckCircle className="h-4 w-4" />
                   Smart scheduling
                 </div>
@@ -315,25 +315,25 @@ const PatternGenerator = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
                   onClick={() => setShowPremiumPreview(true)}
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  className="btn-outline px-6 py-3"
                 >
                   <Eye className="h-5 w-5 mr-2" />
                   View Full Preview
                 </button>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-              <Sparkles className="h-6 w-6 text-purple-600 mx-auto mb-2" />
+            <div className="card p-4">
+              <Sparkles className="h-6 w-6 text-neutral-700 dark:text-neutral-300 mx-auto mb-2" />
               <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Custom Patterns</h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">Create any text pattern using letters and numbers</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-              <Eye className="h-6 w-6 text-blue-600 mx-auto mb-2" />
+            <div className="card p-4">
+              <Eye className="h-6 w-6 text-neutral-700 dark:text-neutral-300 mx-auto mb-2" />
               <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Live Preview</h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">See exactly how your pattern will look</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-              <Zap className="h-6 w-6 text-green-600 mx-auto mb-2" />
+            <div className="card p-4">
+              <Zap className="h-6 w-6 text-neutral-700 dark:text-neutral-300 mx-auto mb-2" />
               <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Smart Generation</h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">Automated commit creation with custom dates</p>
             </div>
@@ -341,7 +341,7 @@ const PatternGenerator = () => {
 
                 <Link
                   to="/upgrade"
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  className="btn-primary px-6 py-3"
                 >
                   <Crown className="h-5 w-5 mr-2" />
                   Upgrade to Premium
@@ -379,7 +379,7 @@ const PatternGenerator = () => {
       </div>
 
       {/* Templates */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+      <div className="card">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Quick Templates
         </h3>
@@ -397,7 +397,7 @@ const PatternGenerator = () => {
       </div>
 
       {/* Configuration */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+      <div className="card">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
           Pattern Configuration
         </h3>
@@ -419,7 +419,7 @@ const PatternGenerator = () => {
             {validation && (
               <div className="mt-2">
                 {validation.valid ? (
-                  <div className="flex items-center text-green-600 dark:text-green-400">
+                  <div className="flex items-center text-neutral-700 dark:text-neutral-300">
                     <CheckCircle className="w-4 h-4 mr-2" />
                     <span className="text-sm">Text is valid</span>
                   </div>
@@ -509,7 +509,7 @@ const PatternGenerator = () => {
           <button
             onClick={generatePreview}
             disabled={!text || !validation?.valid || loading}
-            className="btn-secondary w-full py-3 text-lg font-semibold"
+            className="btn-outline w-full py-3 text-lg font-semibold"
           >
             {loading ? (
               <div className="flex items-center justify-center">
