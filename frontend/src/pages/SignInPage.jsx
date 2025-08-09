@@ -4,6 +4,7 @@ import { GitBranch } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import ClerkErrorBoundary from '../components/auth/ClerkErrorBoundary'
 import { useTheme } from '../contexts/ThemeContext'
+import Logo from '../components/ui/Logo'
 
 const SignInPage = () => {
   const { isLoaded, isSignedIn } = useAuth()
@@ -97,14 +98,9 @@ const SignInPage = () => {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400/10 dark:bg-purple-400/5 rounded-full blur-3xl"></div>
       </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <Link to="/" className="flex items-center justify-center space-x-3 mb-8 group">
-          <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg group-hover:bg-indigo-200 dark:group-hover:bg-indigo-900/50 transition-colors duration-200">
-            <GitBranch className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-          </div>
-          <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200">
-            AutoGitPilot
-          </span>
-        </Link>
+        <div className="flex justify-center mb-8">
+          <Logo variant="auth" size="xl" />
+        </div>
 
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">

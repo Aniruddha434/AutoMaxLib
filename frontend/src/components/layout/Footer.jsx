@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { GitBranch, Heart, Github, Twitter, Mail, ExternalLink } from 'lucide-react'
 import { cn } from '../../utils/cn'
+import Logo from '../ui/Logo'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -45,14 +46,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Logo and Description */}
           <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="flex items-center space-x-3 mb-6 group">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-2xl flex items-center justify-center shadow-elegant group-hover:shadow-glow transition-all duration-300 group-hover:scale-110 transform">
-                <GitBranch className="h-6 w-6 text-white group-hover:rotate-12 transition-transform duration-300" />
-              </div>
-              <span className="text-2xl font-bold text-gradient-primary">
-                AutoMaxLib
-              </span>
-            </Link>
+            <div className="mb-6">
+              <Logo variant="footer" size="lg" />
+            </div>
             <p className="text-neutral-600 dark:text-neutral-400 mb-6 max-w-md leading-relaxed text-lg">
               The intelligent way to maintain your coding consistency and build a professional
               developer profile that stands out to employers and peers.

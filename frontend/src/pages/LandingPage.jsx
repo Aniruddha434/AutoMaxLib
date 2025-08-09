@@ -35,6 +35,7 @@ import {
 const LandingPage = () => {
   const { isSignedIn } = useAuth()
   const [repositoryUrl, setRepositoryUrl] = useState('')
+  const [validationError, setValidationError] = useState('')
 
   // Scroll animation refs
   const heroRef = useScrollAnimation()
@@ -196,15 +197,18 @@ const LandingPage = () => {
   ]
 
   const handleRepositoryReadmeGeneration = () => {
+    // Clear previous errors
+    setValidationError('')
+
     if (!repositoryUrl.trim()) {
-      alert('Please enter a valid repository URL')
+      setValidationError('Please enter a valid repository URL')
       return
     }
 
     // Validate GitHub URL format
     const githubUrlPattern = /^https:\/\/github\.com\/[^\/]+\/[^\/]+\/?$/
     if (!githubUrlPattern.test(repositoryUrl.trim())) {
-      alert('Please enter a valid GitHub repository URL (e.g., https://github.com/username/repository)')
+      setValidationError('Please enter a valid GitHub repository URL (e.g., https://github.com/username/repository)')
       return
     }
 
@@ -214,6 +218,14 @@ const LandingPage = () => {
       window.location.href = `/repository-readme?url=${encodedUrl}`
     } else {
       window.location.href = `/sign-up?redirect=/repository-readme&url=${encodedUrl}`
+    }
+  }
+
+  const handleRepositoryUrlChange = (e) => {
+    setRepositoryUrl(e.target.value)
+    // Clear validation error when user starts typing
+    if (validationError) {
+      setValidationError('')
     }
   }
 
@@ -350,10 +362,19 @@ const LandingPage = () => {
                   id="repo-url"
                   type="url"
                   value={repositoryUrl}
-                  onChange={(e) => setRepositoryUrl(e.target.value)}
+                  onChange={handleRepositoryUrlChange}
                   placeholder="https://github.com/username/repository"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200 ${
+                    validationError
+                      ? 'border-red-500 dark:border-red-400'
+                      : 'border-gray-300 dark:border-gray-600'
+                  }`}
                 />
+                {validationError && (
+                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                    {validationError}
+                  </p>
+                )}
               </div>
               <button
                 onClick={handleRepositoryReadmeGeneration}

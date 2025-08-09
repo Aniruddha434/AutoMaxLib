@@ -4,6 +4,7 @@ import { useAuth, UserButton } from '@clerk/clerk-react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { Menu, X, Moon, Sun, GitBranch, ChevronDown } from 'lucide-react'
 import { cn } from '../../utils/cn'
+import Logo from '../ui/Logo'
 
 const Navbar = () => {
   const { isSignedIn } = useAuth()
@@ -62,14 +63,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <GitBranch className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="text-lg font-semibold text-foreground">
-              AutoMaxLib
-            </span>
-          </Link>
+          <Logo variant="navbar" size="sm" />
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
