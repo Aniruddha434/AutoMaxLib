@@ -86,7 +86,7 @@ const LandingPage = () => {
     {
       icon: BarChart3,
       title: "Analytics Dashboard",
-      description: "Get detailed insights into your coding patterns, streak statistics, and productivity trends with beautiful charts.",
+      description: "Get detailed insights into your coding patterns, streak statistics, and productivity trends with charts.",
       color: "from-teal-500 to-cyan-500"
     },
     {
@@ -318,16 +318,16 @@ const LandingPage = () => {
                 className="col-span-full sm:col-span-3 lg:col-span-2 animate-fade-in-up"
                 style={{ animationDelay: `${0.2 + index * 0.1}s` }}
               >
-                <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 hover-glow group">
-                  <div className="p-6 pt-6">
+                <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 hover-glow group h-full flex flex-col">
+                  <div className="p-6 pt-6 flex-1 flex flex-col">
                     <div className="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5 mb-6 group-hover:scale-110 transition-transform duration-300">
                       <feature.icon className="m-auto size-5 group-hover:text-primary-600 transition-colors duration-300" strokeWidth={1} />
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-2 flex-1 flex flex-col">
                       <h3 className="text-lg font-medium transition group-hover:text-primary-600">
                         {feature.title}
                       </h3>
-                      <p className="text-foreground text-sm">
+                      <p className="text-foreground text-sm flex-1">
                         {feature.description}
                       </p>
                     </div>
