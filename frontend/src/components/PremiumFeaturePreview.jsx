@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from './ui/Button'
 import { Badge } from './ui/badge'
 import { Card, CardContent } from './ui/Card'
-import { Crown, Sparkles, GitBranch, FileText, ArrowRight, Check } from 'lucide-react'
+import { Crown, GitBranch, FileText, ArrowRight, CheckCircle2, Star, Zap, Shield } from 'lucide-react'
 
 const PremiumFeaturePreview = ({ 
   isOpen, 
@@ -53,90 +53,116 @@ const PremiumFeaturePreview = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className={`p-2 rounded-lg bg-gradient-to-r ${config.color}`}>
-              <IconComponent className="h-6 w-6 text-white" />
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0" showCloseButton={false}>
+        {/* Custom Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 p-2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-colors duration-200"
+          aria-label="Close dialog"
+        >
+          <ArrowRight className="h-5 w-5 rotate-45" />
+        </button>
+
+        <DialogHeader className="px-8 pt-8 pb-6">
+          <div className="flex items-start gap-4">
+            <div className={`p-3 rounded-xl bg-gradient-to-r ${config.color} shadow-lg`}>
+              <IconComponent className="h-7 w-7 text-white" />
             </div>
-            <div>
-              <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-                {config.title}
-                <Badge variant="secondary" className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
-                  <Crown className="h-3 w-3 mr-1" />
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-3">
+                <DialogTitle className="text-3xl font-bold text-neutral-900 dark:text-white">
+                  {config.title}
+                </DialogTitle>
+                <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 px-3 py-1">
+                  <Crown className="h-3 w-3 mr-1.5" />
                   Premium
                 </Badge>
-              </DialogTitle>
-              <DialogDescription className="text-lg text-gray-600">
+              </div>
+              <DialogDescription className="text-lg text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {config.subtitle}
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="px-0 pb-8 space-y-8">
           {/* Feature Image Preview */}
-          <Card className="overflow-hidden border-2 border-dashed border-gray-200 hover:border-gray-300 transition-colors">
+          <div className="overflow-hidden rounded-lg">
             <CardContent className="p-0">
-              <div className="relative group">
+              <div className="relative group overflow-hidden rounded-lg">
                 <img
                   src={config.image}
                   alt={config.imageAlt}
-                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-auto block rounded-lg transition-transform duration-300 group-hover:scale-[1.02]"
                   loading="lazy"
                   onError={(e) => {
                     console.error('Failed to load premium preview image:', config.image)
                     e.target.style.display = 'none'
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Badge className="bg-white/90 text-gray-800">
-                    <Sparkles className="h-3 w-3 mr-1" />
-                    Premium Preview
-                  </Badge>
-                </div>
+
+
               </div>
             </CardContent>
-          </Card>
+          </div>
 
           {/* Feature Description */}
-          <div className="space-y-4">
-            <p className="text-gray-700 leading-relaxed">
+          <div className="px-6 space-y-6">
+            <p className="text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed font-medium">
               {config.description}
             </p>
 
             {/* Feature List */}
-            <div className="grid md:grid-cols-2 gap-3">
+            <div className="grid md:grid-cols-2 gap-4">
               {config.features.map((feature, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  <span className="text-sm text-gray-600">{feature}</span>
+                <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700/50 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200">
+                  <div className="flex-shrink-0 mt-0.5">
+                    <CheckCircle2 className="h-5 w-5 text-green-500 dark:text-green-400" />
+                  </div>
+                  <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300 leading-relaxed">{feature}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Upgrade CTA */}
-          <Card className={`bg-gradient-to-r ${config.color} text-white`}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Unlock Premium Features</h3>
-                  <p className="text-white/90 mb-4">
-                    Get access to {config.title.toLowerCase()} and all other premium features for just $6/month.
+          <div className="px-6">
+            <Card className={`bg-gradient-to-br ${config.color} text-white shadow-xl border-0 overflow-hidden relative`}>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+            <CardContent className="px-6 py-8 sm:px-8 sm:py-10 relative">
+              <div className="flex flex-col gap-6">
+                {/* Text/content at top */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-white/20 backdrop-blur-sm">
+                      <Crown className="h-5 w-5 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-semibold tracking-tight">Unlock Premium Features</h3>
+                  </div>
+                  <p className="text-white/95 text-base leading-relaxed">
+                    Get access to {config.title.toLowerCase()} and all other premium features for just <span className="font-bold">$6/month</span>.
                   </p>
-                  <div className="flex items-center gap-4 text-sm text-white/80">
-                    <span>✨ All premium features</span>
-                    <span>🚀 Priority support</span>
-                    <span>🔄 Cancel anytime</span>
+                  <div className="flex flex-wrap gap-x-6 gap-y-3">
+                    <div className="flex items-center gap-2 text-white/90 whitespace-nowrap">
+                      <Star className="h-4 w-4" />
+                      <span>All premium features</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-white/90 whitespace-nowrap">
+                      <Zap className="h-4 w-4" />
+                      <span>Priority support</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-white/90 whitespace-nowrap">
+                      <Shield className="h-4 w-4" />
+                      <span>Cancel anytime</span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col gap-2">
+                {/* Buttons at bottom */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
                   <Button
                     onClick={onUpgrade}
                     size="lg"
-                    className="bg-white text-gray-900 hover:bg-gray-100 font-semibold"
+                    className="w-full sm:w-auto bg-neutral-900 text-white hover:bg-neutral-800 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3 text-base"
                   >
                     Upgrade to Premium
                     <ArrowRight className="h-4 w-4 ml-2" />
@@ -145,7 +171,7 @@ const PremiumFeaturePreview = ({
                     onClick={onClose}
                     variant="ghost"
                     size="sm"
-                    className="text-white/80 hover:text-white hover:bg-white/10"
+                    className="w-full sm:w-auto text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200"
                   >
                     Maybe Later
                   </Button>
@@ -153,6 +179,7 @@ const PremiumFeaturePreview = ({
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

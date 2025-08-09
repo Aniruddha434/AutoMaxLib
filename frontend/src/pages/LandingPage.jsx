@@ -5,6 +5,7 @@ import FeatureShowcase from '../components/FeatureShowcase'
 import { PricingCard } from '../components/ui/pricing'
 import { CircularTestimonials } from '../components/ui/circular-testimonials'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
+import { CompareSection } from '../components/CompareShowcase'
 import {
   GitBranch,
   Clock,
@@ -437,6 +438,9 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Compare Showcase (Before/After) */}
+      <CompareSection />
+
       {/* Premium Features Showcase */}
       <FeatureShowcase
         onUpgrade={() => {
@@ -512,9 +516,9 @@ const LandingPage = () => {
               name: "rgb(10, 10, 10)",
               designation: "rgb(115, 115, 115)",
               testimony: "rgb(64, 64, 64)",
-              arrowBackground: "rgb(59, 130, 246)",
-              arrowForeground: "rgb(255, 255, 255)",
-              arrowHoverBackground: "rgb(37, 99, 235)",
+              arrowBackground: "transparent",
+              arrowForeground: "rgb(0, 0, 0)",
+              arrowHoverBackground: "rgb(255, 255, 255)",
             }}
             fontSizes={{
               name: "24px",
@@ -522,6 +526,7 @@ const LandingPage = () => {
               quote: "18px",
             }}
             className="animate-fade-in-up"
+            hideDots={true}
           />
         </div>
       </section>
