@@ -544,8 +544,8 @@ const LandingPage = () => {
 
       {/* Pricing Section */}
       <section ref={pricingRef} className="py-16 md:py-32" id="pricing">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto flex max-w-3xl flex-col text-left md:text-center mb-12">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="mx-auto flex max-w-3xl flex-col text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 rounded-full px-3 py-1.5 mb-4 mx-auto animate-fade-in-up">
               <Award className="w-3 h-3" />
               <span className="text-xs font-medium">Simple Pricing</span>
@@ -558,22 +558,23 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="rounded-lg flex flex-col justify-between border border-slate-200 dark:border-slate-700 p-1 bg-slate-50/50 dark:bg-slate-900/50 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-            <div className="flex flex-col gap-3 md:flex-row">
+          <div className="flex justify-center items-stretch animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl w-full">
               {pricingPlans.map((plan, index) => (
-                <PricingCard
-                  key={index}
-                  title={plan.title}
-                  price={`${plan.price} / ${plan.period}`}
-                  description={plan.description}
-                  buttonText={plan.buttonText}
-                  buttonVariant={plan.buttonVariant}
-                  highlight={plan.highlight}
-                  popular={plan.popular}
-                  features={plan.features}
-                  className="animate-fade-in-up"
-                  style={{ animationDelay: `${0.8 + index * 0.2}s` }}
-                />
+                <div key={index} className="flex">
+                  <PricingCard
+                    title={plan.title}
+                    price={`${plan.price} / ${plan.period}`}
+                    description={plan.description}
+                    buttonText={plan.buttonText}
+                    buttonVariant={plan.buttonVariant}
+                    highlight={plan.highlight}
+                    popular={plan.popular}
+                    features={plan.features}
+                    className="w-full animate-fade-in-up"
+                    style={{ animationDelay: `${0.8 + index * 0.2}s` }}
+                  />
+                </div>
               ))}
             </div>
           </div>
