@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '@clerk/clerk-react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import FeatureShowcase from '../components/FeatureShowcase'
 import { PricingCard } from '../components/ui/pricing'
 import { CircularTestimonials } from '../components/ui/circular-testimonials'
@@ -27,11 +27,14 @@ import {
   Play,
   Github,
   Quote,
-  Flame
+  Flame,
+  FileText,
+  ExternalLink
 } from 'lucide-react'
 
 const LandingPage = () => {
   const { isSignedIn } = useAuth()
+  const [repositoryUrl, setRepositoryUrl] = useState('')
 
   // Scroll animation refs
   const heroRef = useScrollAnimation()
@@ -78,6 +81,24 @@ const LandingPage = () => {
       title: "Goal Tracking",
       description: "Set coding goals, track milestones, and celebrate achievements as you build consistent development habits.",
       color: "from-indigo-500 to-purple-500"
+    },
+    {
+      icon: BarChart3,
+      title: "Analytics Dashboard",
+      description: "Get detailed insights into your coding patterns, streak statistics, and productivity trends with beautiful charts.",
+      color: "from-teal-500 to-cyan-500"
+    },
+    {
+      icon: Mail,
+      title: "Smart Notifications",
+      description: "Receive intelligent email alerts about your streaks, achievements, and important repository updates.",
+      color: "from-orange-500 to-red-500"
+    },
+    {
+      icon: FileText,
+      title: "README Generation",
+      description: "Create professional GitHub profile and repository READMEs with AI-powered content and modern templates.",
+      color: "from-violet-500 to-purple-500"
     }
   ]
 
@@ -174,6 +195,28 @@ const LandingPage = () => {
     }
   ]
 
+  const handleRepositoryReadmeGeneration = () => {
+    if (!repositoryUrl.trim()) {
+      alert('Please enter a valid repository URL')
+      return
+    }
+
+    // Validate GitHub URL format
+    const githubUrlPattern = /^https:\/\/github\.com\/[^\/]+\/[^\/]+\/?$/
+    if (!githubUrlPattern.test(repositoryUrl.trim())) {
+      alert('Please enter a valid GitHub repository URL (e.g., https://github.com/username/repository)')
+      return
+    }
+
+    // Redirect to repository README generator with the URL
+    const encodedUrl = encodeURIComponent(repositoryUrl.trim())
+    if (isSignedIn) {
+      window.location.href = `/repository-readme?url=${encodedUrl}`
+    } else {
+      window.location.href = `/sign-up?redirect=/repository-readme&url=${encodedUrl}`
+    }
+  }
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -216,7 +259,7 @@ const LandingPage = () => {
                   >
                     <Play className="w-5 h-5 mr-2 transition-transform group-hover:scale-110" />
                     Watch Demo
-                  </Link>https://github.com/Automaxx
+                  </Link>
                 </>
               )}
             </div>
@@ -280,6 +323,77 @@ const LandingPage = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Repository README Generation Section */}
+      <section className="py-16 md:py-24 bg-gray-50 dark:bg-transparent">
+        <div className="mx-auto max-w-4xl px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6">
+              Generate Professional Repository READMEs
+            </h2>
+            <p className="text-lg text-foreground max-w-2xl mx-auto mb-8">
+              Transform your GitHub repositories with AI-powered README generation.
+              Simply paste your repository URL and get a professional, comprehensive README in seconds.
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12">
+            <div className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="flex-1">
+                <label htmlFor="repo-url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Repository URL
+                </label>
+                <input
+                  id="repo-url"
+                  type="url"
+                  value={repositoryUrl}
+                  onChange={(e) => setRepositoryUrl(e.target.value)}
+                  placeholder="https://github.com/username/repository"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200"
+                />
+              </div>
+              <button
+                onClick={handleRepositoryReadmeGeneration}
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover-glow px-6 py-3"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Generate
+                <ExternalLink className="w-3 h-3 ml-2" />
+              </button>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <Sparkles className="w-6 h-6 text-black dark:text-white" />
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">AI-Powered Analysis</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Automatically analyzes your repository structure, technologies, and dependencies
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <Target className="w-6 h-6 text-black dark:text-white" />
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Professional Templates</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Choose from multiple templates designed for different project types
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <Zap className="w-6 h-6 text-black dark:text-white" />
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Instant Generation</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Get a complete, professional README in seconds with deployment options
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
