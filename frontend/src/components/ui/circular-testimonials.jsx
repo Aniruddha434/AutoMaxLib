@@ -6,6 +6,7 @@ export const CircularTestimonials = ({
   testimonials = [],
   autoplay = false,
   autoplayInterval = 5000,
+  hideDots = false,
   colors = {
     name: "#0a0a0a",
     designation: "#454545",
@@ -195,32 +196,7 @@ export const CircularTestimonials = ({
         )}
       </div>
 
-      {/* Dots indicator */}
-      {testimonials.length > 1 && (
-        <div className="flex justify-center space-x-2 mt-8">
-          {testimonials.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                clearAutoplay();
-                setCurrentIndex(index);
-              }}
-              className={cn(
-                "w-3 h-3 rounded-full transition-all duration-200",
-                index === currentIndex 
-                  ? "scale-125 opacity-100" 
-                  : "scale-100 opacity-50 hover:opacity-75"
-              )}
-              style={{
-                backgroundColor: index === currentIndex 
-                  ? colors.arrowHoverBackground 
-                  : colors.arrowBackground
-              }}
-              aria-label={`Go to testimonial ${index + 1}`}
-            />
-          ))}
-        </div>
-      )}
+
     </div>
   );
 };
