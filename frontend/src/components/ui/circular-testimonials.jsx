@@ -159,17 +159,7 @@ export const CircularTestimonials = ({
           <>
             <button
               onClick={handlePrev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 z-20"
-              style={{
-                backgroundColor: colors.arrowBackground,
-                color: colors.arrowForeground,
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = colors.arrowHoverBackground;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = colors.arrowBackground;
-              }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 p-2 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 z-20 text-black dark:text-white"
               aria-label="Previous testimonial"
             >
               <ChevronLeft className="w-6 h-6" />
@@ -177,17 +167,7 @@ export const CircularTestimonials = ({
 
             <button
               onClick={handleNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 z-20"
-              style={{
-                backgroundColor: colors.arrowBackground,
-                color: colors.arrowForeground,
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = colors.arrowHoverBackground;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = colors.arrowBackground;
-              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 z-20 text-black dark:text-white"
               aria-label="Next testimonial"
             >
               <ChevronRight className="w-6 h-6" />

@@ -162,7 +162,7 @@ const PremiumFeaturePreview = ({
                   <Button
                     onClick={onUpgrade}
                     size="lg"
-                    className="w-full sm:w-auto bg-neutral-900 text-white hover:bg-neutral-800 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3 text-base"
+                    className="w-full sm:w-auto bg-neutral-900 dark:bg-neutral-900 text-white hover:bg-neutral-800 dark:hover:bg-neutral-800 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3 text-base"
                   >
                     Upgrade to Premium
                     <ArrowRight className="h-4 w-4 ml-2" />
