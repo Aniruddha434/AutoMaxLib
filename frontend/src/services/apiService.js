@@ -37,7 +37,7 @@ class ApiService {
       return config
     })
 
-    // Handle response errors with enhanced logging
+    // Handle response errors with enhanced logging and token refresh
     this.api.interceptors.response.use(
       (response) => {
         const requestId = response.config.metadata?.requestId
@@ -45,7 +45,7 @@ class ApiService {
         console.log(`[${requestId}] API Success: ${response.status} in ${duration}ms`)
         return response.data
       },
-      (error) => {
+      async (error) => {
         const requestId = error.config?.metadata?.requestId
         const duration = Date.now() - (error.config?.metadata?.startTime || 0)
 
@@ -62,6 +62,29 @@ class ApiService {
         }
 
         console.error(`[${requestId}] API Error:`, errorInfo)
+
+        // Handle 401 errors by refreshing token and retrying
+        if (error.response?.status === 401 && !error.config._retry) {
+          console.log(`[${requestId}] 401 error detected, attempting token refresh...`)
+
+          try {
+            // Force refresh the token
+            const newToken = await authTokenService.forceRefresh()
+
+            if (newToken) {
+              console.log(`[${requestId}] Token refreshed, retrying request...`)
+
+              // Mark this request as a retry to prevent infinite loops
+              error.config._retry = true
+              error.config.headers.Authorization = `Bearer ${newToken}`
+
+              // Retry the original request
+              return this.api.request(error.config)
+            }
+          } catch (refreshError) {
+            console.error(`[${requestId}] Token refresh failed:`, refreshError)
+          }
+        }
 
         // Enhanced error object with more context
         const enhancedError = error.response?.data || {

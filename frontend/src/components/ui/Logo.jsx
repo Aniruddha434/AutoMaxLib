@@ -45,24 +45,24 @@ const Logo = ({
 
   const variantClasses = {
     default: {
-      container: 'bg-gradient-to-br from-primary-600 to-secondary-600 rounded-xl',
-      icon: 'text-white',
+      container: 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-sm',
+      icon: 'text-neutral-700 dark:text-neutral-300',
       text: 'text-foreground'
     },
     navbar: {
-      container: 'bg-primary rounded-lg',
-      icon: 'text-primary-foreground',
+      container: 'bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200/50 dark:border-neutral-700/50 rounded-lg',
+      icon: 'text-neutral-600 dark:text-neutral-400',
       text: 'text-foreground'
     },
     footer: {
-      container: 'bg-gradient-to-br from-primary-600 to-secondary-600 rounded-2xl shadow-elegant',
-      icon: 'text-white',
-      text: 'text-gradient-primary'
+      container: 'bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-sm',
+      icon: 'text-neutral-700 dark:text-neutral-300',
+      text: 'text-foreground'
     },
     auth: {
-      container: 'bg-indigo-100 dark:bg-indigo-900/30 rounded-lg',
-      icon: 'text-indigo-600 dark:text-indigo-400',
-      text: 'text-slate-900 dark:text-slate-100'
+      container: 'bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-200 dark:border-neutral-700 rounded-lg',
+      icon: 'text-neutral-600 dark:text-neutral-400',
+      text: 'text-neutral-900 dark:text-neutral-100'
     }
   }
 
@@ -79,15 +79,14 @@ const Logo = ({
         'flex items-center justify-center transition-all duration-300',
         sizes.container,
         variants.container,
-        'group-hover:scale-110 transform',
-        variant === 'footer' && 'group-hover:shadow-glow',
-        variant === 'auth' && 'group-hover:bg-indigo-200 dark:group-hover:bg-indigo-900/50'
+        'group-hover:scale-105 transform group-hover:shadow-md',
+        variant === 'auth' && 'group-hover:bg-neutral-100 dark:group-hover:bg-neutral-700/50'
       )}>
         <GitBranch className={cn(
           sizes.icon,
           variants.icon,
-          'transition-transform duration-300',
-          variant === 'footer' && 'group-hover:rotate-12'
+          'transition-all duration-300',
+          'group-hover:scale-110'
         )} />
       </div>
       {showText && (
@@ -95,7 +94,7 @@ const Logo = ({
           sizes.text,
           variants.text,
           'transition-colors duration-200',
-          variant === 'auth' && 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
+          'group-hover:text-neutral-900 dark:group-hover:text-white'
         )}>
           AutoMaxLib
         </span>

@@ -133,8 +133,6 @@ const Footer = () => {
                 © {currentYear} AutoMaxLib. All rights reserved.
               </p>
               <div className="flex items-center space-x-4 text-xs text-neutral-400">
-                <span>Built with ❤️ by developers</span>
-                <span>•</span>
                 <span>Powered by AI</span>
               </div>
             </div>

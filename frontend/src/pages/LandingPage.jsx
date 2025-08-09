@@ -388,32 +388,50 @@ const LandingPage = () => {
             </div>
 
             <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Sparkles className="w-6 h-6 text-black dark:text-white" />
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 hover-glow group h-full flex flex-col">
+                <div className="p-6 pt-6 flex-1 flex flex-col">
+                  <div className="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5 mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Sparkles className="m-auto size-5 group-hover:text-primary-600 transition-colors duration-300" strokeWidth={1} />
+                  </div>
+                  <div className="space-y-2 flex-1 flex flex-col">
+                    <h3 className="text-lg font-medium transition group-hover:text-primary-600">
+                      AI-Powered Analysis
+                    </h3>
+                    <p className="text-foreground text-sm flex-1">
+                      Automatically analyzes your repository structure, technologies, and dependencies
+                    </p>
+                  </div>
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">AI-Powered Analysis</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Automatically analyzes your repository structure, technologies, and dependencies
-                </p>
               </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Target className="w-6 h-6 text-black dark:text-white" />
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 hover-glow group h-full flex flex-col">
+                <div className="p-6 pt-6 flex-1 flex flex-col">
+                  <div className="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5 mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Target className="m-auto size-5 group-hover:text-primary-600 transition-colors duration-300" strokeWidth={1} />
+                  </div>
+                  <div className="space-y-2 flex-1 flex flex-col">
+                    <h3 className="text-lg font-medium transition group-hover:text-primary-600">
+                      Professional Templates
+                    </h3>
+                    <p className="text-foreground text-sm flex-1">
+                      Choose from multiple templates designed for different project types
+                    </p>
+                  </div>
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Professional Templates</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Choose from multiple templates designed for different project types
-                </p>
               </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Zap className="w-6 h-6 text-black dark:text-white" />
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 hover-glow group h-full flex flex-col">
+                <div className="p-6 pt-6 flex-1 flex flex-col">
+                  <div className="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5 mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Zap className="m-auto size-5 group-hover:text-primary-600 transition-colors duration-300" strokeWidth={1} />
+                  </div>
+                  <div className="space-y-2 flex-1 flex flex-col">
+                    <h3 className="text-lg font-medium transition group-hover:text-primary-600">
+                      Instant Generation
+                    </h3>
+                    <p className="text-foreground text-sm flex-1">
+                      Get a complete, professional README in seconds with deployment options
+                    </p>
+                  </div>
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Instant Generation</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Get a complete, professional README in seconds with deployment options
-                </p>
               </div>
             </div>
           </div>
