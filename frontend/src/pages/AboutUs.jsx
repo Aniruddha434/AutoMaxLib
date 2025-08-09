@@ -179,11 +179,11 @@ const AboutUs = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
               <div>
-                <div className="text-4xl font-bold mb-2">1000+</div>
+                <div className="text-4xl font-bold mb-2">100+</div>
                 <div className="text-primary-100">Active Users</div>
               </div>
               <div>
-                <div className="text-4xl font-bold mb-2">50K+</div>
+                <div className="text-4xl font-bold mb-2">1000+</div>
                 <div className="text-primary-100">Automated Commits</div>
               </div>
               <div>

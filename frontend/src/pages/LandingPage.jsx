@@ -100,8 +100,8 @@ const LandingPage = () => {
   ]
 
   const stats = [
-    { number: "10K+", label: "Active Developers", icon: Users },
-    { number: "1M+", label: "Commits Generated", icon: GitBranch },
+    { number: "100+", label: "Active Developers", icon: Users },
+    { number: "1000+", label: "Commits Generated", icon: GitBranch },
     { number: "99.9%", label: "Uptime Reliability", icon: Shield },
     { number: "365", label: "Days Automated", icon: Calendar }
   ]
@@ -132,7 +132,7 @@ const LandingPage = () => {
       name: "Free",
       title: "Free",
       price: "$0",
-      period: "forever",
+      period: "15 days",
       description: "Perfect for testing the automated commit experience",
       buttonText: "Start 15-Day Free Trial",
       buttonVariant: "outline",
@@ -216,7 +216,7 @@ const LandingPage = () => {
                   >
                     <Play className="w-5 h-5 mr-2 transition-transform group-hover:scale-110" />
                     Watch Demo
-                  </Link>
+                  </Link>https://github.com/Automaxx
                 </>
               )}
             </div>
@@ -478,7 +478,7 @@ const LandingPage = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                <span className="text-sm">10K+ Happy Users</span>
+                <span className="text-sm">100+ Happy Users</span>
               </div>
               <div className="flex items-center gap-2">
                 <Award className="w-4 h-4" />
