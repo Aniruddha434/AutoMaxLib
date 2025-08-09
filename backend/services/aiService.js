@@ -754,11 +754,37 @@ Provide ONLY the JSON response - no additional text or explanations.`
 
   // Parse repository analysis response
   parseRepositoryAnalysis(analysisText, repoInfo, fileStructure) {
+    console.log('🔍 Raw AI Analysis Response:', analysisText.substring(0, 500) + '...')
+
     try {
-      // Try to extract JSON from the response
-      const jsonMatch = analysisText.match(/\{[\s\S]*\}/)
+      // Try to extract JSON from the response - look for both single and multiple JSON blocks
+      let jsonMatch = analysisText.match(/\{[\s\S]*\}/)
+
+      // If no match, try to find JSON between code blocks
+      if (!jsonMatch) {
+        jsonMatch = analysisText.match(/```json\s*(\{[\s\S]*?\})\s*```/)
+        if (jsonMatch) {
+          jsonMatch[0] = jsonMatch[1]
+        }
+      }
+
+      // If still no match, try to find any JSON-like structure
+      if (!jsonMatch) {
+        jsonMatch = analysisText.match(/(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})/)
+      }
+
       if (jsonMatch) {
-        const analysisData = JSON.parse(jsonMatch[0])
+        console.log('📝 Extracted JSON:', jsonMatch[0].substring(0, 200) + '...')
+
+        // Clean up the JSON string
+        let jsonString = jsonMatch[0]
+          .replace(/```json/g, '')
+          .replace(/```/g, '')
+          .replace(/^\s*[\r\n]/gm, '')
+          .trim()
+
+        const analysisData = JSON.parse(jsonString)
+        console.log('✅ Successfully parsed AI analysis:', Object.keys(analysisData))
 
         // Add additional computed data
         analysisData.codeStructure = {
@@ -768,12 +794,16 @@ Provide ONLY the JSON response - no additional text or explanations.`
         }
 
         return analysisData
+      } else {
+        console.warn('⚠️ No JSON found in AI response, using fallback analysis')
       }
     } catch (error) {
-      console.warn('Failed to parse AI analysis as JSON, using fallback analysis')
+      console.error('❌ Failed to parse AI analysis as JSON:', error.message)
+      console.log('🔍 Problematic JSON string:', jsonMatch ? jsonMatch[0] : 'No JSON match found')
     }
 
     // Fallback analysis based on file structure
+    console.log('🔄 Using fallback analysis based on file structure')
     return this.createFallbackAnalysis(repoInfo, fileStructure)
   }
 
@@ -786,6 +816,8 @@ Provide ONLY the JSON response - no additional text or explanations.`
     const techBadges = this.generateTechnologyBadges(technologies, frameworks, language)
 
     let prompt = `You are an expert technical writer creating a world-class README.md file. Create a comprehensive, professional, and visually stunning README that developers will love to read and use.
+
+IMPORTANT: This README must be SPECIFIC to the actual repository content, not generic. Use the provided repository analysis to create accurate, detailed content.
 
 REPOSITORY CONTEXT:
 📦 Project: ${name}
@@ -804,6 +836,10 @@ REPOSITORY CONTEXT:
 🔧 Build Tools: ${buildTools ? buildTools.join(', ') : 'Standard tools'}
 📦 Package Managers: ${packageManagers ? packageManagers.join(', ') : 'Standard managers'}
 
+KEY FEATURES IDENTIFIED: ${keyFeatures ? keyFeatures.join(', ') : 'Modern features'}
+ARCHITECTURE: ${architecture || 'Standard architecture'}
+SETUP INSTRUCTIONS: ${setupInstructions || 'Standard setup'}
+
 TEMPLATE STYLE: ${template}
 
 REQUIREMENTS:
@@ -811,9 +847,12 @@ Create a README that is:
 ✨ Visually appealing with proper emoji usage
 📚 Easy to read and understand for all skill levels
 🎯 Focused on getting users started quickly
-🔧 Includes practical, working examples
+🔧 Includes practical, working examples SPECIFIC to this repository
 📖 Well-structured with clear sections
 🚀 Motivates users to try the project
+🎯 MUST reflect the actual repository structure and purpose
+🔍 Use REAL file names, technologies, and architecture from the analysis
+📝 Avoid generic placeholders - be specific and accurate
 
 MANDATORY SECTIONS TO INCLUDE:
 
@@ -829,14 +868,14 @@ MANDATORY SECTIONS TO INCLUDE:
    - All major sections linked
 
 3. **OVERVIEW/ABOUT**
-   - What the project does (2-3 sentences)
-   - Why it's useful/unique
-   - Who should use it
+   - What the project ACTUALLY does based on the repository analysis (2-3 sentences)
+   - Why it's useful/unique based on the technologies and architecture found
+   - Who should use it based on the project type and complexity
 
 4. **KEY FEATURES**
-   - 4-6 bullet points with emojis
-   - Focus on user benefits
-   - Highlight unique selling points
+   - 4-6 bullet points with emojis based on ACTUAL repository capabilities
+   - Focus on user benefits derived from the real technologies used
+   - Highlight unique selling points based on the architecture and frameworks found
 
 5. **QUICK START**
    - Prerequisites clearly listed
@@ -850,10 +889,10 @@ MANDATORY SECTIONS TO INCLUDE:
    - Troubleshooting common issues
 
 7. **USAGE EXAMPLES**
-   - Real, working code examples
-   - Multiple use cases
-   - Expected outputs
-   - Progressive complexity (basic → advanced)
+   - Real, working code examples using the ACTUAL technologies found (${technologies ? technologies.join(', ') : 'detected technologies'})
+   - Multiple use cases based on the project type (${projectType})
+   - Expected outputs relevant to the application
+   - Progressive complexity (basic → advanced) using real file structures
 
 8. **API DOCUMENTATION** (if applicable)
    - Key endpoints/methods
@@ -1187,7 +1226,8 @@ Generate ONLY the README.md content in markdown format. Make it exceptional - th
   }
 
   createFallbackAnalysis(repoInfo, fileStructure) {
-    const { language, languages, topics } = repoInfo
+    console.log('🔄 Creating fallback analysis for repository:', repoInfo.name)
+    const { name, description, language, languages, topics } = repoInfo
     const fileTypes = this.analyzeFileTypes(fileStructure)
 
     // Determine project type based on file extensions and structure
@@ -1206,44 +1246,133 @@ Generate ONLY the README.md content in markdown format. Make it exceptional - th
       projectType = 'mobile-app'
     }
 
-    // Detect technologies
+    // Detect technologies more comprehensively
     const technologies = []
     if (language) technologies.push(language)
     if (languages) technologies.push(...languages.slice(0, 5))
 
-    // Detect frameworks
+    // Add technologies based on file types
+    if (fileTypes.js) technologies.push('JavaScript')
+    if (fileTypes.ts) technologies.push('TypeScript')
+    if (fileTypes.py) technologies.push('Python')
+    if (fileTypes.java) technologies.push('Java')
+    if (fileTypes.cpp || fileTypes.cc) technologies.push('C++')
+    if (fileTypes.cs) technologies.push('C#')
+    if (fileTypes.go) technologies.push('Go')
+    if (fileTypes.rs) technologies.push('Rust')
+    if (fileTypes.php) technologies.push('PHP')
+    if (fileTypes.rb) technologies.push('Ruby')
+
+    // Detect frameworks more comprehensively
     const frameworks = []
     if (fileTypes.jsx || fileTypes.tsx) frameworks.push('React')
     if (fileTypes.vue) frameworks.push('Vue.js')
-    if (fileTypes.py) frameworks.push('Python')
+    if (fileTypes.py) {
+      // Check for common Python frameworks in file structure
+      const hasFlask = fileStructure.some(item => item.name.toLowerCase().includes('flask'))
+      const hasDjango = fileStructure.some(item => item.name.toLowerCase().includes('django'))
+      const hasFastAPI = fileStructure.some(item => item.name.toLowerCase().includes('fastapi'))
+
+      if (hasFlask) frameworks.push('Flask')
+      if (hasDjango) frameworks.push('Django')
+      if (hasFastAPI) frameworks.push('FastAPI')
+    }
+
+    // Generate more meaningful features based on actual repository content
+    const keyFeatures = []
+    if (description) {
+      keyFeatures.push(`${description.split('.')[0]}`)
+    }
+    if (fileTypes.js || fileTypes.ts) {
+      keyFeatures.push('Modern JavaScript/TypeScript implementation')
+    }
+    if (fileTypes.py) {
+      keyFeatures.push('Python-based solution')
+    }
+    if (fileTypes.md > 1) {
+      keyFeatures.push('Comprehensive documentation')
+    }
+    if (fileStructure.some(item => item.name.includes('test'))) {
+      keyFeatures.push('Automated testing suite')
+    }
+
+    // If no specific features found, add generic but relevant ones
+    if (keyFeatures.length === 0) {
+      keyFeatures.push(`${projectType.replace('-', ' ')} solution`)
+      keyFeatures.push('Easy to use and integrate')
+      keyFeatures.push('Well-structured codebase')
+    }
 
     return {
       projectType,
       technologies: [...new Set(technologies)],
       frameworks,
-      buildTools: [],
-      packageManagers: fileTypes.json ? ['npm'] : [],
+      buildTools: fileTypes.json ? ['npm/yarn'] : fileTypes.py ? ['pip'] : [],
+      packageManagers: fileTypes.json ? ['npm'] : fileTypes.py ? ['pip'] : [],
       databases: [],
       deploymentPlatforms: [],
-      mainFiles: ['README.md', 'index.js', 'main.py', 'app.py'].filter(file =>
-        fileStructure.some(item => item.name === file)
+      mainFiles: ['README.md', 'index.js', 'main.py', 'app.py', 'src/index.js', 'src/main.py'].filter(file =>
+        fileStructure.some(item => item.name === file || item.path === file)
       ),
       configFiles: Object.keys(fileTypes).filter(ext =>
         ['json', 'yml', 'yaml', 'toml', 'ini', 'conf'].includes(ext)
       ),
-      hasTests: Object.keys(fileTypes).some(ext => ['test', 'spec'].some(t => ext.includes(t))),
+      hasTests: Object.keys(fileTypes).some(ext => ['test', 'spec'].some(t => ext.includes(t))) ||
+                fileStructure.some(item => item.name.toLowerCase().includes('test')),
       hasDocumentation: fileTypes.md > 0,
-      hasCI: fileStructure.some(item => item.name === '.github'),
-      estimatedComplexity: Object.keys(fileTypes).length > 10 ? 'complex' : 'moderate',
-      keyFeatures: ['To be determined from code analysis'],
-      architecture: 'Standard project structure',
-      setupInstructions: 'Standard setup process',
+      hasCI: fileStructure.some(item => item.name === '.github' || item.path.includes('.github')),
+      estimatedComplexity: Object.keys(fileTypes).length > 10 ? 'complex' :
+                          Object.keys(fileTypes).length > 5 ? 'moderate' : 'simple',
+      keyFeatures,
+      architecture: `${projectType.replace('-', ' ')} with ${language || 'multiple languages'} implementation`,
+      setupInstructions: this.generateSetupInstructions(projectType, fileTypes, language),
+      useCases: [`Developers working with ${language || 'this technology stack'}`, 'Teams building similar solutions'],
+      prerequisites: this.generatePrerequisites(fileTypes, language),
+      apiEndpoints: projectType === 'api-service' ? ['To be documented based on code analysis'] : [],
+      environmentVariables: fileStructure.some(item => item.name === '.env' || item.name === '.env.example') ?
+                           ['Check .env.example for required variables'] : [],
+      deploymentNotes: [`Standard ${projectType} deployment process`],
       codeStructure: {
         totalFiles: this.countFiles(fileStructure),
         directories: this.extractDirectories(fileStructure),
         fileTypes
       }
     }
+  }
+
+  generateSetupInstructions(projectType, fileTypes, language) {
+    if (fileTypes.json) {
+      return 'Clone repository, run npm install, then npm start'
+    } else if (fileTypes.py) {
+      return 'Clone repository, install requirements with pip install -r requirements.txt, then run main script'
+    } else if (language === 'Java') {
+      return 'Clone repository, ensure Java is installed, compile and run main class'
+    } else {
+      return `Clone repository and follow ${language || 'language-specific'} setup procedures`
+    }
+  }
+
+  generatePrerequisites(fileTypes, language) {
+    const prerequisites = []
+
+    if (fileTypes.js || fileTypes.ts || fileTypes.json) {
+      prerequisites.push('Node.js (v14 or higher)', 'npm or yarn')
+    }
+    if (fileTypes.py) {
+      prerequisites.push('Python 3.7+', 'pip package manager')
+    }
+    if (language === 'Java') {
+      prerequisites.push('Java JDK 8+', 'Maven or Gradle')
+    }
+    if (language === 'Go') {
+      prerequisites.push('Go 1.16+')
+    }
+
+    if (prerequisites.length === 0) {
+      prerequisites.push(`${language || 'Appropriate runtime'} environment`)
+    }
+
+    return prerequisites
   }
 }
 

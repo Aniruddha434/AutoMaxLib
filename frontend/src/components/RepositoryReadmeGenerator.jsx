@@ -39,6 +39,32 @@ const RepositoryReadmeGenerator = () => {
   const [usage, setUsage] = useState(null)
   const [limits, setLimits] = useState(null)
 
+  // Test authentication function
+  const testAuthentication = async () => {
+    try {
+      console.log('🔍 Testing authentication...')
+      console.log('Clerk session:', window.Clerk?.session)
+      console.log('User signed in:', window.Clerk?.user)
+
+      const authToken = await window.Clerk?.session?.getToken()
+      console.log('Auth token available:', !!authToken)
+
+      if (authToken) {
+        // Test API call to debug endpoint
+        const response = await fetch('/api/debug/auth', {
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        const result = await response.json()
+        console.log('Auth test result:', result)
+      }
+    } catch (error) {
+      console.error('Auth test failed:', error)
+    }
+  }
+
 
   useEffect(() => {
     loadTemplates()
@@ -86,6 +112,20 @@ const RepositoryReadmeGenerator = () => {
     setError(null)
 
     try {
+      // Debug authentication status
+      console.log('🔍 Checking authentication status...')
+      console.log('Clerk session:', window.Clerk?.session)
+      console.log('User signed in:', window.Clerk?.user)
+
+      // Force refresh token to avoid expiration issues
+      const authToken = await window.Clerk?.session?.getToken({ skipCache: true })
+      console.log('Fresh auth token available:', !!authToken)
+
+      if (!authToken) {
+        setError('Authentication required. Please sign in again.')
+        return
+      }
+
       const response = await repositoryService.analyzeRepository(repositoryUrl)
       console.log('Analysis response:', response) // Debug log
 
@@ -98,7 +138,13 @@ const RepositoryReadmeGenerator = () => {
       }
     } catch (error) {
       console.error('Error analyzing repository:', error)
-      setError(error.message || 'Failed to analyze repository')
+
+      // Handle specific authentication errors
+      if (error.error === 'CLERK_MIDDLEWARE_ERROR' || error.status === 401) {
+        setError('Authentication failed. Please refresh the page and try again.')
+      } else {
+        setError(error.message || 'Failed to analyze repository')
+      }
     } finally {
       setAnalyzing(false)
     }
@@ -115,6 +161,13 @@ const RepositoryReadmeGenerator = () => {
     setError(null)
 
     try {
+      // Force refresh token before generation to avoid expiration
+      const authToken = await window.Clerk?.session?.getToken({ skipCache: true })
+      if (!authToken) {
+        setError('Authentication required. Please sign in again.')
+        return
+      }
+
       const response = await repositoryService.generateRepositoryReadme(
         repositoryData,
         analysisData,
@@ -128,7 +181,13 @@ const RepositoryReadmeGenerator = () => {
       setCurrentStep(4)
     } catch (error) {
       console.error('Error generating repository README:', error)
-      setError(error.message || 'Failed to generate repository README')
+
+      // Handle specific authentication errors
+      if (error.error === 'CLERK_MIDDLEWARE_ERROR' || error.status === 401) {
+        setError('Authentication failed. Please refresh the page and try again.')
+      } else {
+        setError(error.message || 'Failed to generate repository README')
+      }
     } finally {
       setLoading(false)
     }
