@@ -79,6 +79,7 @@ const optionalEnvVars = {
   // AI Services (Optional)
   OPENAI_API_KEY: { type: 'string' },
   GEMINI_API_KEY: { type: 'string' },
+  OPENROUTER_API_KEY: { type: 'string' },
 
   // Email (Optional)
   SMTP_HOST: { type: 'string' },
@@ -209,7 +210,7 @@ export function printEnvironmentStatus() {
   console.log(`   Database: ${process.env.MONGODB_URI ? '✅ Configured' : '❌ Missing'}`)
   console.log(`   Authentication: ${process.env.CLERK_SECRET_KEY ? '✅ Configured' : '❌ Missing'}`)
   console.log(`   Payment: ${process.env.RAZORPAY_KEY_ID ? '✅ Configured' : '⚠️ Optional'}`)
-  console.log(`   AI Services: ${process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY ? '✅ Configured' : '⚠️ Optional'}`)
+  console.log(`   AI Services: ${process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY || process.env.OPENROUTER_API_KEY ? '✅ Configured' : '⚠️ Optional'}`)
   console.log(`   Email: ${process.env.SMTP_USER ? '✅ Configured' : '⚠️ Optional'}`)
   console.log(`   Redis: ${process.env.REDIS_URL ? '✅ Configured' : '⚠️ Optional'}`)
   console.log(`   Monitoring: ${process.env.SENTRY_DSN ? '✅ Configured' : '⚠️ Optional'}`)

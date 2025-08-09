@@ -211,6 +211,13 @@ class MonitoringService {
       services.gemini = { status: 'not_configured' }
     }
 
+    // Check OpenRouter
+    if (process.env.OPENROUTER_API_KEY) {
+      services.openrouter = { status: 'configured' }
+    } else {
+      services.openrouter = { status: 'not_configured' }
+    }
+
     return services
   }
 

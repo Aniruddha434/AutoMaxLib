@@ -4,6 +4,7 @@ import express from 'express'
 import User from '../models/User.js'
 import aiService from '../services/aiService.js'
 import profileRoutes from '../routes/profile.js'
+import repositoryRoutes from '../routes/repository.js'
 
 // Mock dependencies
 jest.mock('../models/User.js')
@@ -17,6 +18,11 @@ app.use('/api/profile', (req, res, next) => {
   req.auth = { userId: 'test-user-id' }
   next()
 }, profileRoutes)
+
+app.use('/api/repository', (req, res, next) => {
+  req.auth = { userId: 'test-user-id' }
+  next()
+}, repositoryRoutes)
 
 describe('README Generation API', () => {
   beforeEach(() => {
@@ -347,8 +353,185 @@ describe('AI Service', () => {
       aiService.calculateProfileCompleteness.mockReturnValue(25)
 
       const completeness = aiService.calculateProfileCompleteness(profileData)
-      
+
       expect(completeness).toBe(25)
+    })
+  })
+})
+
+describe('Repository README Generation API', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  describe('POST /api/repository/readme/generate', () => {
+    it('should generate repository README with OpenRouter (primary provider)', async () => {
+      const mockUser = {
+        clerkId: 'test-user-id',
+        canGenerateRepositoryReadme: jest.fn().mockReturnValue({
+          canGenerate: true,
+          usage: 1,
+          limit: 2,
+          remaining: 1,
+          isPremium: false,
+          limitType: 'lifetime'
+        }),
+        addGeneratedRepositoryReadme: jest.fn().mockReturnValue({
+          id: 'repo-readme-123',
+          content: '# My Awesome Project\n\nA comprehensive README',
+          template: 'web-application',
+          wordCount: 150,
+          generatedAt: new Date()
+        }),
+        save: jest.fn().mockResolvedValue(true),
+        repositoryReadmeGeneration: {
+          monthlyUsage: 1,
+          totalGenerations: 1
+        }
+      }
+
+      const mockReadmeResult = {
+        success: true,
+        content: '# My Awesome Project\n\nA comprehensive README',
+        template: 'web-application',
+        wordCount: 150,
+        generatedAt: new Date(),
+        modelUsed: 'OpenRouter:anthropic/claude-3-sonnet',
+        provider: 'openrouter',
+        quality: { score: 95, issues: [] }
+      }
+
+      User.findOne.mockResolvedValue(mockUser)
+      aiService.isAvailable.mockReturnValue(true)
+      aiService.isOpenRouterAvailable.mockReturnValue(true)
+      aiService.generateRepositoryReadmeContent.mockResolvedValue(mockReadmeResult)
+
+      const requestData = {
+        template: 'web-application',
+        repositoryData: {
+          name: 'my-awesome-project',
+          description: 'An awesome web application',
+          language: 'JavaScript',
+          topics: ['react', 'nodejs']
+        },
+        analysisData: {
+          projectType: 'web-application',
+          technologies: ['React', 'Node.js', 'Express'],
+          frameworks: ['React', 'Express'],
+          hasTests: true,
+          hasCI: true
+        },
+        customSections: {}
+      }
+
+      const response = await request(app)
+        .post('/api/repository/readme/generate')
+        .send(requestData)
+        .expect(200)
+
+      expect(response.body.success).toBe(true)
+      expect(response.body.readme).toBeDefined()
+      expect(response.body.readme.content).toBe(mockReadmeResult.content)
+      expect(mockUser.addGeneratedRepositoryReadme).toHaveBeenCalled()
+      expect(mockUser.save).toHaveBeenCalled()
+    })
+
+    it('should fallback to Gemini when OpenRouter fails', async () => {
+      const mockUser = {
+        clerkId: 'test-user-id',
+        canGenerateRepositoryReadme: jest.fn().mockReturnValue({
+          canGenerate: true,
+          usage: 1,
+          limit: 10,
+          remaining: 9,
+          isPremium: true,
+          limitType: 'monthly'
+        }),
+        addGeneratedRepositoryReadme: jest.fn().mockReturnValue({
+          id: 'repo-readme-124',
+          content: '# My Project\n\nGenerated with Gemini fallback',
+          template: 'library-package',
+          wordCount: 120,
+          generatedAt: new Date()
+        }),
+        save: jest.fn().mockResolvedValue(true),
+        repositoryReadmeGeneration: {
+          monthlyUsage: 2,
+          totalGenerations: 5
+        }
+      }
+
+      const mockReadmeResult = {
+        success: true,
+        content: '# My Project\n\nGenerated with Gemini fallback',
+        template: 'library-package',
+        wordCount: 120,
+        generatedAt: new Date(),
+        modelUsed: 'Gemini:gemini-1.5-pro',
+        provider: 'gemini',
+        quality: { score: 88, issues: [] }
+      }
+
+      User.findOne.mockResolvedValue(mockUser)
+      aiService.isAvailable.mockReturnValue(true)
+      aiService.isOpenRouterAvailable.mockReturnValue(false) // OpenRouter not available
+      aiService.generateRepositoryReadmeContent.mockResolvedValue(mockReadmeResult)
+
+      const requestData = {
+        template: 'library-package',
+        repositoryData: {
+          name: 'my-library',
+          description: 'A useful library package',
+          language: 'Python'
+        },
+        analysisData: {
+          projectType: 'library-package',
+          technologies: ['Python'],
+          frameworks: [],
+          hasTests: true,
+          hasCI: false
+        }
+      }
+
+      const response = await request(app)
+        .post('/api/repository/readme/generate')
+        .send(requestData)
+        .expect(200)
+
+      expect(response.body.success).toBe(true)
+      expect(response.body.readme.content).toBe(mockReadmeResult.content)
+      expect(mockUser.addGeneratedRepositoryReadme).toHaveBeenCalled()
+    })
+
+    it('should respect free user limits for repository README generation', async () => {
+      const mockUser = {
+        clerkId: 'test-user-id',
+        canGenerateRepositoryReadme: jest.fn().mockReturnValue({
+          canGenerate: false,
+          reason: 'Free plan limit reached. You\'ve used 2 of 2 lifetime repository README generations. Upgrade to Premium for unlimited monthly access.',
+          usage: 2,
+          limit: 2,
+          remaining: 0,
+          isPremium: false,
+          limitType: 'lifetime'
+        })
+      }
+
+      User.findOne.mockResolvedValue(mockUser)
+
+      const requestData = {
+        template: 'web-application',
+        repositoryData: { name: 'test-repo' },
+        analysisData: { projectType: 'web-application' }
+      }
+
+      const response = await request(app)
+        .post('/api/repository/readme/generate')
+        .send(requestData)
+        .expect(403)
+
+      expect(response.body.success).toBe(false)
+      expect(response.body.message).toContain('Free plan limit reached')
     })
   })
 })

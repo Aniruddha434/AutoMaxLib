@@ -58,6 +58,15 @@
     "nodemon": "^3.0.2",
     "supertest": "^6.3.3"
   },
+  "jest": {
+    "preset": "default",
+    "extensionsToTreatAsEsm": [".js"],
+    "globals": {
+      "NODE_OPTIONS": "--experimental-vm-modules"
+    },
+    "transform": {},
+    "testEnvironment": "node"
+  },
   "keywords": [
     "github",
     "automation",

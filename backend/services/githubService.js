@@ -691,7 +691,16 @@ I'm a developer who loves to code and build amazing things!
         '.github/workflows',
         'README.md',
         'LICENSE',
-        'CONTRIBUTING.md'
+        'CONTRIBUTING.md',
+        '.env.example',
+        'config.json',
+        'tsconfig.json',
+        'webpack.config.js',
+        'vite.config.js',
+        'next.config.js',
+        'nuxt.config.js',
+        'angular.json',
+        'vue.config.js'
       ]
 
       for (const fileName of importantFiles) {
@@ -702,7 +711,7 @@ I'm a developer who loves to code and build amazing things!
             // Decode base64 content
             const content = Buffer.from(response.data.content, 'base64').toString('utf-8')
             keyFiles[fileName] = {
-              content: content.substring(0, 5000), // Limit content size
+              content: content.substring(0, 8000), // Increased limit for better analysis
               size: response.data.size,
               path: response.data.path
             }
@@ -718,6 +727,204 @@ I'm a developer who loves to code and build amazing things!
       console.error(`Error fetching key files for ${owner}/${repo}:`, error.message)
       return null
     }
+  }
+
+  // Get source code files for deep analysis
+  async getSourceCodeFiles(token, owner, repo, fileStructure, maxFiles = 15) {
+    try {
+      const client = this.createClient(token)
+      const sourceFiles = {}
+      let fileCount = 0
+
+      // Priority file patterns for analysis
+      const priorityPatterns = [
+        /^(index|main|app|server)\.(js|ts|py|java|go|rs|php)$/i,
+        /^src\/(index|main|app)\.(js|ts|py|java|go|rs|php)$/i,
+        /^(routes|controllers|handlers|api)\//i,
+        /^(models|entities|schemas)\//i,
+        /^(services|utils|helpers)\//i,
+        /^(components|views|pages)\//i,
+        /\.(js|ts|py|java|go|rs|php|jsx|tsx|vue)$/i
+      ]
+
+      // Extract files from structure with priority scoring
+      const extractFiles = (items, path = '') => {
+        if (!Array.isArray(items) || fileCount >= maxFiles) return
+
+        for (const item of items) {
+          if (fileCount >= maxFiles) break
+
+          if (item.type === 'file') {
+            const fullPath = path ? `${path}/${item.name}` : item.name
+
+            // Calculate priority score
+            let priority = 0
+            for (let i = 0; i < priorityPatterns.length; i++) {
+              if (priorityPatterns[i].test(fullPath)) {
+                priority = priorityPatterns.length - i
+                break
+              }
+            }
+
+            if (priority > 0) {
+              sourceFiles[fullPath] = { priority, ...item }
+              fileCount++
+            }
+          } else if (item.children && item.type === 'dir') {
+            const fullPath = path ? `${path}/${item.name}` : item.name
+            extractFiles(item.children, fullPath)
+          }
+        }
+      }
+
+      extractFiles(fileStructure)
+
+      // Sort by priority and fetch content
+      const sortedFiles = Object.entries(sourceFiles)
+        .sort(([, a], [, b]) => b.priority - a.priority)
+        .slice(0, maxFiles)
+
+      const codeFiles = {}
+      for (const [filePath, fileInfo] of sortedFiles) {
+        try {
+          const response = await client.get(`/repos/${owner}/${repo}/contents/${filePath}`)
+
+          if (response.data.type === 'file' && response.data.content) {
+            const content = Buffer.from(response.data.content, 'base64').toString('utf-8')
+
+            // Only include files that aren't too large and contain meaningful code
+            if (content.length < 50000 && content.trim().length > 50) {
+              codeFiles[filePath] = {
+                content: content.substring(0, 10000), // Limit for analysis
+                size: response.data.size,
+                language: this.detectLanguage(filePath),
+                priority: fileInfo.priority
+              }
+            }
+          }
+        } catch (error) {
+          // File might be binary or inaccessible, continue
+          continue
+        }
+      }
+
+      return codeFiles
+    } catch (error) {
+      console.error(`Error fetching source code files for ${owner}/${repo}:`, error.message)
+      return {}
+    }
+  }
+
+  // Detect programming language from file extension
+  detectLanguage(filePath) {
+    const extension = filePath.split('.').pop().toLowerCase()
+    const languageMap = {
+      'js': 'JavaScript',
+      'jsx': 'JavaScript (React)',
+      'ts': 'TypeScript',
+      'tsx': 'TypeScript (React)',
+      'py': 'Python',
+      'java': 'Java',
+      'go': 'Go',
+      'rs': 'Rust',
+      'php': 'PHP',
+      'rb': 'Ruby',
+      'cpp': 'C++',
+      'c': 'C',
+      'cs': 'C#',
+      'swift': 'Swift',
+      'kt': 'Kotlin',
+      'scala': 'Scala',
+      'vue': 'Vue.js',
+      'svelte': 'Svelte'
+    }
+    return languageMap[extension] || extension.toUpperCase()
+  }
+
+  // Analyze API endpoints and routes from source code
+  analyzeAPIEndpoints(codeFiles) {
+    const endpoints = []
+    const routePatterns = [
+      // Express.js patterns
+      /(?:router|app)\.(get|post|put|delete|patch)\s*\(\s*['"`]([^'"`]+)['"`]/gi,
+      // FastAPI patterns
+      /@app\.(get|post|put|delete|patch)\s*\(\s*['"`]([^'"`]+)['"`]/gi,
+      // Flask patterns
+      /@app\.route\s*\(\s*['"`]([^'"`]+)['"`].*?methods\s*=\s*\[['"`]([^'"`]+)['"`]\]/gi,
+      // Spring Boot patterns
+      /@(Get|Post|Put|Delete|Patch)Mapping\s*\(\s*['"`]([^'"`]+)['"`]/gi,
+      // Django patterns
+      /path\s*\(\s*['"`]([^'"`]+)['"`]/gi
+    ]
+
+    for (const [filePath, fileInfo] of Object.entries(codeFiles)) {
+      const content = fileInfo.content
+
+      for (const pattern of routePatterns) {
+        let match
+        while ((match = pattern.exec(content)) !== null) {
+          const method = match[1]?.toUpperCase() || 'GET'
+          const path = match[2] || match[1]
+
+          if (path && !path.includes('*') && path.length < 100) {
+            endpoints.push({
+              method,
+              path: path.startsWith('/') ? path : `/${path}`,
+              file: filePath,
+              language: fileInfo.language
+            })
+          }
+        }
+      }
+    }
+
+    // Remove duplicates and sort
+    const uniqueEndpoints = endpoints.filter((endpoint, index, self) =>
+      index === self.findIndex(e => e.method === endpoint.method && e.path === endpoint.path)
+    ).sort((a, b) => a.path.localeCompare(b.path))
+
+    return uniqueEndpoints.slice(0, 20) // Limit to 20 endpoints
+  }
+
+  // Extract environment variables from code and config files
+  analyzeEnvironmentVariables(keyFiles, codeFiles) {
+    const envVars = new Set()
+    const patterns = [
+      /process\.env\.([A-Z_][A-Z0-9_]*)/gi,
+      /os\.environ\.get\s*\(\s*['"`]([A-Z_][A-Z0-9_]*)['"`]/gi,
+      /System\.getenv\s*\(\s*['"`]([A-Z_][A-Z0-9_]*)['"`]/gi,
+      /\$\{([A-Z_][A-Z0-9_]*)\}/gi,
+      /env\(['"`]([A-Z_][A-Z0-9_]*)['"`]\)/gi
+    ]
+
+    // Check .env.example file first
+    if (keyFiles['.env.example']) {
+      const envContent = keyFiles['.env.example'].content
+      const envLines = envContent.split('\n')
+      for (const line of envLines) {
+        const match = line.match(/^([A-Z_][A-Z0-9_]*)\s*=/)
+        if (match) {
+          envVars.add(match[1])
+        }
+      }
+    }
+
+    // Check source code files
+    const allFiles = { ...keyFiles, ...codeFiles }
+    for (const [filePath, fileInfo] of Object.entries(allFiles)) {
+      const content = fileInfo.content
+
+      for (const pattern of patterns) {
+        let match
+        while ((match = pattern.exec(content)) !== null) {
+          if (match[1] && match[1].length > 2) {
+            envVars.add(match[1])
+          }
+        }
+      }
+    }
+
+    return Array.from(envVars).sort()
   }
 
   // Update repository file (wrapper for repository README deployment)

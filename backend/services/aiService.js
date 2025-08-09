@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import OpenAI from 'openai'
 
 class AIService {
   constructor() {
@@ -6,12 +7,15 @@ class AIService {
     this.model = null
     this.isConfigured = null
     this.initialized = false
+    this.openRouterClient = null
+    this.openRouterConfigured = false
   }
 
-  // Initialize Gemini AI (called lazily)
+  // Initialize AI services (called lazily)
   initialize() {
     if (this.initialized) return
 
+    // Initialize Gemini AI
     if (process.env.GEMINI_API_KEY) {
       try {
         this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
@@ -31,13 +35,43 @@ class AIService {
       this.isConfigured = false
     }
 
+    // Initialize OpenRouter AI
+    if (process.env.OPENROUTER_API_KEY) {
+      try {
+        this.openRouterClient = new OpenAI({
+          apiKey: process.env.OPENROUTER_API_KEY,
+          baseURL: 'https://openrouter.ai/api/v1',
+          defaultHeaders: {
+            'HTTP-Referer': process.env.FRONTEND_URL || 'http://localhost:3000',
+            'X-Title': 'AutoGitPilot Repository README Generator'
+          }
+        })
+        this.openRouterConfigured = true
+        console.log('✅ OpenRouter AI configured for repository README generation')
+      } catch (error) {
+        console.error('❌ Error initializing OpenRouter AI:', error.message)
+        this.openRouterClient = null
+        this.openRouterConfigured = false
+      }
+    } else {
+      console.warn('⚠️ OpenRouter API key not configured. Using Gemini as primary provider.')
+      this.openRouterClient = null
+      this.openRouterConfigured = false
+    }
+
     this.initialized = true
   }
 
   // Check if AI service is configured
   isAvailable() {
     this.initialize()
-    return this.isConfigured
+    return this.isConfigured || this.openRouterConfigured
+  }
+
+  // Check if OpenRouter is available
+  isOpenRouterAvailable() {
+    this.initialize()
+    return this.openRouterConfigured
   }
 
   // Generate README content using Gemini AI
@@ -561,8 +595,30 @@ Return only the commit message, nothing else.`
       // Get key files content for analysis
       const keyFiles = await githubService.getKeyRepositoryFiles(githubToken, owner, repo)
 
+      // Get source code files for deep analysis
+      const sourceCodeFiles = await githubService.getSourceCodeFiles(githubToken, owner, repo, fileStructure.data)
+
+      // Get repository languages
+      const languagesResult = await githubService.getRepositoryLanguages(githubToken, owner, repo)
+      if (languagesResult.success) {
+        repoInfo.data.languages = languagesResult.data
+      }
+
+      // Analyze API endpoints
+      const apiEndpoints = githubService.analyzeAPIEndpoints(sourceCodeFiles)
+
+      // Analyze environment variables
+      const environmentVariables = githubService.analyzeEnvironmentVariables(keyFiles, sourceCodeFiles)
+
       // Analyze with AI
-      const analysisPrompt = this.buildRepositoryAnalysisPrompt(repoInfo.data, fileStructure.data, keyFiles)
+      const analysisPrompt = this.buildRepositoryAnalysisPrompt(
+        repoInfo.data,
+        fileStructure.data,
+        keyFiles,
+        sourceCodeFiles,
+        apiEndpoints,
+        environmentVariables
+      )
 
       const modelNames = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro']
 
@@ -598,12 +654,107 @@ Return only the commit message, nothing else.`
     }
   }
 
-  // Generate repository README content using AI
+  // Generate repository README content using OpenRouter AI
+  async generateRepositoryReadmeWithOpenRouter(repositoryData, analysisData, template = 'web-application', customSections = {}) {
+    if (!this.openRouterConfigured) {
+      throw new Error('OpenRouter AI is not configured.')
+    }
+
+    const prompt = this.buildRepositoryReadmePrompt(repositoryData, analysisData, template, customSections)
+
+    // Use high-quality models for repository README generation
+    const models = [
+      'anthropic/claude-3-sonnet',
+      'openai/gpt-4-turbo',
+      'openai/gpt-4'
+    ]
+
+    let lastError = null
+
+    for (const modelName of models) {
+      try {
+        console.log(`🤖 Generating repository README with OpenRouter model: ${modelName}`)
+
+        const completion = await this.openRouterClient.chat.completions.create({
+          model: modelName,
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert technical writer specializing in creating comprehensive, professional README files for software repositories. Generate high-quality, detailed README content that follows best practices and provides real value to developers.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 8192,
+          top_p: 0.95
+        })
+
+        const readmeContent = completion.choices[0]?.message?.content
+
+        if (!readmeContent || readmeContent.trim().length < 100) {
+          throw new Error('Generated content is too short or empty')
+        }
+
+        console.log(`✅ Repository README generated successfully with OpenRouter model: ${modelName}`)
+        console.log(`📊 Generated ${readmeContent.length} characters`)
+
+        // Clean up and enhance the content
+        const cleanContent = this.cleanupAndEnhanceReadmeContent(readmeContent, repositoryData, analysisData)
+
+        return {
+          success: true,
+          content: cleanContent,
+          template: template,
+          generatedAt: new Date(),
+          wordCount: cleanContent.split(' ').length,
+          characterCount: cleanContent.length,
+          modelUsed: `OpenRouter:${modelName}`,
+          provider: 'openrouter',
+          quality: this.assessReadmeQuality(cleanContent)
+        }
+      } catch (error) {
+        lastError = error
+        console.warn(`⚠️ OpenRouter model ${modelName} failed:`, error.message)
+
+        // If it's the last model, don't continue
+        if (modelName === models[models.length - 1]) {
+          break
+        }
+
+        // Wait a bit before trying the next model
+        await new Promise(resolve => setTimeout(resolve, 1000))
+      }
+    }
+
+    // If all OpenRouter models failed, throw the last error
+    throw new Error(`All OpenRouter models failed to generate repository README. Last error: ${lastError?.message || 'Unknown error'}`)
+  }
+
+  // Generate repository README content using AI (with OpenRouter primary, Gemini fallback)
   async generateRepositoryReadmeContent(repositoryData, analysisData, template = 'web-application', customSections = {}) {
     this.initialize()
-    if (!this.isConfigured) {
-      throw new Error('Gemini AI is not configured. Please set GEMINI_API_KEY.')
+
+    // Try OpenRouter first if available
+    if (this.openRouterConfigured) {
+      try {
+        console.log('🚀 Attempting repository README generation with OpenRouter (primary provider)')
+        const result = await this.generateRepositoryReadmeWithOpenRouter(repositoryData, analysisData, template, customSections)
+        console.log('✅ Successfully generated repository README with OpenRouter')
+        return result
+      } catch (error) {
+        console.warn('⚠️ OpenRouter failed, falling back to Gemini:', error.message)
+      }
     }
+
+    // Fallback to Gemini
+    if (!this.isConfigured) {
+      throw new Error('No AI providers are configured. Please set OPENROUTER_API_KEY or GEMINI_API_KEY.')
+    }
+
+    console.log('🔄 Using Gemini as fallback provider for repository README generation')
 
     const prompt = this.buildRepositoryReadmePrompt(repositoryData, analysisData, template, customSections)
 
@@ -666,7 +817,8 @@ Return only the commit message, nothing else.`
           generatedAt: new Date(),
           wordCount: cleanContent.split(' ').length,
           characterCount: cleanContent.length,
-          modelUsed: modelName,
+          modelUsed: `Gemini:${modelName}`,
+          provider: 'gemini',
           quality: this.assessReadmeQuality(cleanContent)
         }
       } catch (error) {
@@ -688,7 +840,7 @@ Return only the commit message, nothing else.`
   }
 
   // Build repository analysis prompt
-  buildRepositoryAnalysisPrompt(repoInfo, fileStructure, keyFiles) {
+  buildRepositoryAnalysisPrompt(repoInfo, fileStructure, keyFiles, sourceCodeFiles = {}, apiEndpoints = [], environmentVariables = []) {
     const { name, description, language, languages, topics, license, homepage, size, stargazersCount, forksCount } = repoInfo
 
     let prompt = `You are an expert software architect analyzing a GitHub repository. Provide a comprehensive, accurate technical analysis that will be used to generate an excellent README.
@@ -711,32 +863,59 @@ ${JSON.stringify(fileStructure, null, 2)}
 KEY FILES CONTENT:
 ${keyFiles ? JSON.stringify(keyFiles, null, 2) : 'No key files analyzed'}
 
+SOURCE CODE ANALYSIS:
+${Object.keys(sourceCodeFiles).length > 0 ? JSON.stringify(sourceCodeFiles, null, 2) : 'No source code files analyzed'}
+
+API ENDPOINTS DETECTED:
+${apiEndpoints.length > 0 ? JSON.stringify(apiEndpoints, null, 2) : 'No API endpoints detected'}
+
+ENVIRONMENT VARIABLES:
+${environmentVariables.length > 0 ? environmentVariables.join(', ') : 'No environment variables detected'}
+
 ANALYSIS REQUIREMENTS:
-Analyze this repository thoroughly and provide detailed information in JSON format. Be specific and accurate - this analysis will be used to create a professional README.
+Analyze this repository thoroughly and provide detailed, accurate information in JSON format. Focus on REAL project details, not generic placeholders. This analysis will be used to create a professional, project-specific README.
+
+DEEP ANALYSIS INSTRUCTIONS:
+1. **Project Understanding**: Examine the actual code to understand what this project REALLY does
+2. **Feature Detection**: Identify actual implemented features from the source code
+3. **Architecture Analysis**: Understand the real code structure and patterns used
+4. **Technology Stack**: Identify all technologies, frameworks, and tools actually used
+5. **API Documentation**: Extract real API endpoints and their purposes
+6. **Setup Requirements**: Determine actual installation and setup steps from package files
+7. **Usage Examples**: Identify how the project is actually used based on code patterns
+8. **Configuration**: Find real configuration requirements and environment variables
 
 Required JSON Response Format:
 {
   "projectType": "web-application|library-package|cli-tool|api-service|mobile-app|data-science|game-entertainment|educational",
-  "technologies": ["specific technologies used - be comprehensive"],
-  "frameworks": ["frameworks and libraries used"],
-  "buildTools": ["build tools like webpack, vite, gradle, maven, etc."],
-  "packageManagers": ["npm, yarn, pip, composer, cargo, etc."],
-  "databases": ["databases if any - mysql, postgresql, mongodb, etc."],
-  "deploymentPlatforms": ["vercel, netlify, aws, docker, etc. if detectable"],
-  "mainFiles": ["main entry point files like index.js, main.py, app.js"],
-  "configFiles": ["configuration files found"],
+  "realProjectDescription": "Accurate description based on actual code analysis, not the GitHub description",
+  "technologies": ["specific technologies actually used - be comprehensive and accurate"],
+  "frameworks": ["frameworks and libraries actually used in the code"],
+  "buildTools": ["actual build tools detected from config files"],
+  "packageManagers": ["package managers actually used"],
+  "databases": ["databases actually used - detected from code/config"],
+  "deploymentPlatforms": ["deployment platforms detected from config files"],
+  "mainFiles": ["actual main entry point files found"],
+  "configFiles": ["actual configuration files found"],
   "hasTests": true/false,
+  "testingFrameworks": ["testing frameworks actually used"],
   "hasDocumentation": true/false,
   "hasCI": true/false,
+  "ciPlatforms": ["CI platforms detected from .github/workflows or other CI configs"],
   "estimatedComplexity": "simple|moderate|complex",
-  "keyFeatures": ["specific features this project provides - be detailed"],
-  "architecture": "detailed description of the project architecture and structure",
-  "setupInstructions": "specific setup instructions based on the project type and dependencies",
-  "useCases": ["who would use this and why"],
-  "prerequisites": ["what users need before using this project"],
-  "apiEndpoints": ["if it's an API, list main endpoints"],
-  "environmentVariables": ["environment variables needed if any"],
-  "deploymentNotes": ["deployment considerations and instructions"]
+  "actualFeatures": ["real features implemented - extracted from code analysis"],
+  "codeArchitecture": "detailed description of actual code architecture and patterns",
+  "realSetupInstructions": ["step-by-step setup instructions based on actual requirements"],
+  "actualUseCases": ["real use cases based on code functionality"],
+  "prerequisites": ["actual required software/tools based on dependencies"],
+  "realAPIEndpoints": ["actual API endpoints with methods and descriptions"],
+  "actualEnvironmentVariables": ["real environment variables found in code"],
+  "deploymentInstructions": ["actual deployment steps based on config files"],
+  "codeExamples": ["real code usage examples extracted from the repository"],
+  "projectStructure": "explanation of the actual project structure and organization",
+  "keyDependencies": ["most important dependencies and their purposes"],
+  "performanceConsiderations": ["performance-related aspects found in the code"],
+  "securityFeatures": ["security measures implemented in the code"]
 }
 
 ANALYSIS GUIDELINES:
@@ -810,130 +989,199 @@ Provide ONLY the JSON response - no additional text or explanations.`
   // Build repository README prompt
   buildRepositoryReadmePrompt(repositoryData, analysisData, template, customSections) {
     const { name, description, language, topics, license, homepage, stargazersCount, forksCount } = repositoryData
-    const { projectType, technologies, frameworks, keyFeatures, architecture, setupInstructions, hasTests, hasCI, buildTools, packageManagers } = analysisData
+
+    // Extract comprehensive analysis data
+    const {
+      projectType, technologies, frameworks, keyFeatures, architecture, setupInstructions, hasTests, hasCI,
+      buildTools, packageManagers, realProjectDescription, actualFeatures, codeArchitecture,
+      realSetupInstructions, actualUseCases, prerequisites, realAPIEndpoints, actualEnvironmentVariables,
+      deploymentInstructions, codeExamples, projectStructure, keyDependencies, performanceConsiderations,
+      securityFeatures, testingFrameworks, ciPlatforms, mainFiles, configFiles
+    } = analysisData
 
     // Generate technology badges
     const techBadges = this.generateTechnologyBadges(technologies, frameworks, language)
 
-    let prompt = `You are an expert technical writer creating a world-class README.md file. Create a comprehensive, professional, and visually stunning README that developers will love to read and use.
+    let prompt = `You are an expert technical writer creating a world-class README.md file. Create a comprehensive, professional, and project-specific README that accurately reflects the actual repository content.
 
-IMPORTANT: This README must be SPECIFIC to the actual repository content, not generic. Use the provided repository analysis to create accurate, detailed content.
+🎯 CRITICAL REQUIREMENT: Generate REAL, PROJECT-SPECIFIC content based on the actual code analysis. NO generic placeholders or template content.
 
-REPOSITORY CONTEXT:
+REPOSITORY ANALYSIS DATA:
 📦 Project: ${name}
-📝 Description: ${description || 'A modern software project'}
-🏷️ Type: ${projectType}
+📝 GitHub Description: ${description || 'No description provided'}
+🔍 Real Project Description: ${realProjectDescription || 'Analyze the code to determine actual purpose'}
+🏷️ Project Type: ${projectType}
 💻 Primary Language: ${language || 'Multiple'}
-🛠️ Technologies: ${technologies ? technologies.join(', ') : 'Modern tech stack'}
-🚀 Frameworks: ${frameworks ? frameworks.join(', ') : 'Industry standard'}
-🏷️ Topics: ${topics ? topics.join(', ') : 'Software development'}
-📄 License: ${license || 'Open source'}
-🌐 Homepage: ${homepage || 'GitHub repository'}
+🛠️ Technologies: ${technologies ? technologies.join(', ') : 'Not detected'}
+🚀 Frameworks: ${frameworks ? frameworks.join(', ') : 'None detected'}
+🏷️ Topics: ${topics ? topics.join(', ') : 'None'}
+📄 License: ${license || 'Not specified'}
+🌐 Homepage: ${homepage || 'None'}
 ⭐ Stars: ${stargazersCount || 0}
 🍴 Forks: ${forksCount || 0}
-✅ Has Tests: ${hasTests ? 'Yes' : 'No'}
-🔄 Has CI/CD: ${hasCI ? 'Yes' : 'No'}
-🔧 Build Tools: ${buildTools ? buildTools.join(', ') : 'Standard tools'}
-📦 Package Managers: ${packageManagers ? packageManagers.join(', ') : 'Standard managers'}
 
-KEY FEATURES IDENTIFIED: ${keyFeatures ? keyFeatures.join(', ') : 'Modern features'}
-ARCHITECTURE: ${architecture || 'Standard architecture'}
-SETUP INSTRUCTIONS: ${setupInstructions || 'Standard setup'}
+TECHNICAL DETAILS:
+✅ Has Tests: ${hasTests ? 'Yes' : 'No'}
+🧪 Testing Frameworks: ${testingFrameworks ? testingFrameworks.join(', ') : 'None detected'}
+🔄 Has CI/CD: ${hasCI ? 'Yes' : 'No'}
+🏗️ CI Platforms: ${ciPlatforms ? ciPlatforms.join(', ') : 'None detected'}
+🔧 Build Tools: ${buildTools ? buildTools.join(', ') : 'None detected'}
+📦 Package Managers: ${packageManagers ? packageManagers.join(', ') : 'None detected'}
+📁 Main Files: ${mainFiles ? mainFiles.join(', ') : 'None detected'}
+⚙️ Config Files: ${configFiles ? configFiles.join(', ') : 'None detected'}
+
+ACTUAL PROJECT ANALYSIS:
+🎯 Real Features: ${actualFeatures ? actualFeatures.join(', ') : 'Analyze code to identify features'}
+🏗️ Code Architecture: ${codeArchitecture || 'Analyze code structure and patterns'}
+📋 Setup Instructions: ${realSetupInstructions ? realSetupInstructions.join(' → ') : 'Derive from package files'}
+🎪 Use Cases: ${actualUseCases ? actualUseCases.join(', ') : 'Determine from code functionality'}
+📚 Prerequisites: ${prerequisites ? prerequisites.join(', ') : 'Analyze dependencies'}
+🔗 API Endpoints: ${realAPIEndpoints ? realAPIEndpoints.map(ep => `${ep.method} ${ep.path}`).join(', ') : 'None detected'}
+🌍 Environment Variables: ${actualEnvironmentVariables ? actualEnvironmentVariables.join(', ') : 'None detected'}
+🚀 Deployment: ${deploymentInstructions ? deploymentInstructions.join(' → ') : 'Standard deployment'}
+📦 Key Dependencies: ${keyDependencies ? keyDependencies.join(', ') : 'Analyze package files'}
+⚡ Performance: ${performanceConsiderations ? performanceConsiderations.join(', ') : 'Standard considerations'}
+🔒 Security: ${securityFeatures ? securityFeatures.join(', ') : 'Standard security'}
+🏗️ Project Structure: ${projectStructure || 'Analyze directory structure'}
 
 TEMPLATE STYLE: ${template}
 
-REQUIREMENTS:
-Create a README that is:
-✨ Visually appealing with proper emoji usage
-📚 Easy to read and understand for all skill levels
-🎯 Focused on getting users started quickly
-🔧 Includes practical, working examples SPECIFIC to this repository
-📖 Well-structured with clear sections
-🚀 Motivates users to try the project
-🎯 MUST reflect the actual repository structure and purpose
-🔍 Use REAL file names, technologies, and architecture from the analysis
-📝 Avoid generic placeholders - be specific and accurate
+🎯 CRITICAL INSTRUCTIONS:
+Generate a README that is SPECIFIC to this actual repository. Use the real analysis data provided above. NO generic content or placeholders.
+
+CONTENT REQUIREMENTS:
+✨ Professional, visually appealing with strategic emoji usage
+📚 Clear and accessible for developers of all skill levels
+🎯 Focused on practical implementation and real usage
+🔧 Contains ACTUAL working examples from the repository
+📖 Well-structured with logical flow and clear sections
+🚀 Motivates developers to use and contribute to the project
+🔍 Uses REAL file names, directory structures, and code patterns
+📝 Reflects the ACTUAL technology stack and architecture
+⚡ Includes performance considerations and best practices
+🔒 Documents security features and considerations
+🧪 Covers testing strategies and CI/CD processes
 
 MANDATORY SECTIONS TO INCLUDE:
 
 1. **HEADER SECTION**
-   - Eye-catching title with appropriate emoji
-   - Compelling one-line description
-   - Technology badges (use shield.io format)
-   - Quick stats (stars, forks, license)
-   - Demo/live link if applicable
+   - Project title with relevant emoji based on project type
+   - Compelling tagline based on ACTUAL project functionality
+   - Technology badges for REAL technologies used: ${techBadges}
+   - Repository stats (stars: ${stargazersCount}, forks: ${forksCount})
+   - License badge: ${license || 'Not specified'}
+   - Live demo link if homepage exists: ${homepage || 'None'}
 
 2. **TABLE OF CONTENTS**
-   - Clean, clickable navigation
-   - All major sections linked
+   - Comprehensive navigation to all sections
+   - Clickable links for easy navigation
 
-3. **OVERVIEW/ABOUT**
-   - What the project ACTUALLY does based on the repository analysis (2-3 sentences)
+3. **PROJECT OVERVIEW**
+   - What this project ACTUALLY does (based on real analysis)
+   - Real-world problem it solves
+   - Target audience and use cases from actual analysis
    - Why it's useful/unique based on the technologies and architecture found
    - Who should use it based on the project type and complexity
 
 4. **KEY FEATURES**
-   - 4-6 bullet points with emojis based on ACTUAL repository capabilities
-   - Focus on user benefits derived from the real technologies used
-   - Highlight unique selling points based on the architecture and frameworks found
+   - List ACTUAL features implemented in the codebase
+   - Use emojis and focus on real user benefits
+   - Highlight unique aspects of the technology stack
+   - Include performance, security, or scalability features if detected
 
-5. **QUICK START**
-   - Prerequisites clearly listed
-   - Step-by-step installation
-   - Basic usage example
-   - "Hello World" equivalent
+5. **TECHNOLOGY STACK**
+   - Comprehensive list of technologies actually used
+   - Brief explanation of why each technology was chosen
+   - Architecture diagram or description if complex
+   - Dependencies and their purposes
 
-6. **INSTALLATION**
-   - Multiple installation methods if applicable
-   - Platform-specific instructions
-   - Troubleshooting common issues
+6. **QUICK START**
+   - Prerequisites based on ACTUAL dependencies: ${prerequisites ? prerequisites.join(', ') : 'Analyze package files'}
+   - Step-by-step installation using REAL package managers: ${packageManagers ? packageManagers.join(' or ') : 'detected managers'}
+   - Basic usage example with REAL file names and commands
+   - Expected output or result
 
-7. **USAGE EXAMPLES**
-   - Real, working code examples using the ACTUAL technologies found (${technologies ? technologies.join(', ') : 'detected technologies'})
-   - Multiple use cases based on the project type (${projectType})
-   - Expected outputs relevant to the application
-   - Progressive complexity (basic → advanced) using real file structures
+7. **INSTALLATION & SETUP**
+   - Detailed installation for different environments
+   - Environment variable setup: ${actualEnvironmentVariables ? actualEnvironmentVariables.join(', ') : 'None required'}
+   - Configuration file setup if needed
+   - Database setup if applicable
+   - Troubleshooting common installation issues
 
-8. **API DOCUMENTATION** (if applicable)
-   - Key endpoints/methods
-   - Request/response examples
-   - Authentication if needed
+8. **USAGE EXAMPLES**
+   - Real, working code examples using ACTUAL technologies: ${technologies ? technologies.join(', ') : 'detected technologies'}
+   - Multiple use cases based on project type: ${projectType}
+   - Code snippets from actual repository files
+   - Expected outputs and results
+   - Progressive examples (basic → intermediate → advanced)
 
-9. **CONFIGURATION** (if applicable)
-   - Environment variables
-   - Config file examples
-   - Common settings
+9. **API DOCUMENTATION** (if API endpoints detected)
+   - Document REAL endpoints: ${realAPIEndpoints ? realAPIEndpoints.map(ep => `${ep.method} ${ep.path}`).join(', ') : 'None detected'}
+   - Request/response examples with actual data structures
+   - Authentication methods if implemented
+   - Error handling and status codes
+   - Rate limiting information if applicable
 
-10. **CONTRIBUTING**
-    - How to contribute
-    - Development setup
-    - Code style guidelines
-    - Issue reporting
+10. **PROJECT STRUCTURE**
+    - Explain the ACTUAL directory structure
+    - Key files and their purposes: ${mainFiles ? mainFiles.join(', ') : 'Main files'}
+    - Configuration files: ${configFiles ? configFiles.join(', ') : 'Config files'}
+    - Code organization patterns
 
-11. **TESTING** (if tests exist)
+11. **CONFIGURATION**
+    - Environment variables with descriptions: ${actualEnvironmentVariables ? actualEnvironmentVariables.join(', ') : 'None detected'}
+    - Configuration file examples with real settings
+    - Development vs production configurations
+    - Security considerations for configuration
+
+12. **TESTING** (if tests detected)
+    - Testing frameworks used: ${testingFrameworks ? testingFrameworks.join(', ') : 'None detected'}
     - How to run tests
-    - Test coverage info
+    - Test coverage information
     - Writing new tests
 
-12. **DEPLOYMENT** (if applicable)
-    - Deployment instructions
-    - Environment setup
-    - Production considerations
+13. **DEPLOYMENT**
+    - Deployment instructions based on detected platforms
+    - CI/CD setup: ${ciPlatforms ? ciPlatforms.join(', ') : 'None detected'}
+    - Environment-specific considerations
+    - Performance optimization tips
 
-13. **ROADMAP/CHANGELOG**
-    - Upcoming features
-    - Recent changes
-    - Version history
+15. **PERFORMANCE & OPTIMIZATION**
+    - Performance considerations: ${performanceConsiderations ? performanceConsiderations.join(', ') : 'Standard performance'}
+    - Optimization tips based on technology stack
+    - Monitoring and profiling guidance
 
-14. **LICENSE & ACKNOWLEDGMENTS**
-    - License information
-    - Credits and thanks
-    - Third-party libraries
+16. **SECURITY**
+    - Security features implemented: ${securityFeatures ? securityFeatures.join(', ') : 'Standard security'}
+    - Best practices for secure usage
+    - Vulnerability reporting process
 
-15. **SUPPORT & CONTACT**
-    - How to get help
-    - Community links
-    - Maintainer contact
+17. **TROUBLESHOOTING**
+    - Common issues and solutions
+    - Debug mode instructions
+    - Log file locations and analysis
+
+18. **LICENSE & ACKNOWLEDGMENTS**
+    - License: ${license || 'Not specified'}
+    - Credits and acknowledgments
+    - Third-party dependencies and licenses
+
+19. **SUPPORT & COMMUNITY**
+    - How to get help and support
+    - Community guidelines and links
+    - Maintainer contact information
+
+FINAL REQUIREMENTS:
+- Use REAL data from the repository analysis throughout
+- Include actual code snippets and file references
+- Provide working examples that users can copy and run
+- Make it comprehensive but easy to navigate
+- Ensure all links and references are accurate
+- Use professional tone with appropriate technical depth
+- Include visual elements (badges, emojis) strategically
+- Make it actionable - users should be able to get started immediately
+
+Generate a complete, professional README.md that accurately represents this specific repository.
 
 FORMATTING GUIDELINES:
 - Use appropriate emojis (but don't overuse)
