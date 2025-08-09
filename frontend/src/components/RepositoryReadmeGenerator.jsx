@@ -244,10 +244,10 @@ const RepositoryReadmeGenerator = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          AI-Powered Repository README Generator
+          Repository README Generator AI - Create Project Documentation
         </h1>
         <p className="text-gray-600 dark:text-gray-300">
-          Analyze your repository and generate a comprehensive README.md with AI assistance
+          Generate comprehensive repository READMEs with AI. Perfect for documenting your projects with installation guides, usage examples, and professional formatting using our advanced repository README generator.
         </p>
         
         {/* Usage Info */}

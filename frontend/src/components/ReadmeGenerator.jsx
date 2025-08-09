@@ -251,10 +251,10 @@ const ReadmeGenerator = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          AI-Powered README Generator
+          GitHub README AI - Best AI README Generator for GitHub Profiles
         </h1>
         <p className="text-gray-600 dark:text-gray-300">
-          Create a professional GitHub profile README with AI assistance
+          The ultimate GitHub README AI tool for creating professional GitHub profile READMEs. Our advanced README AI generates stunning, customizable profiles that showcase your skills and attract employers.
         </p>
         
         {/* Free User Try-Before-Buy Message */}

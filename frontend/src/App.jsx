@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
+import { HelmetProvider } from 'react-helmet-async'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { UserProvider } from './contexts/UserContext'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -16,6 +17,7 @@ import SignUpPage from './pages/SignUpPage'
 import PatternGenerator from './components/PatternGenerator'
 import ReadmeGeneratorPage from './pages/ReadmeGeneratorPage'
 import RepositoryReadmeGeneratorPage from './pages/RepositoryReadmeGeneratorPage'
+import GitHubReadmeAI from './pages/GitHubReadmeAI'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 
 import ImageTest from './components/ImageTest'
@@ -28,12 +30,13 @@ import AboutUs from './pages/AboutUs'
 
 function App() {
   return (
-    <ErrorBoundary>
-      <ThemeProvider>
-        <UserProvider>
-          <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1">
+    <HelmetProvider>
+      <ErrorBoundary>
+        <ThemeProvider>
+          <UserProvider>
+            <div className="min-h-screen flex flex-col">
+              <Navbar />
+              <main className="flex-1">
               <Routes>
               {/* Public routes */}
               <Route path="/" element={<LandingPage />} />
@@ -85,6 +88,11 @@ function App() {
                   <ReadmeGeneratorPage />
                 </ProtectedRoute>
               } />
+              <Route path="/github-readme-ai" element={
+                <ProtectedRoute>
+                  <GitHubReadmeAI />
+                </ProtectedRoute>
+              } />
               <Route path="/repository-readme-generator" element={
                 <ProtectedRoute>
                   <RepositoryReadmeGeneratorPage />
@@ -97,6 +105,7 @@ function App() {
         </UserProvider>
       </ThemeProvider>
     </ErrorBoundary>
+    </HelmetProvider>
   )
 }
 

@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+
+# Allow all search engines to crawl the site
+Allow: /readme-generator
+Allow: /repository-readme-generator
+Allow: /dashboard
+Allow: /about
+Allow: /contact
+Allow: /privacy-policy
+Allow: /terms-of-service
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /settings
+Disallow: /upgrade
+Disallow: /connect
+
+# Sitemap location
+Sitemap: https://automaxlib.com/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1

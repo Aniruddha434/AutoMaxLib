@@ -6,6 +6,9 @@ import { PricingCard } from '../components/ui/pricing'
 import { CircularTestimonials } from '../components/ui/circular-testimonials'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import { CompareSection } from '../components/CompareShowcase'
+import SEOHead from '../components/SEOHead'
+import { seoData } from '../utils/seoData'
+import SEOFAQSection from '../components/SEOFAQSection'
 import {
   GitBranch,
   Clock,
@@ -50,20 +53,20 @@ const LandingPage = () => {
   const features = [
     {
       icon: Clock,
-      title: "Smart Scheduling",
-      description: "Set your perfect commit times and let AutoMaxLib maintain your streak while you focus on what matters most.",
+      title: "Auto Commit AI Scheduling",
+      description: "Smart auto commit AI that maintains your GitHub contribution streak with intelligent scheduling and meaningful commits.",
       color: "from-blue-500 to-cyan-500"
     },
     {
       icon: GitBranch,
-      title: "Multi-Repository Support",
-      description: "Connect unlimited repositories and manage them all from one elegant dashboard with intelligent automation.",
+      title: "Multi-Repository GitHub Tools",
+      description: "Connect unlimited repositories with our GitHub contribution tools and manage them all from one elegant dashboard.",
       color: "from-purple-500 to-pink-500"
     },
     {
       icon: Sparkles,
-      title: "AI-Powered Content",
-      description: "Generate meaningful commits with advanced AI that understands your coding patterns and project context.",
+      title: "GitHub README AI",
+      description: "Create stunning GitHub profile READMEs with our advanced GitHub README AI. The best README AI generator for professional GitHub profiles.",
       color: "from-amber-500 to-orange-500"
     },
     {
@@ -231,20 +234,28 @@ const LandingPage = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <>
+      <SEOHead
+        title={seoData.home.title}
+        description={seoData.home.description}
+        keywords={seoData.home.keywords}
+        canonicalUrl="/"
+        structuredData={seoData.home.structuredData}
+      />
+      <div className="min-h-screen">
       {/* Hero Section */}
       <section ref={heroRef} className="bg-gray-50 py-16 md:py-32 dark:bg-transparent">
         <div className="mx-auto max-w-3xl lg:max-w-5xl px-6">
           <div className="text-center space-y-8">
             {/* Main Headline */}
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 dark:text-white leading-tight animate-fade-in-up">
-              Never Break Your Coding Streak Again
+              GitHub README AI -README Generator & Auto Commit Tools
             </h1>
 
             {/* Subheadline */}
             <p className="text-lg text-foreground max-w-2xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              AutoMaxLib intelligently maintains your contribution graph with meaningful commits,
-              helping you build consistent coding habits and showcase your dedication to potential employers.
+              AutoMaxLib is the leading GitHub README AI platform. Create professional GitHub READMEs with our advanced README AI generator,
+              plus auto commit tools and GitHub contribution features to boost your developer profile.
             </p>
 
             {/* CTA Buttons */}
@@ -590,6 +601,9 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <SEOFAQSection />
+
       {/* Final CTA Section */}
       <section className="bg-gray-50 dark:bg-transparent">
         <div className="container-custom section text-center">
@@ -649,6 +663,7 @@ const LandingPage = () => {
 
       </section>
     </div>
+    </>
   )
 }
 

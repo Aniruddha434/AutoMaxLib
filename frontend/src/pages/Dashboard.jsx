@@ -6,6 +6,8 @@ import { githubService } from '../services/githubService'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import TrialStatus from '../components/TrialStatus'
 import Progress from '../components/ui/Progress'
+import SEOHead from '../components/SEOHead'
+import { seoData } from '../utils/seoData'
 import {
   GitBranch,
   Clock,
@@ -1335,7 +1337,15 @@ const Dashboard = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-neutral-950">
+    <>
+      <SEOHead
+        title={seoData.autoCommit.title}
+        description={seoData.autoCommit.description}
+        keywords={seoData.autoCommit.keywords}
+        canonicalUrl="/dashboard"
+        structuredData={seoData.autoCommit.structuredData}
+      />
+      <div className="min-h-screen bg-gray-50 dark:bg-neutral-950">
       {/* Header */}
       <div className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1459,6 +1469,7 @@ const Dashboard = () => {
 
       </div>
     </div>
+    </>
   )
 }
 

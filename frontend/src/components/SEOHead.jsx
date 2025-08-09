@@ -1,0 +1,58 @@
+import { Helmet } from 'react-helmet-async'
+
+const SEOHead = ({ 
+  title, 
+  description, 
+  keywords, 
+  canonicalUrl, 
+  ogImage = '/logo.svg',
+  ogType = 'website',
+  structuredData,
+  noIndex = false 
+}) => {
+  const baseUrl = 'https://automaxlib.com'
+  const fullUrl = canonicalUrl ? `${baseUrl}${canonicalUrl}` : baseUrl
+  const fullTitle = title ? `${title} | AutoMaxLib` : 'AutoMaxLib - AI-Powered GitHub Tools & Auto Commit Generator'
+
+  return (
+    <Helmet>
+      {/* Basic Meta Tags */}
+      <title>{fullTitle}</title>
+      <meta name="description" content={description} />
+      {keywords && <meta name="keywords" content={keywords} />}
+      <link rel="canonical" href={fullUrl} />
+      
+      {/* Robots */}
+      {noIndex && <meta name="robots" content="noindex, nofollow" />}
+      
+      {/* Open Graph / Facebook */}
+      <meta property="og:type" content={ogType} />
+      <meta property="og:url" content={fullUrl} />
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={`${baseUrl}${ogImage}`} />
+      <meta property="og:site_name" content="AutoMaxLib" />
+      
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:url" content={fullUrl} />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={`${baseUrl}${ogImage}`} />
+      
+      {/* Additional SEO Meta Tags */}
+      <meta name="author" content="AutoMaxLib" />
+      <meta name="language" content="en" />
+      <meta name="revisit-after" content="7 days" />
+      
+      {/* Structured Data */}
+      {structuredData && (
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      )}
+    </Helmet>
+  )
+}
+
+export default SEOHead
