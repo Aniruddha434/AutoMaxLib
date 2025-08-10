@@ -9,7 +9,7 @@ export const seoData = {
       "@type": "SoftwareApplication",
       "name": "AutoMaxLib - GitHub README AI",
       "description": "Leading GitHub README AI platform with intelligent README generation, auto commit tools, and GitHub contribution management",
-      "url": "https://automaxlib.com",
+      "url": "https://automaxlib.online",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Web",
       "offers": {
@@ -43,7 +43,7 @@ export const seoData = {
       "@type": "SoftwareApplication",
       "name": "GitHub README AI Generator",
       "description": "Advanced GitHub README AI tool for generating professional GitHub profile READMEs",
-      "url": "https://automaxlib.com/readme-generator",
+      "url": "https://automaxlib.online/readme-generator",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Web",
       "offers": {
@@ -83,7 +83,7 @@ export const seoData = {
       "@type": "SoftwareApplication",
       "name": "Repository README Generator",
       "description": "AI tool for generating comprehensive repository documentation and READMEs",
-      "url": "https://automaxlib.com/repository-readme-generator",
+      "url": "https://automaxlib.online/repository-readme-generator",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Web",
       "offers": {
@@ -116,7 +116,7 @@ export const seoData = {
       "@type": "SoftwareApplication",
       "name": "Auto Commit AI",
       "description": "Intelligent GitHub auto commit generator for maintaining contribution streaks",
-      "url": "https://automaxlib.com/dashboard",
+      "url": "https://automaxlib.online/dashboard",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Web",
       "offers": {
@@ -151,8 +151,8 @@ export const organizationStructuredData = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "AutoMaxLib",
-  "url": "https://automaxlib.com",
-  "logo": "https://automaxlib.com/logo.svg",
+  "url": "https://automaxlib.online",
+  "logo": "https://automaxlib.online/logo.svg",
   "description": "Leading provider of AI-powered GitHub automation tools and developer productivity solutions",
   "sameAs": [
     "https://github.com/automaxlib"
@@ -160,6 +160,6 @@ export const organizationStructuredData = {
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "customer service",
-    "url": "https://automaxlib.com/contact"
+    "url": "https://automaxlib.online/contact"
   }
 }

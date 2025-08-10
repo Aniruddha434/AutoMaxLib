@@ -36,7 +36,7 @@ const TermsOfService = () => {
               </p>
               <p>
                 These Terms of Service ("Terms") govern your use of our website located at
-                automaxlib.com and our service operated by AutoMaxLib.
+                automaxlib.online and our service operated by AutoMaxLib.
               </p>
             </div>
           </section>

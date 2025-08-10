@@ -35,7 +35,7 @@ const Footer = () => {
     },
     {
       label: 'Email',
-      href: 'mailto:support@automaxlib.com',
+      href: 'mailto:support@automaxlib.online',
       icon: Mail
     }
   ]

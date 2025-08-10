@@ -19,7 +19,7 @@ const EmailConflictModal = ({ isOpen, onClose, email, onRetry }) => {
 
   const handleContactSupport = () => {
     // You can replace this with your actual support contact method
-    window.open('mailto:support@automaxlib.com?subject=Email Conflict Issue&body=I am experiencing an email conflict with my account. Email: ' + email, '_blank')
+    window.open('mailto:support@automaxlib.online?subject=Email Conflict Issue&body=I am experiencing an email conflict with my account. Email: ' + email, '_blank')
   }
 
   if (!isOpen) return null

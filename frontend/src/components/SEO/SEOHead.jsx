@@ -12,7 +12,7 @@ const SEOHead = ({
   noIndex = false,
   children
 }) => {
-  const baseUrl = 'https://automaxlib.com'
+  const baseUrl = 'https://automaxlib.online'
   const fullTitle = title ? `${title} | AutoMaxLib` : 'AutoMaxLib - AI-Powered GitHub Automation & README Generator'
   const fullCanonicalUrl = canonicalUrl ? `${baseUrl}${canonicalUrl}` : baseUrl
   const fullOgImage = ogImage ? `${baseUrl}${ogImage}` : `${baseUrl}/og-image.png`

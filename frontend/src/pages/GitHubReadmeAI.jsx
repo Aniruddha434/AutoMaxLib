@@ -14,7 +14,7 @@ const GitHubReadmeAI = () => {
           "@type": "SoftwareApplication",
           "name": "GitHub README AI Generator",
           "description": "Advanced GitHub README AI tool for generating professional GitHub profile READMEs",
-          "url": "https://automaxlib.com/github-readme-ai",
+          "url": "https://automaxlib.online/github-readme-ai",
           "applicationCategory": "DeveloperApplication",
           "operatingSystem": "Web",
           "offers": {

@@ -10,7 +10,7 @@ const SEOHead = ({
   structuredData,
   noIndex = false 
 }) => {
-  const baseUrl = 'https://automaxlib.com'
+  const baseUrl = 'https://automaxlib.online'
   const fullUrl = canonicalUrl ? `${baseUrl}${canonicalUrl}` : baseUrl
   const fullTitle = title ? `${title} | AutoMaxLib` : 'AutoMaxLib - AI-Powered GitHub Tools & Auto Commit Generator'
 

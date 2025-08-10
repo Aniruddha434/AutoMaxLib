@@ -93,7 +93,7 @@ describe('EmailConflictModal', () => {
     fireEvent.click(supportButton)
     
     expect(mockOpen).toHaveBeenCalledWith(
-      expect.stringContaining('mailto:support@automaxlib.com'),
+      expect.stringContaining('mailto:support@automaxlib.online'),
       '_blank'
     )
   })

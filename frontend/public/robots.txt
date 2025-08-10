@@ -18,7 +18,7 @@ Disallow: /upgrade
 Disallow: /connect
 
 # Sitemap location
-Sitemap: https://automaxlib.com/sitemap.xml
+Sitemap: https://automaxlib.online/sitemap.xml
 
 # Crawl delay (optional)
 Crawl-delay: 1
