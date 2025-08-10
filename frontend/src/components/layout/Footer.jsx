@@ -77,51 +77,54 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Product Links */}
-          <div>
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-white uppercase tracking-wider mb-6 flex items-center">
-              Product
-              <div className="ml-2 w-8 h-0.5 bg-gradient-to-r from-primary-500 to-transparent"></div>
-            </h3>
-            <ul className="space-y-4">
-              {productLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    to={link.href}
-                    className="group flex items-center text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200"
-                  >
-                    <span className="group-hover:translate-x-1 transition-transform duration-200">
-                      {link.label}
-                    </span>
-                    {link.href.startsWith('http') && (
-                      <ExternalLink className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Product and Support Links - Side by side on mobile */}
+          <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 md:gap-8">
+            {/* Product Links */}
+            <div>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-white uppercase tracking-wider mb-6 flex items-center">
+                Product
+                <div className="ml-2 w-8 h-0.5 bg-gradient-to-r from-primary-500 to-transparent"></div>
+              </h3>
+              <ul className="space-y-4">
+                {productLinks.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      to={link.href}
+                      className="group flex items-center text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200"
+                    >
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {link.label}
+                      </span>
+                      {link.href.startsWith('http') && (
+                        <ExternalLink className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Support Links */}
-          <div>
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-white uppercase tracking-wider mb-6 flex items-center">
-              Support
-              <div className="ml-2 w-8 h-0.5 bg-gradient-to-r from-secondary-500 to-transparent"></div>
-            </h3>
-            <ul className="space-y-4">
-              {supportLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    to={link.href}
-                    className="group flex items-center text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200"
-                  >
-                    <span className="group-hover:translate-x-1 transition-transform duration-200">
-                      {link.label}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {/* Support Links */}
+            <div>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-white uppercase tracking-wider mb-6 flex items-center">
+                Support
+                <div className="ml-2 w-8 h-0.5 bg-gradient-to-r from-secondary-500 to-transparent"></div>
+              </h3>
+              <ul className="space-y-4">
+                {supportLinks.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      to={link.href}
+                      className="group flex items-center text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200"
+                    >
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {link.label}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
