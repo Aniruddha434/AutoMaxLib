@@ -1947,13 +1947,16 @@ REQUIREMENTS
 - No explanations before or after, just the Mermaid code block
 
 CRITICAL MERMAID SYNTAX RULES:
-- Node IDs must be simple alphanumeric (A, B, C1, API, DB, etc.) - NO SPACES
+- Node IDs must be simple alphanumeric (A, B, C1, API, DB, etc.) - NO SPACES OR SPECIAL CHARACTERS
 - Node labels go in brackets: A["API Gateway"] or B["React Frontend"]
 - Use underscores for multi-word IDs: API_Gateway["API Gateway"]
 - Valid arrows: --> --- -.- ==>
 - Edge labels: A -->|HTTP| B or A -- "REST API" --> B
 - Subgraph syntax: subgraph Frontend ... end
 - Style syntax: style A fill:#f9f,stroke:#333,stroke-width:2px
+- NO PARENTHESES in node IDs or labels: Use "React App" not "React App (Vite, TS)"
+- NO SLASHES in node IDs: Use "Frontend_App" not "Frontend/App"
+- NO SPECIAL CHARACTERS in node IDs: Only letters, numbers, and underscores
 
 ${guidance}
 
@@ -1979,11 +1982,18 @@ graph LR
         style CACHE fill:#e8f5e8
     end
 
-    UI -->|HTTP/REST| API
+    UI -->|HTTP REST| API
     API -->|SQL| DB
     API -->|Cache| CACHE
     AUTH -->|JWT| API
 \`\`\`
+
+CRITICAL: Follow these syntax rules exactly:
+- Node IDs: Only letters, numbers, underscores (A, B, API_Gateway, DB1)
+- Labels: Always in quotes ["React App"] ["Express API"]
+- No parentheses in labels: Use "React App" not "React App (Vite)"
+- No slashes in IDs: Use Frontend_App not Frontend/App
+- Edge labels: Use |text| format, avoid special characters
 
 Return only the code block, like above.`
   }

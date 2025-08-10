@@ -99,6 +99,21 @@ const RepositoryArchitectureGenerator = () => {
     const lines = code.split('\n').map(line => {
       let cleaned = line.trim()
 
+      // Skip empty lines and comments
+      if (!cleaned || cleaned.startsWith('%%')) return cleaned
+
+      // Fix node IDs with spaces or special characters
+      // Pattern: "User/Client" -> "User_Client"
+      cleaned = cleaned.replace(/([A-Za-z][A-Za-z0-9\s\/\-]*)\s*\[/g, (match, id) => {
+        const cleanId = id.trim()
+          .replace(/\s+/g, '_')           // Replace spaces with underscores
+          .replace(/[\/\-\(\)]/g, '_')    // Replace slashes, dashes, parentheses with underscores
+          .replace(/[^a-zA-Z0-9_]/g, '')  // Remove any other special characters
+          .replace(/_+/g, '_')            // Replace multiple underscores with single
+          .replace(/^_|_$/g, '')          // Remove leading/trailing underscores
+        return `${cleanId}[`
+      })
+
       // Fix node syntax: spaces in node names with brackets
       // Pattern: "API Gateway[Spring Boot]" -> "API_Gateway[\"Spring Boot\"]"
       cleaned = cleaned.replace(/([A-Za-z][A-Za-z\s]*[A-Za-z])\[([^\]]+)\]/g, (match, id, label) => {
@@ -113,13 +128,26 @@ const RepositoryArchitectureGenerator = () => {
 
         // Remove or replace problematic characters in labels
         const cleanLabel = label
-          .replace(/[()]/g, '')  // Remove parentheses completely
-          .replace(/['"]/g, '')  // Remove quotes
-          .replace(/[{}]/g, '')  // Remove curly braces
-          .replace(/[<>]/g, '')  // Remove angle brackets
+          .replace(/[()]/g, '')           // Remove parentheses completely
+          .replace(/['"]/g, '')           // Remove quotes
+          .replace(/[{}]/g, '')           // Remove curly braces
+          .replace(/[<>]/g, '')           // Remove angle brackets
+          .replace(/<br\s*\/?>/gi, ' ')   // Replace <br> tags with spaces
+          .replace(/\s+/g, ' ')           // Replace multiple spaces with single space
           .trim()
 
         return `["${cleanLabel}"]`
+      })
+
+      // Fix subgraph names with spaces or special characters
+      cleaned = cleaned.replace(/subgraph\s+([^{}\n]+)/g, (match, name) => {
+        const cleanName = name.trim()
+          .replace(/[\/\-\(\)]/g, '_')    // Replace special chars with underscores
+          .replace(/\s+/g, '_')           // Replace spaces with underscores
+          .replace(/[^a-zA-Z0-9_]/g, '')  // Remove other special characters
+          .replace(/_+/g, '_')            // Replace multiple underscores with single
+          .replace(/^_|_$/g, '')          // Remove leading/trailing underscores
+        return `subgraph ${cleanName}`
       })
 
       // Fix simple arrows
