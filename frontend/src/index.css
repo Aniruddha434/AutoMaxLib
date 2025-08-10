@@ -117,6 +117,23 @@
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+/* Fix text color in dark mode for UserButton popup */
+.dark .cl-userButtonPopoverCard,
+.dark .cl-userButtonPopoverCard * {
+  color: rgb(243, 244, 246) !important; /* gray-100 */
+}
+
+/* Ensure action buttons have proper text color in dark mode */
+.dark .cl-userButtonPopoverActionButton {
+  color: rgb(243, 244, 246) !important; /* gray-100 */
+}
+
+/* Fix user info text in dark mode */
+.dark .cl-userButtonPopoverCard .cl-userPreview,
+.dark .cl-userButtonPopoverCard .cl-userPreview * {
+  color: rgb(243, 244, 246) !important; /* gray-100 */
+}
+
 /* Navbar UserButton: pin popover to top-right (Option 1) */
 .navbar-user-popover {
   position: fixed !important;
