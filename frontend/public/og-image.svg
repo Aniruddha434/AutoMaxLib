@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <!-- Background with gradient -->
+  <rect width="1200" height="630" fill="url(#gradient)"/>
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Logo container -->
+  <g transform="translate(100, 165)">
+    <!-- Logo background -->
+    <rect width="120" height="120" rx="24" fill="white" stroke="#e5e7eb" stroke-width="2"/>
+    
+    <!-- GitBranch icon -->
+    <g transform="translate(30, 30)">
+      <!-- Main branch line -->
+      <line x1="15" y1="9" x2="15" y2="51" stroke="#374151" stroke-width="5" stroke-linecap="round"/>
+      <!-- Branch line -->
+      <path d="M15 21 Q27 21 39 33 Q51 45 51 57" stroke="#374151" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <!-- Commit dots -->
+      <circle cx="15" cy="9" r="5" fill="#374151"/>
+      <circle cx="15" cy="30" r="5" fill="#374151"/>
+      <circle cx="51" cy="57" r="5" fill="#374151"/>
+    </g>
+  </g>
+  
+  <!-- Text content -->
+  <g transform="translate(280, 200)">
+    <!-- Main title -->
+    <text x="0" y="0" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="bold" fill="#1f2937">
+      AutoMaxLib
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="0" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="36" fill="#6b7280">
+      AI-Powered GitHub Tools &amp; Auto Commit Generator
+    </text>
+    
+    <!-- Features -->
+    <text x="0" y="120" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#374151">
+      ✨ README AI Generator  •  🚀 Auto Commit Tools  •  📊 GitHub Analytics
+    </text>
+  </g>
+  
+  <!-- Bottom branding -->
+  <text x="100" y="580" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="#9ca3af">
+    automaxlib.online
+  </text>
+</svg>

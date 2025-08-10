@@ -15,8 +15,20 @@
       "purpose": "any maskable"
     },
     {
+      "src": "/favicon-16x16.svg",
+      "sizes": "16x16",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
       "src": "/logo.svg",
       "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/og-image.svg",
+      "sizes": "1200x630",
       "type": "image/svg+xml",
       "purpose": "any"
     }

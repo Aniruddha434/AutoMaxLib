@@ -152,7 +152,7 @@ export const organizationStructuredData = {
   "@type": "Organization",
   "name": "AutoMaxLib",
   "url": "https://automaxlib.online",
-  "logo": "https://automaxlib.online/logo.svg",
+  "logo": "https://automaxlib.online/og-image.svg",
   "description": "Leading provider of AI-powered GitHub automation tools and developer productivity solutions",
   "sameAs": [
     "https://github.com/automaxlib"

@@ -5,7 +5,7 @@ const SEOHead = ({
   description, 
   keywords, 
   canonicalUrl, 
-  ogImage = '/logo.svg',
+  ogImage = '/og-image.svg',
   ogType = 'website',
   structuredData,
   noIndex = false 
@@ -31,6 +31,9 @@ const SEOHead = ({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={`${baseUrl}${ogImage}`} />
+      <meta property="og:image:alt" content="AutoMaxLib - AI-Powered GitHub Tools & Auto Commit Generator" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content="AutoMaxLib" />
       
       {/* Twitter */}

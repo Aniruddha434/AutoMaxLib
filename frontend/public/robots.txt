@@ -9,6 +9,9 @@ Allow: /about
 Allow: /contact
 Allow: /privacy-policy
 Allow: /terms-of-service
+Allow: /og-image.svg
+Allow: /logo.svg
+Allow: /favicon.svg
 
 # Disallow admin and private areas
 Disallow: /admin/

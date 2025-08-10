@@ -15,7 +15,7 @@ const SEOHead = ({
   const baseUrl = 'https://automaxlib.online'
   const fullTitle = title ? `${title} | AutoMaxLib` : 'AutoMaxLib - AI-Powered GitHub Automation & README Generator'
   const fullCanonicalUrl = canonicalUrl ? `${baseUrl}${canonicalUrl}` : baseUrl
-  const fullOgImage = ogImage ? `${baseUrl}${ogImage}` : `${baseUrl}/og-image.png`
+  const fullOgImage = ogImage ? `${baseUrl}${ogImage}` : `${baseUrl}/og-image.svg`
 
   return (
     <Helmet>
@@ -34,6 +34,9 @@ const SEOHead = ({
       <meta property="og:description" content={description} />
       <meta property="og:url" content={fullCanonicalUrl} />
       <meta property="og:image" content={fullOgImage} />
+      <meta property="og:image:alt" content="AutoMaxLib - AI-Powered GitHub Tools & Auto Commit Generator" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content="AutoMaxLib" />
       
       {/* Twitter */}
