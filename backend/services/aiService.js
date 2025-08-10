@@ -83,8 +83,8 @@ class AIService {
 
     const prompt = this.buildReadmePrompt(userProfile, template, customSections)
 
-    // Try different model names in order of preference
-    const modelNames = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro']
+    // Try different model names in order of preference (updated to current valid models)
+    const modelNames = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
 
     for (const modelName of modelNames) {
       try {
@@ -817,13 +817,41 @@ Return only the commit message, nothing else.`
         environmentVariables
       )
 
-      const modelNames = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro']
+      const modelNames = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
 
       for (const modelName of modelNames) {
         try {
           console.log(`🤖 Analyzing repository with model: ${modelName}`)
-          const model = this.genAI.getGenerativeModel({ model: modelName })
-          const result = await model.generateContent(analysisPrompt)
+
+          // Add retry logic for rate limits and temporary failures
+          let retryCount = 0
+          const maxRetries = 3
+          let result = null
+
+          while (retryCount < maxRetries) {
+            try {
+              const model = this.genAI.getGenerativeModel({ model: modelName })
+              result = await model.generateContent(analysisPrompt)
+              break // Success, exit retry loop
+            } catch (retryError) {
+              retryCount++
+
+              // Check if it's a rate limit (429) or service unavailable (503)
+              if (retryError.message?.includes('429') || retryError.message?.includes('503') ||
+                  retryError.message?.includes('Too Many Requests') || retryError.message?.includes('Service Unavailable')) {
+                if (retryCount < maxRetries) {
+                  const delay = Math.pow(2, retryCount) * 2000 // Exponential backoff
+                  console.log(`⏳ Gemini rate limited/overloaded, retrying in ${delay}ms (attempt ${retryCount}/${maxRetries})`)
+                  await new Promise(resolve => setTimeout(resolve, delay))
+                  continue
+                }
+              }
+
+              // If it's a permanent error or max retries reached, throw
+              throw retryError
+            }
+          }
+
           const response = await result.response
           const analysisText = response.text()
 
@@ -843,6 +871,8 @@ Return only the commit message, nothing else.`
           if (modelName === modelNames[modelNames.length - 1]) {
             throw error
           }
+          // Wait longer between model attempts
+          await new Promise(resolve => setTimeout(resolve, 3000))
         }
       }
     } catch (error) {
@@ -859,11 +889,13 @@ Return only the commit message, nothing else.`
 
     const prompt = this.buildRepositoryReadmePrompt(repositoryData, analysisData, template, customSections)
 
-    // Use high-quality models for repository README generation
+    // Use current valid models for repository README generation
     const models = [
-      'anthropic/claude-3-sonnet',
-      'openai/gpt-4-turbo',
-      'openai/gpt-4'
+      'anthropic/claude-3.5-sonnet',
+      'openai/gpt-4o',
+      'openai/gpt-4o-mini',
+      'google/gemma-2-9b-it:free',
+      'meta-llama/llama-3.1-8b-instruct:free'
     ]
 
     let lastError = null
@@ -872,24 +904,49 @@ Return only the commit message, nothing else.`
       try {
         console.log(`🤖 Generating repository README with OpenRouter model: ${modelName}`)
 
-        const completion = await this.openRouterClient.chat.completions.create({
-          model: modelName,
-          messages: [
-            {
-              role: 'system',
-              content: 'You are an expert technical writer specializing in creating comprehensive, professional README files for software repositories. Generate high-quality, detailed README content that follows best practices and provides real value to developers.'
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 8192,
-          top_p: 0.95
-        })
+        // Add retry logic for rate limits and temporary failures
+        let retryCount = 0
+        const maxRetries = 3
+        let completion = null
 
-        const readmeContent = completion.choices[0]?.message?.content
+        while (retryCount < maxRetries) {
+          try {
+            completion = await this.openRouterClient.chat.completions.create({
+              model: modelName,
+              messages: [
+                {
+                  role: 'system',
+                  content: 'You are an expert technical writer specializing in creating comprehensive, professional README files for software repositories. Generate high-quality, detailed README content that follows best practices and provides real value to developers.'
+                },
+                {
+                  role: 'user',
+                  content: prompt
+                }
+              ],
+              temperature: 0.7,
+              max_tokens: 8192,
+              top_p: 0.95
+            })
+            break // Success, exit retry loop
+          } catch (retryError) {
+            retryCount++
+
+            // Check if it's a rate limit, quota, or temporary error
+            if (retryError.status === 429 || retryError.status === 503 || retryError.status === 502) {
+              if (retryCount < maxRetries) {
+                const delay = Math.pow(2, retryCount) * 1000 // Exponential backoff
+                console.log(`⏳ Rate limited/temporary error, retrying in ${delay}ms (attempt ${retryCount}/${maxRetries})`)
+                await new Promise(resolve => setTimeout(resolve, delay))
+                continue
+              }
+            }
+
+            // If it's a permanent error (402 insufficient credits, 404 model not found) or max retries reached, throw
+            throw retryError
+          }
+        }
+
+        const readmeContent = completion?.choices[0]?.message?.content
 
         if (!readmeContent || readmeContent.trim().length < 100) {
           throw new Error('Generated content is too short or empty')
@@ -922,7 +979,7 @@ Return only the commit message, nothing else.`
         }
 
         // Wait a bit before trying the next model
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise(resolve => setTimeout(resolve, 2000))
       }
     }
 
@@ -956,7 +1013,7 @@ Return only the commit message, nothing else.`
     const prompt = this.buildRepositoryReadmePrompt(repositoryData, analysisData, template, customSections)
 
     // Use the best models first for highest quality README generation
-    const modelNames = ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.0-pro', 'gemini-pro']
+    const modelNames = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
 
     let lastError = null
 
@@ -1951,9 +2008,11 @@ Return only the code block, like above.`
     const prompt = this.buildRepositoryArchitectureDiagramPrompt(repositoryData, analysisData, style)
 
     const models = [
-      'anthropic/claude-3-sonnet',
-      'openai/gpt-4-turbo',
-      'openai/gpt-4'
+      'anthropic/claude-3.5-sonnet',
+      'openai/gpt-4o',
+      'openai/gpt-4o-mini',
+      'google/gemma-2-9b-it:free',
+      'meta-llama/llama-3.1-8b-instruct:free'
     ]
 
     let lastError = null
@@ -1961,18 +2020,44 @@ Return only the code block, like above.`
     for (const modelName of models) {
       try {
         console.log(`🤖 Generating architecture diagram with OpenRouter model: ${modelName}`)
-        const completion = await this.openRouterClient.chat.completions.create({
-          model: modelName,
-          messages: [
-            { role: 'system', content: 'You are an expert software architect. Respond with Mermaid code only.' },
-            { role: 'user', content: prompt }
-          ],
-          temperature: 0.4,
-          max_tokens: 4096,
-          top_p: 0.95
-        })
 
-        const content = completion.choices[0]?.message?.content || ''
+        // Add retry logic for rate limits and temporary failures
+        let retryCount = 0
+        const maxRetries = 3
+        let completion = null
+
+        while (retryCount < maxRetries) {
+          try {
+            completion = await this.openRouterClient.chat.completions.create({
+              model: modelName,
+              messages: [
+                { role: 'system', content: 'You are an expert software architect. Respond with Mermaid code only.' },
+                { role: 'user', content: prompt }
+              ],
+              temperature: 0.4,
+              max_tokens: 4096,
+              top_p: 0.95
+            })
+            break // Success, exit retry loop
+          } catch (retryError) {
+            retryCount++
+
+            // Check if it's a rate limit, quota, or temporary error
+            if (retryError.status === 429 || retryError.status === 503 || retryError.status === 502) {
+              if (retryCount < maxRetries) {
+                const delay = Math.pow(2, retryCount) * 1000 // Exponential backoff
+                console.log(`⏳ Rate limited/temporary error, retrying in ${delay}ms (attempt ${retryCount}/${maxRetries})`)
+                await new Promise(resolve => setTimeout(resolve, delay))
+                continue
+              }
+            }
+
+            // If it's a permanent error or max retries reached, throw
+            throw retryError
+          }
+        }
+
+        const content = completion?.choices[0]?.message?.content || ''
         const mermaid = this.extractMermaidCode(content)
         if (!mermaid || mermaid.length < 50) {
           throw new Error('Generated diagram is empty or too short')
@@ -2015,21 +2100,49 @@ Return only the code block, like above.`
     }
 
     const prompt = this.buildRepositoryArchitectureDiagramPrompt(repositoryData, analysisData, style)
-    const modelNames = ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.0-pro', 'gemini-pro']
+    const modelNames = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
 
     let lastError = null
 
     for (const modelName of modelNames) {
       try {
         console.log(`🤖 Generating architecture diagram with Gemini model: ${modelName}`)
-        const model = this.genAI.getGenerativeModel({
-          model: modelName,
-          generationConfig: {
-            temperature: 0.4,
-            maxOutputTokens: 4096
+
+        // Add retry logic for rate limits and temporary failures
+        let retryCount = 0
+        const maxRetries = 3
+        let result = null
+
+        while (retryCount < maxRetries) {
+          try {
+            const model = this.genAI.getGenerativeModel({
+              model: modelName,
+              generationConfig: {
+                temperature: 0.4,
+                maxOutputTokens: 4096
+              }
+            })
+            result = await model.generateContent(prompt)
+            break // Success, exit retry loop
+          } catch (retryError) {
+            retryCount++
+
+            // Check if it's a rate limit (429) or service unavailable (503)
+            if (retryError.message?.includes('429') || retryError.message?.includes('503') ||
+                retryError.message?.includes('Too Many Requests') || retryError.message?.includes('Service Unavailable')) {
+              if (retryCount < maxRetries) {
+                const delay = Math.pow(2, retryCount) * 2000 // Exponential backoff, longer for Gemini
+                console.log(`⏳ Gemini rate limited/overloaded, retrying in ${delay}ms (attempt ${retryCount}/${maxRetries})`)
+                await new Promise(resolve => setTimeout(resolve, delay))
+                continue
+              }
+            }
+
+            // If it's a permanent error or max retries reached, throw
+            throw retryError
           }
-        })
-        const result = await model.generateContent(prompt)
+        }
+
         const response = await result.response
         const content = response.text()
         const mermaid = this.extractMermaidCode(content)
@@ -2047,7 +2160,7 @@ Return only the code block, like above.`
         lastError = error
         console.warn(`⚠️ Gemini model ${modelName} failed (architecture):`, error.message)
         if (modelName === modelNames[modelNames.length - 1]) break
-        await new Promise(r => setTimeout(r, 800))
+        await new Promise(r => setTimeout(r, 2000)) // Longer delay between models
       }
     }
 
