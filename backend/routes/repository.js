@@ -406,4 +406,128 @@ router.post('/readme/:readmeId/deploy', [
   }
 })
 
+// Generate repository architecture diagram (Mermaid)
+router.post('/architecture/generate', [
+  body('repositoryData').isObject().withMessage('Repository data is required'),
+  body('analysisData').isObject().withMessage('Analysis data is required'),
+  body('style').optional().isIn(['flowchart', 'c4']).withMessage('Invalid style')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      })
+    }
+
+    const { repositoryData, analysisData, style = 'flowchart' } = req.body
+
+    let user = await User.findOne({ clerkId: req.auth.userId })
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      })
+    }
+
+    // Enforce usage limits: Free 5 lifetime, Premium unlimited
+    const canGenerate = user.canGenerateArchitectureDiagram()
+    if (!canGenerate.canGenerate) {
+      return res.status(403).json({
+        success: false,
+        message: canGenerate.reason,
+        usage: canGenerate.usage,
+        limit: canGenerate.limit,
+        remaining: canGenerate.remaining
+      })
+    }
+
+    // Generate Mermaid architecture diagram
+    const result = await aiService.generateRepositoryArchitectureDiagramContent(
+      repositoryData,
+      analysisData,
+      style
+    )
+
+    // Save to user history and increment usage
+    const saved = user.addGeneratedArchitectureDiagram({
+      style,
+      mermaid: result.mermaid,
+      repositoryData,
+      analysisData,
+      generatedAt: result.generatedAt
+    })
+    await user.save()
+
+    res.json({
+      success: true,
+      message: 'Architecture diagram generated successfully',
+      diagram: {
+        id: saved.id,
+        mermaid: saved.mermaid,
+        provider: result.provider,
+        modelUsed: result.modelUsed,
+        generatedAt: saved.generatedAt
+      },
+      limits: user.canGenerateArchitectureDiagram()
+    })
+  } catch (error) {
+    console.error('Error generating architecture diagram:', error)
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to generate architecture diagram'
+    })
+  }
+})
+
+// Deploy architecture diagram to repo as architecture.md
+router.post('/architecture/:diagramId/deploy', [
+  body('targetRepository').isObject().withMessage('Target repository required'),
+  body('targetRepository.owner').isString(),
+  body('targetRepository.name').isString(),
+  body('targetRepository.branch').optional().isString()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, message: 'Validation failed', errors: errors.array() })
+    }
+
+    const { diagramId } = req.params
+    const { targetRepository } = req.body
+    const { owner, name, branch = 'main' } = targetRepository
+
+    let user = await User.findOne({ clerkId: req.auth.userId })
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' })
+    if (!user.githubToken) return res.status(400).json({ success: false, message: 'GitHub token not found' })
+
+    const diagram = user.getArchitectureDiagramById(diagramId)
+    if (!diagram) return res.status(404).json({ success: false, message: 'Diagram not found' })
+
+    const path = 'ARCHITECTURE.md'
+    const content = `# System Architecture\n\nBelow is the system architecture in Mermaid format.\n\n\`\`\`mermaid\n${diagram.mermaid}\n\`\`\`\n`
+    const message = `Add/Update ARCHITECTURE.md via AutoGitPilot Architecture Diagram Generator`
+
+    const repoValidation = await githubService.validateRepositoryAccess(user.githubToken, owner, name)
+    if (!repoValidation.success) {
+      return res.status(400).json({ success: false, message: `Cannot access ${owner}/${name}. ${repoValidation.message}` })
+    }
+
+    const deployResult = await githubService.updateRepositoryFile(user.githubToken, owner, name, path, content, message, branch)
+
+    if (deployResult.success) {
+      user.markArchitectureDiagramAsDeployed(diagramId, { owner, name, branch })
+      await user.save()
+      return res.json({ success: true, message: 'Architecture deployed successfully', deployment: { repository: `${owner}/${name}`, branch, url: `https://github.com/${owner}/${name}` } })
+    }
+
+    return res.status(500).json({ success: false, message: deployResult.message || 'Failed to deploy architecture' })
+  } catch (error) {
+    console.error('Error deploying architecture:', error)
+    res.status(500).json({ success: false, message: error.message || 'Failed to deploy architecture' })
+  }
+})
+
 export default router

@@ -1819,6 +1819,240 @@ Generate ONLY the README.md content in markdown format. Make it exceptional - th
 
     return prerequisites
   }
+
+  // Build prompt for generating a repository architecture diagram (Mermaid)
+  buildRepositoryArchitectureDiagramPrompt(repositoryData, analysisData, style = 'flowchart') {
+    const {
+      name,
+      description,
+      language,
+      topics = [],
+      license,
+      homepage
+    } = repositoryData || {}
+
+    const {
+      projectType,
+      technologies = [],
+      frameworks = [],
+      buildTools = [],
+      packageManagers = [],
+      realAPIEndpoints = [],
+      codeArchitecture = '',
+      projectStructure = '',
+      mainFiles = [],
+      configFiles = [],
+      hasCI = false,
+      ciPlatforms = []
+    } = analysisData || {}
+
+    const techList = [...new Set([...(technologies || []), ...(frameworks || [])])].join(', ')
+
+    const guidance = style === 'c4'
+      ? `Use a single Mermaid C4-style diagram if supported by Mermaid (otherwise emulate using subgraphs):
+- Show Context: Users/Clients -> Frontend -> Backend -> Databases/Queues -> External services
+- Show Containers/Components within subgraphs with clear responsibilities
+- Annotate edges with protocols (HTTP, gRPC, WebSocket), ports, and auth where applicable
+- Keep it to ONE diagram only`
+      : `Use a single Mermaid flowchart (flowchart LR) with subgraphs for layers (Frontend, Backend, Database, External, CI/CD).
+- Nodes should include short labels and technology hints (e.g., Express API, MongoDB, Redis)
+- Edges annotated with protocols (HTTP/REST, GraphQL, gRPC) where known
+- Keep it to ONE diagram only`
+
+    return `You are an expert software architect. Based on the following repository data and analysis, produce a single ADVANCED system architecture diagram in Mermaid syntax only.
+
+REPOSITORY
+- Name: ${name}
+- Description: ${description || 'N/A'}
+- Primary Language: ${language || 'Multiple'}
+- Topics: ${topics.join(', ') || 'None'}
+- License: ${license || 'Unspecified'}
+- Homepage: ${homepage || 'None'}
+
+ANALYSIS
+- Project Type: ${projectType}
+- Technologies: ${techList || 'Detect from files'}
+- Build Tools: ${(buildTools || []).join(', ') || 'N/A'}
+- Package Managers: ${(packageManagers || []).join(', ') || 'N/A'}
+- Main Files: ${(mainFiles || []).join(', ') || 'N/A'}
+- Config Files: ${(configFiles || []).join(', ') || 'N/A'}
+- Has CI/CD: ${hasCI ? 'Yes' : 'No'} (${(ciPlatforms || []).join(', ')})
+- Code Architecture: ${codeArchitecture || 'N/A'}
+- Project Structure: ${projectStructure || 'N/A'}
+- API Endpoints (if any): ${(realAPIEndpoints || []).slice(0, 15).join(' | ') || 'N/A'}
+
+REQUIREMENTS
+- Output ONLY one fenced code block containing Mermaid syntax and nothing else
+- Prefer ${style === 'c4' ? 'C4-style (Context/Container/Component) structure' : 'flowchart with subgraphs'}
+- Use subgraphs to group layers (Frontend, Backend/Services, Data Stores, External Services, CI/CD)
+- Include relevant elements based on the analysis data
+- Annotate edges with protocols (HTTP/REST, GraphQL, gRPC, DB driver) where appropriate
+- No explanations before or after, just the Mermaid code block
+
+CRITICAL MERMAID SYNTAX RULES:
+- Node IDs must be simple alphanumeric (A, B, C1, API, DB, etc.) - NO SPACES
+- Node labels go in brackets: A["API Gateway"] or B["React Frontend"]
+- Use underscores for multi-word IDs: API_Gateway["API Gateway"]
+- Valid arrows: --> --- -.- ==>
+- Edge labels: A -->|HTTP| B or A -- "REST API" --> B
+- Subgraph syntax: subgraph Frontend ... end
+- Style syntax: style A fill:#f9f,stroke:#333,stroke-width:2px
+
+${guidance}
+
+EXAMPLE OUTPUT:
+\`\`\`mermaid
+graph LR
+    subgraph Frontend
+        UI["React App"]
+        style UI fill:#e1f5fe
+    end
+
+    subgraph Backend
+        API["Express API"]
+        AUTH["Auth Service"]
+        style API fill:#f3e5f5
+        style AUTH fill:#f3e5f5
+    end
+
+    subgraph Data
+        DB["PostgreSQL"]
+        CACHE["Redis Cache"]
+        style DB fill:#e8f5e8
+        style CACHE fill:#e8f5e8
+    end
+
+    UI -->|HTTP/REST| API
+    API -->|SQL| DB
+    API -->|Cache| CACHE
+    AUTH -->|JWT| API
+\`\`\`
+
+Return only the code block, like above.`
+  }
+
+  // Extract Mermaid code block from AI response
+  extractMermaidCode(text) {
+    if (!text) return ''
+    const match = text.match(/```mermaid[\s\S]*?```/)
+    if (match) {
+      return match[0].replace(/```mermaid\s*/, '').replace(/```\s*$/, '').trim()
+    }
+    // Fallback: return whole text if no fenced block
+    return text.trim()
+  }
+
+  // Generate architecture diagram via OpenRouter (primary)
+  async generateRepositoryArchitectureDiagramWithOpenRouter(repositoryData, analysisData, style = 'flowchart') {
+    if (!this.openRouterConfigured) {
+      throw new Error('OpenRouter AI is not configured.')
+    }
+
+    const prompt = this.buildRepositoryArchitectureDiagramPrompt(repositoryData, analysisData, style)
+
+    const models = [
+      'anthropic/claude-3-sonnet',
+      'openai/gpt-4-turbo',
+      'openai/gpt-4'
+    ]
+
+    let lastError = null
+
+    for (const modelName of models) {
+      try {
+        console.log(`🤖 Generating architecture diagram with OpenRouter model: ${modelName}`)
+        const completion = await this.openRouterClient.chat.completions.create({
+          model: modelName,
+          messages: [
+            { role: 'system', content: 'You are an expert software architect. Respond with Mermaid code only.' },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.4,
+          max_tokens: 4096,
+          top_p: 0.95
+        })
+
+        const content = completion.choices[0]?.message?.content || ''
+        const mermaid = this.extractMermaidCode(content)
+        if (!mermaid || mermaid.length < 50) {
+          throw new Error('Generated diagram is empty or too short')
+        }
+
+        return {
+          success: true,
+          mermaid,
+          provider: 'openrouter',
+          modelUsed: `OpenRouter:${modelName}`,
+          generatedAt: new Date()
+        }
+      } catch (error) {
+        lastError = error
+        console.warn(`⚠️ OpenRouter model ${modelName} failed (architecture):`, error.message)
+        if (modelName === models[models.length - 1]) break
+        await new Promise(r => setTimeout(r, 800))
+      }
+    }
+
+    throw new Error(`All OpenRouter models failed to generate architecture diagram. Last error: ${lastError?.message || 'Unknown'}`)
+  }
+
+  // Generate architecture diagram (OpenRouter primary, Gemini fallback)
+  async generateRepositoryArchitectureDiagramContent(repositoryData, analysisData, style = 'flowchart') {
+    this.initialize()
+
+    // Try OpenRouter first
+    if (this.openRouterConfigured) {
+      try {
+        return await this.generateRepositoryArchitectureDiagramWithOpenRouter(repositoryData, analysisData, style)
+      } catch (error) {
+        console.warn('⚠️ OpenRouter failed for architecture diagram, falling back to Gemini:', error.message)
+      }
+    }
+
+    // Fallback to Gemini
+    if (!this.isConfigured) {
+      throw new Error('No AI providers configured. Please set OPENROUTER_API_KEY or GEMINI_API_KEY.')
+    }
+
+    const prompt = this.buildRepositoryArchitectureDiagramPrompt(repositoryData, analysisData, style)
+    const modelNames = ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.0-pro', 'gemini-pro']
+
+    let lastError = null
+
+    for (const modelName of modelNames) {
+      try {
+        console.log(`🤖 Generating architecture diagram with Gemini model: ${modelName}`)
+        const model = this.genAI.getGenerativeModel({
+          model: modelName,
+          generationConfig: {
+            temperature: 0.4,
+            maxOutputTokens: 4096
+          }
+        })
+        const result = await model.generateContent(prompt)
+        const response = await result.response
+        const content = response.text()
+        const mermaid = this.extractMermaidCode(content)
+        if (!mermaid || mermaid.length < 50) {
+          throw new Error('Generated diagram is empty or too short')
+        }
+        return {
+          success: true,
+          mermaid,
+          provider: 'gemini',
+          modelUsed: `Gemini:${modelName}`,
+          generatedAt: new Date()
+        }
+      } catch (error) {
+        lastError = error
+        console.warn(`⚠️ Gemini model ${modelName} failed (architecture):`, error.message)
+        if (modelName === modelNames[modelNames.length - 1]) break
+        await new Promise(r => setTimeout(r, 800))
+      }
+    }
+
+    throw new Error(`All AI models failed to generate architecture diagram. Last error: ${lastError?.message || 'Unknown'}`)
+  }
 }
 
 export default new AIService()

@@ -3,6 +3,7 @@ import { SignedIn, SignedOut } from '@clerk/clerk-react'
 import { HelmetProvider } from 'react-helmet-async'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { UserProvider } from './contexts/UserContext'
+import { ToastProvider } from './components/ui/Toast'
 import ErrorBoundary from './components/ErrorBoundary'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
@@ -17,6 +18,7 @@ import SignUpPage from './pages/SignUpPage'
 import PatternGenerator from './components/PatternGenerator'
 import ReadmeGeneratorPage from './pages/ReadmeGeneratorPage'
 import RepositoryReadmeGeneratorPage from './pages/RepositoryReadmeGeneratorPage'
+import RepositoryArchitectureGeneratorPage from './pages/RepositoryArchitectureGeneratorPage'
 import GitHubReadmeAI from './pages/GitHubReadmeAI'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 
@@ -34,7 +36,8 @@ function App() {
       <ErrorBoundary>
         <ThemeProvider>
           <UserProvider>
-            <div className="min-h-screen flex flex-col">
+            <ToastProvider>
+              <div className="min-h-screen flex flex-col">
               <Navbar />
               <main className="flex-1">
               <Routes>
@@ -98,13 +101,19 @@ function App() {
                   <RepositoryReadmeGeneratorPage />
                 </ProtectedRoute>
               } />
+              <Route path="/repository-architecture-generator" element={
+                <ProtectedRoute>
+                  <RepositoryArchitectureGeneratorPage />
+                </ProtectedRoute>
+              } />
             </Routes>
             </main>
             <Footer />
-          </div>
-        </UserProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+              </div>
+            </ToastProvider>
+          </UserProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
     </HelmetProvider>
   )
 }

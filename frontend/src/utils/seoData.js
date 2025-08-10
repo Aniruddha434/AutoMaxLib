@@ -84,6 +84,20 @@ export const seoData = {
       "name": "Repository README Generator",
       "description": "AI tool for generating comprehensive repository documentation and READMEs",
       "url": "https://automaxlib.online/repository-readme-generator",
+      }
+    },
+
+
+  repositoryArchitectureGenerator: {
+    title: 'Repository Architecture Diagram AI (Mermaid) - System Architecture Generator',
+    description: 'Analyze your repository and generate an advanced system architecture diagram using Mermaid syntax. Perfect for documentation and onboarding.',
+    keywords: 'architecture diagram AI, mermaid architecture, system architecture generator, repository architecture, software architecture AI',
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Repository Architecture Diagram Generator",
+      "description": "AI tool for generating system architecture diagrams in Mermaid from repository analysis",
+      "url": "https://automaxlib.online/repository-architecture-generator",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Web",
       "offers": {
@@ -94,11 +108,11 @@ export const seoData = {
       },
       "featureList": [
         "AI repository analysis",
-        "Comprehensive documentation generation",
-        "Installation guides",
-        "Usage examples",
-        "Professional formatting",
-        "Multiple template options"
+        "Mermaid architecture diagrams",
+        "PNG export",
+        "Save to repo as ARCHITECTURE.md",
+        "Flowchart and C4-style",
+        "Inline rendering"
       ],
       "provider": {
         "@type": "Organization",

@@ -201,4 +201,4 @@ export const toast = {
 }
 
 export default Toast
-export { Toast, ToastContainer, ToastProvider }
+export { Toast, ToastContainer }

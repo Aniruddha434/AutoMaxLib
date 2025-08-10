@@ -112,7 +112,16 @@ const Navbar = () => {
                     isActiveRoute('/repository-readme-generator') && 'nav-link-active'
                   )}
                 >
-                  Repository README
+                  Repo README
+                </Link>
+                <Link
+                  to="/repository-architecture-generator"
+                  className={cn(
+                    'nav-link',
+                    isActiveRoute('/repository-architecture-generator') && 'nav-link-active'
+                  )}
+                >
+                  Repo Architecture
                 </Link>
                 <Link
                   to="/settings"
@@ -274,7 +283,17 @@ const Navbar = () => {
                     )}
                     onClick={handleToggleMenu}
                   >
-                    Repository README
+                    Repo README
+                  </Link>
+                  <Link
+                    to="/repository-architecture-generator"
+                    className={cn(
+                      'nav-link block transform transition-all duration-200',
+                      isActiveRoute('/repository-architecture-generator') && 'nav-link-active'
+                    )}
+                    onClick={handleToggleMenu}
+                  >
+                    Repo Architecture
                   </Link>
                   <Link
                     to="/settings"

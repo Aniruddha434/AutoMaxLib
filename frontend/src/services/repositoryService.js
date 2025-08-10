@@ -56,6 +56,21 @@ class RepositoryService {
     }
   }
 
+  // Generate repository architecture diagram (Mermaid)
+  async generateRepositoryArchitecture(repositoryData, analysisData, style = 'flowchart') {
+    try {
+      const response = await this.api.post('/repository/architecture/generate', {
+        repositoryData,
+        analysisData,
+        style
+      })
+      return response
+    } catch (error) {
+      console.error('Error generating repository architecture diagram:', error)
+      throw error
+    }
+  }
+
   // Get specific repository README by ID
   async getRepositoryReadme(readmeId) {
     try {
@@ -76,6 +91,19 @@ class RepositoryService {
       return response
     } catch (error) {
       console.error('Error deploying repository README:', error)
+      throw error
+    }
+  }
+
+  // Deploy architecture.md to GitHub repository
+  async deployRepositoryArchitecture(diagramId, targetRepository) {
+    try {
+      const response = await this.api.post(`/repository/architecture/${diagramId}/deploy`, {
+        targetRepository
+      })
+      return response
+    } catch (error) {
+      console.error('Error deploying architecture diagram:', error)
       throw error
     }
   }

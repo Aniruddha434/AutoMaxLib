@@ -302,6 +302,21 @@ const userSchema = new mongoose.Schema({
       default: 0
     }
   },
+  // Architecture Diagram Generation (Mermaid)
+  architectureDiagramGeneration: {
+    generatedDiagrams: [{
+      id: { type: String, default: () => new Date().getTime().toString() },
+      style: { type: String, enum: ['flowchart', 'c4'], default: 'flowchart' },
+      mermaid: { type: String, required: true },
+      repositoryData: { type: mongoose.Schema.Types.Mixed, default: {} },
+      analysisData: { type: mongoose.Schema.Types.Mixed, default: {} },
+      generatedAt: { type: Date, default: Date.now },
+      isDeployed: { type: Boolean, default: false },
+      deployedAt: { type: Date, default: null },
+      deployedToRepository: { owner: String, name: String, branch: String }
+    }],
+    totalGenerations: { type: Number, default: 0 }
+  },
   isActive: {
     type: Boolean,
     default: true
@@ -571,6 +586,58 @@ userSchema.methods.markRepositoryReadmeAsDeployed = function(readmeId, deploymen
 // Method to get repository README by ID
 userSchema.methods.getRepositoryReadmeById = function(readmeId) {
   return this.repositoryReadmeGeneration.generatedReadmes.find(r => r.id === readmeId)
+}
+
+// Architecture Diagram permissions and updates
+userSchema.methods.canGenerateArchitectureDiagram = function() {
+  if (this.isPremium()) {
+    return { canGenerate: true, usage: null, limit: null, remaining: null, isPremium: true, limitType: 'unlimited' }
+  }
+  const freeLimit = 5
+  const totalUsage = this.architectureDiagramGeneration?.totalGenerations || 0
+  if (totalUsage >= freeLimit) {
+    return {
+      canGenerate: false,
+      reason: `Free plan limit reached. You've used ${totalUsage} of ${freeLimit} architecture diagram generations. Upgrade to Premium for unlimited access.`,
+      usage: totalUsage,
+      limit: freeLimit,
+      remaining: 0,
+      isPremium: false,
+      limitType: 'lifetime'
+    }
+  }
+  return {
+    canGenerate: true,
+    usage: totalUsage,
+    limit: freeLimit,
+    remaining: freeLimit - totalUsage,
+    isPremium: false,
+    limitType: 'lifetime'
+  }
+}
+
+userSchema.methods.addGeneratedArchitectureDiagram = function(diagramData) {
+  this.architectureDiagramGeneration.totalGenerations += 1
+  this.architectureDiagramGeneration.generatedDiagrams.push(diagramData)
+  if (this.architectureDiagramGeneration.generatedDiagrams.length > 20) {
+    this.architectureDiagramGeneration.generatedDiagrams = this.architectureDiagramGeneration.generatedDiagrams.slice(-20)
+  }
+  return this.architectureDiagramGeneration.generatedDiagrams[this.architectureDiagramGeneration.generatedDiagrams.length - 1]
+}
+
+userSchema.methods.getArchitectureDiagramById = function(id) {
+  return this.architectureDiagramGeneration.generatedDiagrams.find(d => d.id === id)
+}
+
+userSchema.methods.markArchitectureDiagramAsDeployed = function(id, deploymentInfo) {
+  const d = this.getArchitectureDiagramById(id)
+  if (d) {
+    d.isDeployed = true
+    d.deployedAt = new Date()
+    if (deploymentInfo) d.deployedToRepository = deploymentInfo
+    return true
+  }
+  return false
 }
 
 export default mongoose.model('User', userSchema)
