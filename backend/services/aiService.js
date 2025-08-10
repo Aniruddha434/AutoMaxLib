@@ -236,50 +236,247 @@ REQUIREMENTS:
 
       case 'professional':
         prompt += `
-- Clean, professional layout
-- Focus on experience and skills
-- Include technology badges using shields.io
-- Add GitHub stats
-- Professional tone throughout
-- Include contact information section
-- Add a brief about section
-- List key technologies and tools`
+EXAMPLE STRUCTURE (use this as a guide, adapt content to user's profile):
+
+# ${fullName}
+**${currentRole || 'Software Developer'}** ${company ? `at ${company}` : ''}
+
+## Professional Summary
+${bio || 'Experienced software developer with a passion for creating efficient, scalable solutions. Proven track record in full-stack development and team collaboration.'}
+
+## 🛠️ Technical Skills
+**Languages:** ${skills.length > 0 ? skills.slice(0, 6).join(' • ') : 'JavaScript • Python • TypeScript • Java • C# • SQL'}
+
+**Frameworks & Libraries:** React • Node.js • Express • Django • .NET • Spring Boot
+
+**Tools & Technologies:** Git • Docker • AWS • MongoDB • PostgreSQL • Redis
+
+## 💼 Professional Experience
+${experience.length > 0 ? experience.map(exp => `**${exp.role}** - ${exp.company} (${exp.duration})\n- ${exp.description || 'Key responsibilities and achievements'}`).join('\n\n') : `**Senior Software Developer** - Tech Company (2022-Present)
+- Led development of scalable web applications serving 10k+ users
+- Implemented CI/CD pipelines reducing deployment time by 60%
+- Mentored junior developers and conducted code reviews`}
+
+## 📊 GitHub Statistics
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&show_icons=true&theme=default&hide_border=true)
+
+## 📫 Contact Information
+- **Email:** ${email}
+- **LinkedIn:** ${socialLinks.linkedin || 'linkedin.com/in/yourprofile'}
+- **Portfolio:** ${socialLinks.website || 'yourportfolio.com'}
+
+REQUIREMENTS:
+- Use ONLY this Markdown structure
+- NO HTML tags at all
+- Replace [placeholders] with actual user data
+- Maintain professional, corporate tone
+- Focus on achievements and experience
+- Keep design clean and readable`
         break
 
       case 'creative':
         prompt += `
-- Creative and visually appealing design
-- Use emojis and visual elements
-- Include animated GIFs or ASCII art
-- Colorful badges and graphics
-- Fun and engaging tone
-- Creative section headers
-- Include hobby/interest section
-- Use creative formatting`
+EXAMPLE STRUCTURE (use this as a guide, adapt content to user's profile):
+
+<div align="center">
+
+# 🌟 Hey there! I'm ${fullName} 🌟
+### 🚀 ${currentRole || 'Creative Developer'} | 💡 Problem Solver | 🎨 Digital Artist
+
+![Coding GIF](https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif)
+
+</div>
+
+## 🎭 About Me
+🔥 ${bio || 'Passionate creator who loves turning ideas into reality through code! Always exploring new technologies and pushing creative boundaries.'}
+
+🌍 **Location:** ${location || 'Planet Earth 🌎'}
+💼 **Currently:** ${currentRole || 'Building awesome stuff'} ${company ? `@ ${company}` : ''}
+🎯 **Mission:** Creating digital experiences that make people smile!
+
+## 🛠️ My Creative Toolkit
+<div align="center">
+
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+
+</div>
+
+## 🎨 What I Love Creating
+${projects.length > 0 ? projects.map(proj => `🚀 **${proj.name}** - ${proj.description}`).join('\n') : `🚀 **Interactive Web Apps** - Beautiful, responsive user experiences
+🎮 **Fun Side Projects** - Creative experiments and learning adventures
+🌈 **Open Source Magic** - Contributing to the community`}
+
+## 📊 My GitHub Adventure
+<div align="center">
+
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&show_icons=true&theme=radical&hide_border=true)
+
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&layout=compact&theme=radical&hide_border=true)
+
+</div>
+
+## 🌈 Let's Connect!
+<div align="center">
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](${socialLinks.linkedin || '#'})
+[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](${socialLinks.twitter || '#'})
+[![Portfolio](https://img.shields.io/badge/Portfolio-FF5722?style=for-the-badge&logo=todoist&logoColor=white)](${socialLinks.website || '#'})
+
+📧 **Email:** ${email}
+
+![Profile Views](https://komarev.com/ghpvc/?username=${githubUsername}&color=brightgreen&style=flat-square&label=Profile+Views)
+
+</div>
+
+---
+<div align="center">
+💫 "Code is poetry, and I'm here to write beautiful verses!" 💫
+</div>
+
+REQUIREMENTS:
+- Use ONLY this Markdown structure with HTML div tags for alignment
+- Include colorful badges and emojis throughout
+- Maintain fun, creative, and engaging tone
+- Use center alignment for visual impact
+- Include animated elements and creative formatting`
         break
 
       case 'minimalist':
         prompt += `
-- Clean, minimal design
-- Simple structure
+EXAMPLE STRUCTURE (use this as a guide, adapt content to user's profile):
+
+# ${fullName}
+
+${currentRole || 'Software Developer'} ${company ? `at ${company}` : ''}
+
+## About
+${bio || 'Software developer focused on writing clean, efficient code.'}
+
+## Skills
+${skills.length > 0 ? skills.join(' • ') : 'JavaScript • Python • React • Node.js'}
+
+## Experience
+${experience.length > 0 ? experience.map(exp => `**${exp.role}** at ${exp.company} (${exp.duration})`).join('\n') : `**Software Developer** at Tech Company (2022-Present)`}
+
+## Projects
+${projects.length > 0 ? projects.map(proj => `**${proj.name}** - ${proj.description}`).join('\n') : `**Web Application** - Full-stack application built with modern technologies`}
+
+## Contact
+Email: ${email}
+${socialLinks.linkedin ? `LinkedIn: ${socialLinks.linkedin}` : ''}
+${socialLinks.website ? `Website: ${socialLinks.website}` : ''}
+
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&show_icons=true&theme=default&hide_border=true&count_private=true)
+
+REQUIREMENTS:
+- Use ONLY this Markdown structure
+- NO HTML tags at all
+- Keep design minimal and clean
 - Essential information only
-- No excessive graphics
-- Clear, concise content
-- Simple badges
-- Minimal use of emojis
-- Focus on content over design`
+- No excessive graphics or emojis
+- Simple, readable formatting
+- Focus on content clarity`
         break
 
       case 'developer-focused':
         prompt += `
-- Technical focus
-- Detailed technology stack
-- Code examples or snippets
-- Development workflow
-- Open source contributions
-- Technical achievements
-- Programming language stats
-- Development tools and environment`
+EXAMPLE STRUCTURE (use this as a guide, adapt content to user's profile):
+
+# ${fullName} - Full Stack Developer
+
+\`\`\`javascript
+const developer = {
+  name: "${fullName}",
+  role: "${currentRole || 'Software Engineer'}",
+  company: "${company || 'Tech Innovator'}",
+  location: "${location || 'Global'}",
+  languages: [${skills.length > 0 ? skills.slice(0, 5).map(s => `"${s}"`).join(', ') : '"JavaScript", "Python", "TypeScript", "Java", "Go"'}],
+  currentFocus: "Building scalable applications",
+  openToWork: true
+};
+\`\`\`
+
+## 🔧 Technology Stack
+
+### Languages
+\`\`\`
+${skills.length > 0 ? skills.slice(0, 8).join('  •  ') : 'JavaScript  •  Python  •  TypeScript  •  Java  •  C#  •  Go  •  Rust  •  SQL'}
+\`\`\`
+
+### Frameworks & Libraries
+- **Frontend:** React, Vue.js, Angular, Next.js, Svelte
+- **Backend:** Node.js, Express, Django, FastAPI, Spring Boot
+- **Database:** PostgreSQL, MongoDB, Redis, MySQL
+- **Cloud:** AWS, Google Cloud, Azure, Docker, Kubernetes
+
+### Development Environment
+\`\`\`bash
+# My daily tools
+OS: ${location?.includes('Mac') ? 'macOS' : location?.includes('Windows') ? 'Windows 11' : 'Linux (Ubuntu)'}
+Editor: VS Code / Neovim
+Terminal: Zsh with Oh My Zsh
+Version Control: Git + GitHub
+Package Managers: npm, yarn, pip, cargo
+\`\`\`
+
+## 💻 Code Examples
+
+### Recent Algorithm Solution
+\`\`\`javascript
+// Binary search implementation
+function binarySearch(arr, target) {
+  let left = 0, right = arr.length - 1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) return mid;
+    arr[mid] < target ? left = mid + 1 : right = mid - 1;
+  }
+  return -1;
+}
+\`\`\`
+
+## 📊 Development Stats
+
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&show_icons=true&theme=dark&hide_border=true&include_all_commits=true&count_private=true)
+
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&layout=compact&theme=dark&hide_border=true&langs_count=8)
+
+![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=${githubUsername}&theme=dark&hide_border=true)
+
+## 🚀 Current Projects
+${projects.length > 0 ? projects.map(proj => `### ${proj.name}\n${proj.description}\n**Tech Stack:** ${proj.technologies || 'Modern web technologies'}`).join('\n\n') : `### Microservices Architecture
+Building scalable backend services with Node.js and Docker
+**Tech Stack:** Node.js, Express, PostgreSQL, Redis, Docker
+
+### React Dashboard
+Modern admin dashboard with real-time data visualization
+**Tech Stack:** React, TypeScript, Chart.js, Material-UI`}
+
+## 📫 Connect & Collaborate
+- 💼 **LinkedIn:** ${socialLinks.linkedin || 'linkedin.com/in/yourprofile'}
+- 🌐 **Portfolio:** ${socialLinks.website || 'yourportfolio.dev'}
+- 📧 **Email:** ${email}
+- 💬 **Open to:** Collaboration, mentoring, technical discussions
+
+\`\`\`
+git clone https://github.com/${githubUsername}
+cd ${githubUsername}
+npm install
+npm start
+// Let's build something amazing together! 🚀
+\`\`\`
+
+REQUIREMENTS:
+- Use ONLY this Markdown structure
+- Include code blocks and technical examples
+- Focus on development skills and workflow
+- Show technical depth and expertise
+- Use developer-friendly formatting
+- Include actual code snippets`
         break
 
       default:
