@@ -248,21 +248,12 @@ const ReadmeGenerator = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          GitHub README AI - Best AI README Generator for GitHub Profiles
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300">
-          The ultimate GitHub README AI tool for creating professional GitHub profile READMEs. Our advanced README AI generates stunning, customizable profiles that showcase your skills and attract employers.
-        </p>
-        
-        {/* Free User Try-Before-Buy Message */}
-        {!isPremium && (
-          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-            <div className="flex items-center">
-              <Eye className="h-5 w-5 text-gray-600 dark:text-gray-400 mr-2" />
-              <div>
+      {/* Free User Try-Before-Buy Message */}
+      {!isPremium && (
+        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div className="flex items-center">
+            <Eye className="h-5 w-5 text-gray-600 dark:text-gray-400 mr-2" />
+            <div>
                 <span className="text-gray-800 dark:text-gray-200 font-medium">
                   Try Before You Buy
                 </span>
@@ -274,20 +265,19 @@ const ReadmeGenerator = () => {
           </div>
         )}
 
-        {/* Usage Info */}
-        {usage && isPremium && (
-          <div className="mt-4 p-4 bg-neutral-50 dark:bg-neutral-900/20 rounded-lg border border-neutral-200 dark:border-neutral-800">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-neutral-800 dark:text-neutral-200">
-                Monthly Usage: {usage.monthly}/5 generations
-              </span>
-              <span className="text-sm text-neutral-700 dark:text-neutral-300">
-                Total Generated: {usage.total}
-              </span>
-            </div>
+      {/* Usage Info */}
+      {usage && isPremium && (
+        <div className="mb-6 p-4 bg-neutral-50 dark:bg-neutral-900/20 rounded-lg border border-neutral-200 dark:border-neutral-800">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-neutral-800 dark:text-neutral-200">
+              Monthly Usage: {usage.monthly}/5 generations
+            </span>
+            <span className="text-sm text-neutral-700 dark:text-neutral-300">
+              Total Generated: {usage.total}
+            </span>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Progress Steps */}
       <div className="mb-8">
