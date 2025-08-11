@@ -5,39 +5,92 @@ Below is the system architecture in Mermaid format.
 ```mermaid
 graph LR
     subgraph Frontend
-        UI["React App<br/>(React, Vite, Tailwind CSS, React Router)"]
-        style UI fill:#e1f5fe
+        React_App["React App (Vite)"]
+        Components["UI Components (Radix UI)"]
+        Icons["Icons (Lucide React)"]
+        React_App --> Components
+        React_App --> Icons
+        style React_App fill:#e1f5fe
+        style Components fill:#e1f5fe
+        style Icons fill:#e1f5fe
     end
 
     subgraph Backend
-        API_Gateway["Express.js API<br/>(Node.js, Express.js)"]
-        AUTH_Service["Clerk Auth"]
-        PAYMENT_Service["Razorpay"]
-        style API_Gateway fill:#f3e5f5
-        style AUTH_Service fill:#f3e5f5
-        style PAYMENT_Service fill:#f3e5f5
+        Express_API["Express API"]
+        Auth_Middleware["Auth Middleware (Clerk)"]
+        Security_Middleware["Security Middleware (Helmet, HPP, XSS, Rate Limit)"]
+        Error_Handling["Error Handling Middleware"]
+        Logging["Logging (Winston)"]
+        AIService["AI Service"]
+        GithubService["GitHub Service (Octokit)"]
+        PaymentService["Payment Service (Razorpay)"]
+        SchedulerService["Scheduler Service (Node-Cron, BullMQ)"]
+        EmailService["Email Service (Nodemailer)"]
+        Express_API --> Auth_Middleware
+        Express_API --> Security_Middleware
+        Express_API --> Error_Handling
+        Express_API --> Logging
+        Express_API --> AIService
+        Express_API --> GithubService
+        Express_API --> PaymentService
+        Express_API --> SchedulerService
+        Express_API --> EmailService
+        style Express_API fill:#f3e5f5
+        style Auth_Middleware fill:#f3e5f5
+        style Security_Middleware fill:#f3e5f5
+        style Error_Handling fill:#f3e5f5
+        style Logging fill:#f3e5f5
+        style AIService fill:#f3e5f5
+        style GithubService fill:#f3e5f5
+        style PaymentService fill:#f3e5f5
+        style SchedulerService fill:#f3e5f5
+        style EmailService fill:#f3e5f5
     end
 
-    subgraph Data
-        DB["MongoDB<br/>(Mongoose)"]
-        style DB fill:#e8f5e8
+    subgraph Data_Stores
+        MongoDB["MongoDB"]
+        Redis["Redis (Caching, BullMQ)"]
+        Models["Mongoose Models"]
+        Express_API -->|Mongoose| MongoDB
+        Express_API --> Redis
+        MongoDB --> Models
+        style MongoDB fill:#e8f5e8
+        style Redis fill:#e8f5e8
+        style Models fill:#e8f5e8
     end
 
-    subgraph External
-        GITHUB["GitHub API"]
-        style GITHUB fill:#f0f8ff
+    subgraph External_Services
+        OpenAI_API["OpenAI API"]
+        Google_Gemini_API["Google Gemini API"]
+        OpenRouter_API["OpenRouter API"]
+        Clerk_Auth["Clerk Authentication"]
+        Razorpay_API["Razorpay API"]
+        GitHub_API["GitHub API"]
+        Nodemailer_Service["Nodemailer"]
+        AIService --> OpenAI_API
+        AIService --> Google_Gemini_API
+        AIService --> OpenRouter_API
+        Auth_Middleware --> Clerk_Auth
+        PaymentService --> Razorpay_API
+        GithubService --> GitHub_API
+        EmailService --> Nodemailer_Service
+        style OpenAI_API fill:#fff9c4
+        style Google_Gemini_API fill:#fff9c4
+        style OpenRouter_API fill:#fff9c4
+        style Clerk_Auth fill:#fff9c4
+        style Razorpay_API fill:#fff9c4
+        style GitHub_API fill:#fff9c4
+        style Nodemailer_Service fill:#fff9c4
     end
 
     subgraph CI_CD
-        CI["GitHub Actions"]
-        style CI fill:#f0fff0
+        GitHub_Actions["GitHub Actions"]
+        GitHub_Actions --> React_App
+        GitHub_Actions --> Express_API
+        style GitHub_Actions fill:#dcedc8
     end
 
-    UI -->|HTTP/REST| API_Gateway
-    API_Gateway -->|HTTP/REST| GITHUB
-    API_Gateway -->|DB Driver| DB
-    API_Gateway -->|API| AUTH_Service
-    API_Gateway -->|API| PAYMENT_Service
-    CI -->|Deployment| API_Gateway
-    CI -->|Deployment| UI
+    React_App -->|HTTP REST| Express_API
+    Express_API -->|DB Driver| MongoDB
+    Express_API -->|Cache| Redis
 ```
