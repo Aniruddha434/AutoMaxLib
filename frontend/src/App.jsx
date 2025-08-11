@@ -7,6 +7,8 @@ import { ToastProvider } from './components/ui/Toast'
 import ErrorBoundary from './components/ErrorBoundary'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
+import ScrollToTop from './components/ScrollToTop'
+import { ScrollToTopButton } from './components/ui'
 import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
 import ConnectGitHub from './pages/ConnectGitHub'
@@ -38,6 +40,7 @@ function App() {
           <UserProvider>
             <ToastProvider>
               <div className="min-h-screen flex flex-col">
+              <ScrollToTop />
               <Navbar />
               <main className="flex-1">
               <Routes>
@@ -109,6 +112,7 @@ function App() {
             </Routes>
             </main>
             <Footer />
+            <ScrollToTopButton />
               </div>
             </ToastProvider>
           </UserProvider>

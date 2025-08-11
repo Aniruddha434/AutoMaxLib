@@ -1,8 +1,11 @@
 import RepositoryReadmeGenerator from '../components/RepositoryReadmeGenerator'
 import SEOHead from '../components/SEOHead'
 import { seoData } from '../utils/seoData'
+import { useScrollToTop } from '../hooks/useScrollToTop'
 
 const RepositoryReadmeGeneratorPage = () => {
+  // Scroll to top when component mounts
+  useScrollToTop({ onMount: true, delay: 100 })
   return (
     <>
       <SEOHead

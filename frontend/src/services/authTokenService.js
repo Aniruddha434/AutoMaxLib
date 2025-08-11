@@ -53,17 +53,18 @@ class AuthTokenService {
         return null
       }
 
-      const token = await window.Clerk.session.getToken()
-      
+      // Force fresh token by skipping cache
+      const token = await window.Clerk.session.getToken({ skipCache: true })
+
       if (!token) {
         console.warn('AuthTokenService: No token received from Clerk')
         this._clearCache()
         return null
       }
 
-      // Cache the token with a 5-minute expiry (much shorter to avoid expiration issues)
+      // Cache the token with a 2-minute expiry to avoid expiration issues
       this.tokenCache = token
-      this.tokenExpiry = Date.now() + (5 * 60 * 1000)
+      this.tokenExpiry = Date.now() + (2 * 60 * 1000)
       this.retryCount = 0
 
       console.debug('AuthTokenService: Token refreshed successfully')

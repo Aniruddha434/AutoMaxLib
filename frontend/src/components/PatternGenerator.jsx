@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Sparkles, Eye, Zap, AlertTriangle, CheckCircle, Info, Crown } from 'lucide-react'
 import { apiService } from '../services/apiService'
 import { useUserData } from '../contexts/UserContext'
+import { PatternPreviewLoader, PatternGenerationLoader } from './ui/AILoadingAnimation'
 
 const PatternGenerator = () => {
   const { userData, loading: userLoading, isPremium } = useUserData()
@@ -18,6 +19,7 @@ const PatternGenerator = () => {
   const [validation, setValidation] = useState(null)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [showUpgradeMessage, setShowUpgradeMessage] = useState(false)
+  const [currentAction, setCurrentAction] = useState('')
 
   useEffect(() => {
     // Load templates for all users to allow try-before-buy experience
@@ -63,6 +65,7 @@ const PatternGenerator = () => {
     if (!text || !validation?.valid) return
 
     setLoading(true)
+    setCurrentAction('Generating pattern preview with AI...')
     try {
       const response = await apiService.post('/pattern/preview', {
         text,
@@ -82,6 +85,7 @@ const PatternGenerator = () => {
       alert('Failed to generate preview')
     } finally {
       setLoading(false)
+      setCurrentAction('')
     }
   }
 
@@ -95,6 +99,7 @@ const PatternGenerator = () => {
     }
 
     setGenerating(true)
+    setCurrentAction('Generating pattern commits with AI...')
     try {
       const response = await apiService.post('/pattern/generate', {
         text,
@@ -118,6 +123,7 @@ const PatternGenerator = () => {
       alert('Failed to generate pattern')
     } finally {
       setGenerating(false)
+      setCurrentAction('')
     }
   }
 
@@ -222,7 +228,7 @@ const PatternGenerator = () => {
         >
           {generating ? (
             <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-3"></div>
+              <Sparkles className="w-5 h-5 mr-2 animate-pulse" />
               Generating Pattern...
             </div>
           ) : (
@@ -412,7 +418,7 @@ const PatternGenerator = () => {
           >
             {loading ? (
               <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-600 border-t-transparent mr-3"></div>
+                <Sparkles className="w-5 h-5 mr-2 animate-pulse" />
                 Generating Preview...
               </div>
             ) : (
@@ -492,6 +498,13 @@ const PatternGenerator = () => {
         </div>
       )}
 
+      {/* AI Loading Animations */}
+      {currentAction && (
+        <>
+          {currentAction.includes('Generating pattern preview') && <PatternPreviewLoader />}
+          {currentAction.includes('Generating pattern commits') && <PatternGenerationLoader />}
+        </>
+      )}
 
     </div>
   )

@@ -104,7 +104,8 @@
 
 /* Ensure UserButton dropdown is always visible and properly positioned */
 .cl-userButtonPopoverCard {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
   border-radius: 0.5rem !important;
   background: white !important;
@@ -150,7 +151,6 @@
     right: 12px !important;
   }
 }
-
 
 @layer base {
   :root {
@@ -715,13 +715,18 @@
   }
 
   .card-interactive::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
     transition: left 0.5s ease;
   }
 
@@ -880,6 +885,57 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
   }
 
+  /* Feature Card Enhancements */
+  .feature-card-hover {
+    @apply transition-all duration-300 ease-out hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20 hover:-translate-y-1;
+  }
+
+  .feature-icon-glow {
+    @apply transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg;
+  }
+
+  /* Dashboard Grid Improvements */
+  .dashboard-grid {
+    @apply grid gap-6;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+
+  .dashboard-grid-sm {
+    @apply grid gap-4;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  /* Professional animations */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .shadow-soft {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
   }
@@ -937,7 +993,8 @@
   }
 
   @keyframes float {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0px);
     }
     50% {
@@ -951,7 +1008,8 @@
   }
 
   @keyframes pulseGlow {
-    0%, 100% {
+    0%,
+    100% {
       box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
     }
     50% {
@@ -960,8 +1018,12 @@
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   @keyframes scaleIn {
@@ -1148,16 +1210,15 @@
     @apply outline-none ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-neutral-900;
   }
 
-/* Stronger specificity to always pin Clerk popover */
-.cl-userButtonPopoverCard.navbar-user-popover {
-  position: fixed !important;
-  top: 64px !important;
-  right: 16px !important;
-  left: auto !important;
-  transform: none !important;
-  z-index: 60 !important;
-}
-
+  /* Stronger specificity to always pin Clerk popover */
+  .cl-userButtonPopoverCard.navbar-user-popover {
+    position: fixed !important;
+    top: 64px !important;
+    right: 16px !important;
+    left: auto !important;
+    transform: none !important;
+    z-index: 60 !important;
+  }
 
   /* Keyboard Navigation */
   .keyboard-navigation *:focus {

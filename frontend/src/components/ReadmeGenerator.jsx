@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useUserData } from '../contexts/UserContext'
 import profileService from '../services/profileService'
-import { OrbitalLoader } from './ui/orbital-loader'
+import { ProfileReadmeGenerationLoader } from './ui/AILoadingAnimation'
 import {
   FileText,
   Download,
@@ -587,9 +587,7 @@ const ReadmeGenerator = () => {
             )}
 
             {loading ? (
-              <div className="text-center py-8">
-                <OrbitalLoader message="Generating your professional README..." />
-              </div>
+              <ProfileReadmeGenerationLoader />
             ) : (
               <div className="flex justify-between">
                 <button

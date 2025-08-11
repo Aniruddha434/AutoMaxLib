@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useUserData } from '../contexts/UserContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { userService } from '../services/userService'
+import { useScrollToTop } from '../hooks/useScrollToTop'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card'
 import FormField from '../components/ui/FormField'
@@ -25,6 +26,9 @@ import {
 } from 'lucide-react'
 
 const Settings = () => {
+  // Scroll to top when component mounts
+  useScrollToTop({ onMount: true, delay: 100 })
+
   const { userData, updateUserData, isPremium } = useUserData()
   const { isDark, toggleTheme } = useTheme()
   const [loading, setLoading] = useState(false)

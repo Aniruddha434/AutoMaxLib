@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useUserData } from '../contexts/UserContext'
 import { useToast } from '../components/ui/Toast'
 import repositoryService from '../services/repositoryService'
+import authTokenService from '../services/authTokenService'
 import { Sparkles, Upload, Download, Copy, CheckCircle, AlertCircle, Eye, ExternalLink } from 'lucide-react'
+import AILoadingAnimation, { RepositoryAnalysisLoader, ArchitectureGenerationLoader, DeploymentLoader } from './ui/AILoadingAnimation'
 import mermaid from 'mermaid'
 
 const RepositoryArchitectureGenerator = () => {
@@ -229,7 +231,8 @@ const RepositoryArchitectureGenerator = () => {
         return
       }
 
-      const authToken = await window.Clerk?.session?.getToken({ skipCache: true })
+      // Use the centralized auth token service for consistent token handling
+      const authToken = await authTokenService.forceRefresh()
       if (!authToken) {
         setError('Authentication required. Please sign in again.')
         setLoading(false)
@@ -272,15 +275,34 @@ const RepositoryArchitectureGenerator = () => {
           })
         }
       } else {
-        setError(resp?.message || 'Failed to generate architecture diagram')
+        const errorMessage = resp?.message || 'Failed to generate architecture diagram'
+        setError(errorMessage)
+        addToast({
+          title: 'Generation Failed',
+          description: errorMessage,
+          variant: 'error'
+        })
       }
     } catch (e) {
       console.error('Generation error:', e)
+      let errorMessage = 'Failed to generate architecture diagram'
+
       if (e.status === 401 || e.error === 'CLERK_MIDDLEWARE_ERROR') {
-        setError('Authentication failed. Please refresh the page and try again.')
-      } else {
-        setError(e.message || 'Failed to generate architecture diagram')
+        errorMessage = 'Authentication expired. Please refresh the page and try again.'
+      } else if (e.message?.includes('OpenRouter')) {
+        errorMessage = 'AI service temporarily unavailable. Please try again in a few moments.'
+      } else if (e.message?.includes('Network')) {
+        errorMessage = 'Network error. Please check your connection and try again.'
+      } else if (e.message) {
+        errorMessage = e.message
       }
+
+      setError(errorMessage)
+      addToast({
+        title: 'Generation Failed',
+        description: errorMessage,
+        variant: 'error'
+      })
     } finally {
       setLoading(false)
       setCurrentAction('')
@@ -594,10 +616,25 @@ const RepositoryArchitectureGenerator = () => {
           </div>
         )}
         {currentAction && (
-          <div className="mt-4 flex items-center text-blue-600 dark:text-blue-400">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-            {currentAction}
-          </div>
+          <>
+            {currentAction.includes('Analyzing') && <RepositoryAnalysisLoader />}
+            {currentAction.includes('Generating architecture') && <ArchitectureGenerationLoader />}
+            {currentAction.includes('Deploying') && <DeploymentLoader />}
+            {currentAction.includes('Rendering') && (
+              <AILoadingAnimation
+                message="Rendering Diagram"
+                subMessage="Converting AI-generated architecture into visual diagram..."
+                fullScreen={true}
+              />
+            )}
+            {currentAction.includes('Preparing download') && (
+              <AILoadingAnimation
+                message="Preparing Download"
+                subMessage="Converting diagram to downloadable format..."
+                fullScreen={true}
+              />
+            )}
+          </>
         )}
         {deploymentSuccess && (
           <div className="mt-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">

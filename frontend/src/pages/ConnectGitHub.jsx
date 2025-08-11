@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useUserData } from '../contexts/UserContext'
 import { githubService } from '../services/githubService'
+import { useScrollToTop } from '../hooks/useScrollToTop'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { 
   GitBranch, 
@@ -13,6 +14,9 @@ import {
 } from 'lucide-react'
 
 const ConnectGitHub = () => {
+  // Scroll to top when component mounts
+  useScrollToTop({ onMount: true, delay: 100 })
+
   const { userData, updateUserData, isPremium } = useUserData()
   const [step, setStep] = useState(1)
   const [token, setToken] = useState('')

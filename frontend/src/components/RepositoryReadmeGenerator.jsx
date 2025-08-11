@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useUserData } from '../contexts/UserContext'
 import repositoryService from '../services/repositoryService'
 import PremiumFeaturePreview from './PremiumFeaturePreview'
-import { OrbitalLoader } from './ui/orbital-loader'
+import { RepositoryAnalysisLoader, ReadmeGenerationLoader } from './ui/AILoadingAnimation'
 import {
   FileText,
   Download,
@@ -486,9 +486,7 @@ const RepositoryReadmeGenerator = () => {
                   )}
                 </div>
               ) : analyzing ? (
-                <div className="text-center py-8">
-                  <OrbitalLoader message="Analyzing repository structure..." />
-                </div>
+                <RepositoryAnalysisLoader />
               ) : (
                 <button
                   onClick={analyzeRepository}
@@ -717,9 +715,7 @@ const RepositoryReadmeGenerator = () => {
                   )}
                 </div>
               ) : loading ? (
-                <div className="text-center py-8">
-                  <OrbitalLoader message="Generating your repository README..." />
-                </div>
+                <ReadmeGenerationLoader />
               ) : (
                 <button
                   onClick={generateReadme}

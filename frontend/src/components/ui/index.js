@@ -1,6 +1,6 @@
 // UI Components Index
 export { Button } from './Button'
-export { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, StatCard } from './Card'
+export { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from './Card'
 export { Badge } from './badge'
 export { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogBody, DialogFooter } from './dialog'
 export { Separator } from './separator'
@@ -10,6 +10,11 @@ export { default as LoadingSpinner, InlineSpinner, LoadingOverlay } from './Load
 export { default as LoadingState } from './LoadingState'
 export { default as Toggle } from './Toggle'
 export { PricingCard } from './pricing'
+export { default as FeatureCard } from './FeatureCard'
+export { default as AILoadingAnimation, RepositoryAnalysisLoader, ReadmeGenerationLoader, ProfileReadmeGenerationLoader, ArchitectureGenerationLoader, DeploymentLoader, PatternPreviewLoader, PatternGenerationLoader, AI_MESSAGES } from './AILoadingAnimation'
+export { default as FeatureGrid } from './FeatureGrid'
+export { default as StatsOverview } from './StatsOverview'
+export { default as ScrollToTopButton } from './ScrollToTopButton'
 
 // New Enhanced Components
 export {

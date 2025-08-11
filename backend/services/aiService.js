@@ -38,13 +38,26 @@ class AIService {
     // Initialize OpenRouter AI
     if (process.env.OPENROUTER_API_KEY) {
       try {
+        // Validate API key format
+        if (!process.env.OPENROUTER_API_KEY.startsWith('sk-or-v1-')) {
+          throw new Error('Invalid OpenRouter API key format. Must start with sk-or-v1-')
+        }
+
         this.openRouterClient = new OpenAI({
           apiKey: process.env.OPENROUTER_API_KEY,
           baseURL: 'https://openrouter.ai/api/v1',
           defaultHeaders: {
             'HTTP-Referer': process.env.FRONTEND_URL || 'http://localhost:3000',
             'X-Title': 'AutoGitPilot Repository README Generator'
-          }
+          },
+          timeout: 60000 // 60 second timeout
+        })
+
+        // Log configuration for debugging (without exposing the full API key)
+        console.log('OpenRouter configuration:', {
+          apiKeyPrefix: process.env.OPENROUTER_API_KEY?.substring(0, 12) + '...',
+          baseURL: 'https://openrouter.ai/api/v1',
+          referer: process.env.FRONTEND_URL || 'http://localhost:3000'
         })
         this.openRouterConfigured = true
         console.log('✅ OpenRouter AI configured for repository README generation')
@@ -2051,6 +2064,19 @@ Return only the code block, like above.`
             break // Success, exit retry loop
           } catch (retryError) {
             retryCount++
+            console.warn(`⚠️ OpenRouter model ${modelName} attempt ${retryCount}/${maxRetries} failed:`, {
+              message: retryError.message,
+              status: retryError.status,
+              code: retryError.code
+            })
+
+            // Handle specific error types that shouldn't be retried
+            if (retryError.status === 401) {
+              throw new Error(`OpenRouter authentication failed: ${retryError.message}. Please check your API key.`)
+            }
+            if (retryError.status === 403) {
+              throw new Error(`OpenRouter access denied: ${retryError.message}. Please check your account permissions.`)
+            }
 
             // Check if it's a rate limit, quota, or temporary error
             if (retryError.status === 429 || retryError.status === 503 || retryError.status === 502) {
@@ -2095,18 +2121,25 @@ Return only the code block, like above.`
   async generateRepositoryArchitectureDiagramContent(repositoryData, analysisData, style = 'flowchart') {
     this.initialize()
 
+    let openRouterError = null
+    let geminiError = null
+
     // Try OpenRouter first
     if (this.openRouterConfigured) {
       try {
         return await this.generateRepositoryArchitectureDiagramWithOpenRouter(repositoryData, analysisData, style)
       } catch (error) {
+        openRouterError = error
         console.warn('⚠️ OpenRouter failed for architecture diagram, falling back to Gemini:', error.message)
       }
     }
 
     // Fallback to Gemini
     if (!this.isConfigured) {
-      throw new Error('No AI providers configured. Please set OPENROUTER_API_KEY or GEMINI_API_KEY.')
+      const errorMsg = openRouterError
+        ? `OpenRouter failed: ${openRouterError.message}. Gemini not configured. Please set OPENROUTER_API_KEY or GEMINI_API_KEY.`
+        : 'No AI providers configured. Please set OPENROUTER_API_KEY or GEMINI_API_KEY.'
+      throw new Error(errorMsg)
     }
 
     const prompt = this.buildRepositoryArchitectureDiagramPrompt(repositoryData, analysisData, style)
@@ -2167,6 +2200,7 @@ Return only the code block, like above.`
           generatedAt: new Date()
         }
       } catch (error) {
+        geminiError = error
         lastError = error
         console.warn(`⚠️ Gemini model ${modelName} failed (architecture):`, error.message)
         if (modelName === modelNames[modelNames.length - 1]) break
@@ -2174,7 +2208,17 @@ Return only the code block, like above.`
       }
     }
 
-    throw new Error(`All AI models failed to generate architecture diagram. Last error: ${lastError?.message || 'Unknown'}`)
+    // Provide detailed error message including both provider failures
+    let errorMessage = 'All AI providers failed to generate architecture diagram.'
+    if (openRouterError && geminiError) {
+      errorMessage += ` OpenRouter: ${openRouterError.message}. Gemini: ${geminiError.message}`
+    } else if (openRouterError) {
+      errorMessage += ` OpenRouter: ${openRouterError.message}. Gemini: ${lastError?.message || 'Unknown error'}`
+    } else {
+      errorMessage += ` Gemini: ${lastError?.message || 'Unknown error'}`
+    }
+
+    throw new Error(errorMessage)
   }
 }
 
