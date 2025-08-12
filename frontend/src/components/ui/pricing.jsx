@@ -78,8 +78,8 @@ export const PricingCard = ({
               size="lg"
               className={cn(
                 "w-full group transition-all duration-300 text-sm font-medium py-3 px-6",
-                buttonVariant === "default" && "bg-indigo-600 hover:bg-indigo-700 text-white border-0 hover:scale-[1.02] shadow-lg",
-                buttonVariant === "outline" && "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-[1.02]"
+                buttonVariant === "default" && "bg-indigo-600 hover:bg-indigo-700 text-white dark:text-white border-0 hover:scale-[1.02] shadow-lg dark:bg-indigo-600 dark:hover:bg-indigo-700",
+                buttonVariant === "outline" && "bg-indigo-600 hover:bg-indigo-700 text-white dark:text-white border-0 hover:scale-[1.02] shadow-lg dark:bg-indigo-600 dark:hover:bg-indigo-700"
               )}
             >
               <span className="flex items-center justify-center gap-2">
