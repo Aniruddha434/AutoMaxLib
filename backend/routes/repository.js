@@ -444,12 +444,27 @@ router.post('/architecture/generate', [
       })
     }
 
-    // Generate Mermaid architecture diagram
-    const result = await aiService.generateRepositoryArchitectureDiagramContent(
-      repositoryData,
-      analysisData,
-      style
-    )
+    // Generate Mermaid architecture diagram with enhanced error handling
+    let result
+    try {
+      result = await aiService.generateRepositoryArchitectureDiagramContent(
+        repositoryData,
+        analysisData,
+        style
+      )
+    } catch (aiError) {
+      console.error('AI service failed for architecture diagram:', aiError)
+
+      // Create a fallback diagram for unusual repositories
+      const fallbackMermaid = aiService.createFallbackArchitectureDiagram(repositoryData, analysisData)
+      result = {
+        success: true,
+        mermaid: fallbackMermaid,
+        provider: 'fallback',
+        modelUsed: 'Fallback Generator',
+        generatedAt: new Date()
+      }
+    }
 
     // Save to user history and increment usage
     const saved = user.addGeneratedArchitectureDiagram({

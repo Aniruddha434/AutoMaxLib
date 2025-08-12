@@ -1740,14 +1740,163 @@ Generate ONLY the README.md content in markdown format. Make it exceptional - th
     return fileTypes
   }
 
+  // Analyze repository structure for complex patterns (monorepos, microservices, etc.)
+  analyzeRepositoryStructure(fileStructure) {
+    const structure = {
+      isMonorepo: false,
+      isMicroservices: false,
+      hasMultipleApps: false,
+      packageManagers: [],
+      buildSystems: [],
+      architecturePatterns: []
+    }
+
+    const traverse = (items, path = '') => {
+      if (Array.isArray(items)) {
+        items.forEach(item => {
+          const currentPath = path ? `${path}/${item.name}` : item.name
+
+          if (item.type === 'file') {
+            // Detect package managers
+            if (['package.json', 'yarn.lock', 'pnpm-lock.yaml'].includes(item.name)) {
+              structure.packageManagers.push('npm/yarn/pnpm')
+            }
+            if (['Cargo.toml', 'Cargo.lock'].includes(item.name)) {
+              structure.packageManagers.push('cargo')
+            }
+            if (['go.mod', 'go.sum'].includes(item.name)) {
+              structure.packageManagers.push('go modules')
+            }
+            if (['requirements.txt', 'pyproject.toml', 'Pipfile'].includes(item.name)) {
+              structure.packageManagers.push('pip/poetry')
+            }
+            if (['pom.xml', 'build.gradle'].includes(item.name)) {
+              structure.packageManagers.push('maven/gradle')
+            }
+
+            // Detect build systems
+            if (['webpack.config.js', 'vite.config.js', 'rollup.config.js'].includes(item.name)) {
+              structure.buildSystems.push('bundler')
+            }
+            if (['Dockerfile', 'docker-compose.yml'].includes(item.name)) {
+              structure.buildSystems.push('docker')
+            }
+            if (['Makefile', 'CMakeLists.txt'].includes(item.name)) {
+              structure.buildSystems.push('make/cmake')
+            }
+          } else if (item.children) {
+            // Detect monorepo patterns
+            if (['packages', 'apps', 'services', 'modules', 'libs'].includes(item.name)) {
+              structure.isMonorepo = true
+            }
+            if (['microservices', 'services'].includes(item.name)) {
+              structure.isMicroservices = true
+            }
+            if (['frontend', 'backend', 'api', 'web', 'mobile'].includes(item.name)) {
+              structure.hasMultipleApps = true
+            }
+
+            traverse(item.children, currentPath)
+          }
+        })
+      }
+    }
+
+    traverse(fileStructure)
+
+    // Determine architecture patterns
+    if (structure.isMonorepo) structure.architecturePatterns.push('monorepo')
+    if (structure.isMicroservices) structure.architecturePatterns.push('microservices')
+    if (structure.hasMultipleApps) structure.architecturePatterns.push('multi-app')
+
+    return structure
+  }
+
+  // Analyze tech stack from file types and structure
+  analyzeTechStackFromFiles(fileTypes, fileStructure) {
+    const techStack = {
+      languages: [],
+      frameworks: [],
+      databases: [],
+      tools: [],
+      platforms: []
+    }
+
+    // Language detection from file extensions
+    const languageMap = {
+      'js': 'JavaScript', 'jsx': 'JavaScript/React', 'ts': 'TypeScript', 'tsx': 'TypeScript/React',
+      'py': 'Python', 'java': 'Java', 'kt': 'Kotlin', 'swift': 'Swift',
+      'go': 'Go', 'rs': 'Rust', 'cpp': 'C++', 'c': 'C', 'cs': 'C#',
+      'php': 'PHP', 'rb': 'Ruby', 'scala': 'Scala', 'clj': 'Clojure',
+      'dart': 'Dart', 'lua': 'Lua', 'r': 'R', 'jl': 'Julia'
+    }
+
+    Object.entries(fileTypes).forEach(([ext, count]) => {
+      if (languageMap[ext] && count > 0) {
+        techStack.languages.push(languageMap[ext])
+      }
+    })
+
+    // Framework/tool detection from file names
+    const traverse = (items) => {
+      if (Array.isArray(items)) {
+        items.forEach(item => {
+          if (item.type === 'file') {
+            // Framework detection
+            if (item.name === 'package.json') techStack.platforms.push('Node.js')
+            if (item.name === 'requirements.txt') techStack.platforms.push('Python')
+            if (item.name === 'Cargo.toml') techStack.platforms.push('Rust')
+            if (item.name === 'go.mod') techStack.platforms.push('Go')
+            if (item.name === 'pom.xml') techStack.platforms.push('Java/Maven')
+            if (item.name === 'build.gradle') techStack.platforms.push('Java/Gradle')
+
+            // Database detection
+            if (item.name.includes('mongo')) techStack.databases.push('MongoDB')
+            if (item.name.includes('postgres') || item.name.includes('pg')) techStack.databases.push('PostgreSQL')
+            if (item.name.includes('mysql')) techStack.databases.push('MySQL')
+            if (item.name.includes('redis')) techStack.databases.push('Redis')
+            if (item.name.includes('sqlite')) techStack.databases.push('SQLite')
+
+            // Tool detection
+            if (item.name === 'Dockerfile') techStack.tools.push('Docker')
+            if (item.name === 'docker-compose.yml') techStack.tools.push('Docker Compose')
+            if (item.name.includes('kubernetes') || item.name.includes('k8s')) techStack.tools.push('Kubernetes')
+            if (item.name.includes('terraform')) techStack.tools.push('Terraform')
+          } else if (item.children) {
+            traverse(item.children)
+          }
+        })
+      }
+    }
+
+    traverse(fileStructure)
+
+    // Remove duplicates
+    Object.keys(techStack).forEach(key => {
+      techStack[key] = [...new Set(techStack[key])]
+    })
+
+    return techStack
+  }
+
   createFallbackAnalysis(repoInfo, fileStructure) {
-    console.log('🔄 Creating fallback analysis for repository:', repoInfo.name)
+    console.log('🔄 Creating comprehensive fallback analysis for repository:', repoInfo.name)
     const { name, description, language, languages, topics } = repoInfo
     const fileTypes = this.analyzeFileTypes(fileStructure)
 
-    // Determine project type based on file extensions and structure
+    // Analyze repository structure for complex patterns
+    const structureAnalysis = this.analyzeRepositoryStructure(fileStructure)
+    const techStackAnalysis = this.analyzeTechStackFromFiles(fileTypes, fileStructure)
+
+    // Determine project type based on file extensions, structure, and patterns
     let projectType = 'web-application'
-    if (fileTypes.py || language === 'Python') {
+
+    // Use structure analysis for better project type detection
+    if (structureAnalysis.isMonorepo) {
+      projectType = 'library-package' // Monorepos are often libraries or multi-package projects
+    } else if (structureAnalysis.isMicroservices) {
+      projectType = 'api-service' // Microservices architecture
+    } else if (fileTypes.py || language === 'Python') {
       if (topics && topics.includes('machine-learning')) {
         projectType = 'data-science'
       } else if (fileTypes.py && !fileTypes.html && !fileTypes.js) {
@@ -1761,29 +1910,22 @@ Generate ONLY the README.md content in markdown format. Make it exceptional - th
       projectType = 'mobile-app'
     }
 
-    // Detect technologies more comprehensively
-    const technologies = []
-    if (language) technologies.push(language)
-    if (languages) technologies.push(...languages.slice(0, 5))
+    // Use tech stack analysis for comprehensive technology detection
+    const technologies = [
+      ...(techStackAnalysis.languages || []),
+      ...(language ? [language] : []),
+      ...(languages ? languages.slice(0, 5) : [])
+    ]
 
-    // Add technologies based on file types
-    if (fileTypes.js) technologies.push('JavaScript')
-    if (fileTypes.ts) technologies.push('TypeScript')
-    if (fileTypes.py) technologies.push('Python')
-    if (fileTypes.java) technologies.push('Java')
-    if (fileTypes.cpp || fileTypes.cc) technologies.push('C++')
-    if (fileTypes.cs) technologies.push('C#')
-    if (fileTypes.go) technologies.push('Go')
-    if (fileTypes.rs) technologies.push('Rust')
-    if (fileTypes.php) technologies.push('PHP')
-    if (fileTypes.rb) technologies.push('Ruby')
+    // Combine detected frameworks with structure-based detection
+    const frameworks = [
+      ...(techStackAnalysis.frameworks || []),
+      ...(fileTypes.jsx || fileTypes.tsx ? ['React'] : []),
+      ...(fileTypes.vue ? ['Vue.js'] : [])
+    ]
 
-    // Detect frameworks more comprehensively
-    const frameworks = []
-    if (fileTypes.jsx || fileTypes.tsx) frameworks.push('React')
-    if (fileTypes.vue) frameworks.push('Vue.js')
+    // Add Python framework detection
     if (fileTypes.py) {
-      // Check for common Python frameworks in file structure
       const hasFlask = fileStructure.some(item => item.name.toLowerCase().includes('flask'))
       const hasDjango = fileStructure.some(item => item.name.toLowerCase().includes('django'))
       const hasFastAPI = fileStructure.some(item => item.name.toLowerCase().includes('fastapi'))
@@ -1821,11 +1963,19 @@ Generate ONLY the README.md content in markdown format. Make it exceptional - th
     return {
       projectType,
       technologies: [...new Set(technologies)],
-      frameworks,
-      buildTools: fileTypes.json ? ['npm/yarn'] : fileTypes.py ? ['pip'] : [],
-      packageManagers: fileTypes.json ? ['npm'] : fileTypes.py ? ['pip'] : [],
-      databases: [],
-      deploymentPlatforms: [],
+      frameworks: [...new Set(frameworks)],
+      buildTools: [
+        ...structureAnalysis.buildSystems,
+        ...(fileTypes.json ? ['npm/yarn'] : []),
+        ...(fileTypes.py ? ['pip'] : [])
+      ],
+      packageManagers: [
+        ...structureAnalysis.packageManagers,
+        ...(fileTypes.json ? ['npm'] : []),
+        ...(fileTypes.py ? ['pip'] : [])
+      ],
+      databases: techStackAnalysis.databases || [],
+      deploymentPlatforms: techStackAnalysis.platforms || [],
       mainFiles: ['README.md', 'index.js', 'main.py', 'app.py', 'src/index.js', 'src/main.py'].filter(file =>
         fileStructure.some(item => item.name === file || item.path === file)
       ),
@@ -1836,10 +1986,11 @@ Generate ONLY the README.md content in markdown format. Make it exceptional - th
                 fileStructure.some(item => item.name.toLowerCase().includes('test')),
       hasDocumentation: fileTypes.md > 0,
       hasCI: fileStructure.some(item => item.name === '.github' || item.path.includes('.github')),
-      estimatedComplexity: Object.keys(fileTypes).length > 10 ? 'complex' :
+      estimatedComplexity: structureAnalysis.isMonorepo ? 'complex' :
+                          Object.keys(fileTypes).length > 10 ? 'complex' :
                           Object.keys(fileTypes).length > 5 ? 'moderate' : 'simple',
       keyFeatures,
-      architecture: `${projectType.replace('-', ' ')} with ${language || 'multiple languages'} implementation`,
+      architecture: this.generateArchitectureDescription(projectType, structureAnalysis, techStackAnalysis, language),
       setupInstructions: this.generateSetupInstructions(projectType, fileTypes, language),
       useCases: [`Developers working with ${language || 'this technology stack'}`, 'Teams building similar solutions'],
       prerequisites: this.generatePrerequisites(fileTypes, language),
@@ -1850,9 +2001,34 @@ Generate ONLY the README.md content in markdown format. Make it exceptional - th
       codeStructure: {
         totalFiles: this.countFiles(fileStructure),
         directories: this.extractDirectories(fileStructure),
-        fileTypes
+        fileTypes,
+        isMonorepo: structureAnalysis.isMonorepo,
+        isMicroservices: structureAnalysis.isMicroservices,
+        architecturePatterns: structureAnalysis.architecturePatterns
       }
     }
+  }
+
+  generateArchitectureDescription(projectType, structureAnalysis, techStackAnalysis, language) {
+    let description = `${projectType.replace('-', ' ')} with ${language || 'multiple languages'} implementation`
+
+    if (structureAnalysis.isMonorepo) {
+      description += ' organized as a monorepo with multiple packages/modules'
+    }
+
+    if (structureAnalysis.isMicroservices) {
+      description += ' following microservices architecture pattern'
+    }
+
+    if (structureAnalysis.hasMultipleApps) {
+      description += ' containing multiple applications (frontend, backend, etc.)'
+    }
+
+    if (techStackAnalysis.platforms.length > 0) {
+      description += ` built on ${techStackAnalysis.platforms.join(', ')}`
+    }
+
+    return description
   }
 
   generateSetupInstructions(projectType, fileTypes, language) {
@@ -1913,12 +2089,21 @@ Generate ONLY the README.md content in markdown format. Make it exceptional - th
       mainFiles = [],
       configFiles = [],
       hasCI = false,
-      ciPlatforms = []
+      ciPlatforms = [],
+      codeStructure = {},
+      databases = [],
+      deploymentPlatforms = []
     } = analysisData || {}
 
     const techList = [...new Set([...(technologies || []), ...(frameworks || [])])].join(', ')
 
-    const guidance = style === 'c4'
+    // Handle complex repository structures
+    const isMonorepo = codeStructure?.isMonorepo || false
+    const isMicroservices = codeStructure?.isMicroservices || false
+    const architecturePatterns = codeStructure?.architecturePatterns || []
+
+    // Adapt guidance based on repository complexity
+    let guidance = style === 'c4'
       ? `Use a single Mermaid C4-style diagram if supported by Mermaid (otherwise emulate using subgraphs):
 - Show Context: Users/Clients -> Frontend -> Backend -> Databases/Queues -> External services
 - Show Containers/Components within subgraphs with clear responsibilities
@@ -1928,6 +2113,26 @@ Generate ONLY the README.md content in markdown format. Make it exceptional - th
 - Nodes should include short labels and technology hints (e.g., Express API, MongoDB, Redis)
 - Edges annotated with protocols (HTTP/REST, GraphQL, gRPC) where known
 - Keep it to ONE diagram only`
+
+    // Add specific guidance for complex repositories
+    if (isMonorepo) {
+      guidance += `\n\nMONOREPO GUIDANCE:
+- Create subgraphs for each major package/module
+- Show shared dependencies and internal package relationships
+- Use clear naming for package boundaries (e.g., SHARED_LIBS, PACKAGE_A, PACKAGE_B)`
+    }
+
+    if (isMicroservices) {
+      guidance += `\n\nMICROSERVICES GUIDANCE:
+- Create separate subgraphs for each service
+- Show service-to-service communication patterns
+- Include API Gateway, Service Discovery, and shared infrastructure`
+    }
+
+    if (architecturePatterns.length > 0) {
+      guidance += `\n\nARCHITECTURE PATTERNS DETECTED: ${architecturePatterns.join(', ')}
+- Adapt the diagram to reflect these patterns appropriately`
+    }
 
     return `You are an expert software architect. Based on the following repository data and analysis, produce a single ADVANCED system architecture diagram in Mermaid syntax only.
 
@@ -1944,11 +2149,14 @@ ANALYSIS
 - Technologies: ${techList || 'Detect from files'}
 - Build Tools: ${(buildTools || []).join(', ') || 'N/A'}
 - Package Managers: ${(packageManagers || []).join(', ') || 'N/A'}
+- Databases: ${(databases || []).join(', ') || 'N/A'}
+- Deployment Platforms: ${(deploymentPlatforms || []).join(', ') || 'N/A'}
 - Main Files: ${(mainFiles || []).join(', ') || 'N/A'}
 - Config Files: ${(configFiles || []).join(', ') || 'N/A'}
 - Has CI/CD: ${hasCI ? 'Yes' : 'No'} (${(ciPlatforms || []).join(', ')})
 - Code Architecture: ${codeArchitecture || 'N/A'}
 - Project Structure: ${projectStructure || 'N/A'}
+- Repository Patterns: ${isMonorepo ? 'Monorepo' : ''} ${isMicroservices ? 'Microservices' : ''} ${architecturePatterns.join(', ')}
 - API Endpoints (if any): ${(realAPIEndpoints || []).slice(0, 15).join(' | ') || 'N/A'}
 
 REQUIREMENTS
@@ -1960,16 +2168,17 @@ REQUIREMENTS
 - No explanations before or after, just the Mermaid code block
 
 CRITICAL MERMAID SYNTAX RULES:
-- Node IDs must be simple alphanumeric (A, B, C1, API, DB, etc.) - NO SPACES OR SPECIAL CHARACTERS
-- Node labels go in brackets: A["API Gateway"] or B["React Frontend"]
-- Use underscores for multi-word IDs: API_Gateway["API Gateway"]
+- Node IDs must be UPPERCASE with underscores only (API, DB, FRONTEND_APP, etc.) - NO SPACES OR SPECIAL CHARACTERS
+- Node labels go in brackets with quotes: API["API Gateway"] or DB["MongoDB Database"]
+- Use underscores for multi-word IDs: FRONTEND_APP["React Frontend"] not Frontend_App
 - Valid arrows: --> --- -.- ==>
-- Edge labels: A -->|HTTP| B or A -- "REST API" --> B
+- Edge labels: API -->|HTTP REST| DB (avoid parentheses and slashes in edge labels)
 - Subgraph syntax: subgraph Frontend ... end
-- Style syntax: style A fill:#f9f,stroke:#333,stroke-width:2px
+- Style syntax: style API fill:#f9f,stroke:#333,stroke-width:2px
 - NO PARENTHESES in node IDs or labels: Use "React App" not "React App (Vite, TS)"
-- NO SLASHES in node IDs: Use "Frontend_App" not "Frontend/App"
-- NO SPECIAL CHARACTERS in node IDs: Only letters, numbers, and underscores
+- NO SLASHES in node IDs or edge labels: Use "HTTP REST" not "HTTP/REST"
+- NO SPECIAL CHARACTERS in node IDs: Only UPPERCASE letters, numbers, and underscores
+- Keep edge labels simple: |HTTP| |Database| |Cache| (avoid complex descriptions)
 
 ${guidance}
 
@@ -1977,36 +2186,37 @@ EXAMPLE OUTPUT:
 \`\`\`mermaid
 graph LR
     subgraph Frontend
-        UI["React App"]
-        style UI fill:#e1f5fe
+        FRONTEND_APP["React App"]
+        style FRONTEND_APP fill:#e1f5fe
     end
 
     subgraph Backend
-        API["Express API"]
-        AUTH["Auth Service"]
-        style API fill:#f3e5f5
-        style AUTH fill:#f3e5f5
+        API_SERVER["Express API"]
+        AUTH_SERVICE["Auth Service"]
+        style API_SERVER fill:#f3e5f5
+        style AUTH_SERVICE fill:#f3e5f5
     end
 
-    subgraph Data
-        DB["PostgreSQL"]
-        CACHE["Redis Cache"]
-        style DB fill:#e8f5e8
-        style CACHE fill:#e8f5e8
+    subgraph Data_Stores
+        DATABASE["PostgreSQL"]
+        CACHE_STORE["Redis Cache"]
+        style DATABASE fill:#e8f5e8
+        style CACHE_STORE fill:#e8f5e8
     end
 
-    UI -->|HTTP REST| API
-    API -->|SQL| DB
-    API -->|Cache| CACHE
-    AUTH -->|JWT| API
+    FRONTEND_APP -->|HTTP REST| API_SERVER
+    API_SERVER -->|Database Query| DATABASE
+    API_SERVER -->|Cache Access| CACHE_STORE
+    AUTH_SERVICE -->|JWT Token| API_SERVER
 \`\`\`
 
 CRITICAL: Follow these syntax rules exactly:
-- Node IDs: Only letters, numbers, underscores (A, B, API_Gateway, DB1)
+- Node IDs: UPPERCASE with underscores only (FRONTEND_APP, API_SERVER, DATABASE)
 - Labels: Always in quotes ["React App"] ["Express API"]
 - No parentheses in labels: Use "React App" not "React App (Vite)"
-- No slashes in IDs: Use Frontend_App not Frontend/App
-- Edge labels: Use |text| format, avoid special characters
+- No slashes in IDs or edge labels: Use "HTTP REST" not "HTTP/REST"
+- Edge labels: Use |simple text| format, avoid special characters and parentheses
+- Subgraph names: Use underscores for spaces (Data_Stores not "Data Stores")
 
 Return only the code block, like above.`
   }
@@ -2020,6 +2230,128 @@ Return only the code block, like above.`
     }
     // Fallback: return whole text if no fenced block
     return text.trim()
+  }
+
+  // Create a fallback architecture diagram for unusual repositories
+  createFallbackArchitectureDiagram(repositoryData, analysisData) {
+    const { name, language } = repositoryData || {}
+    const {
+      projectType = 'web-application',
+      technologies = [],
+      frameworks = [],
+      databases = [],
+      codeStructure = {}
+    } = analysisData || {}
+
+    const isMonorepo = codeStructure.isMonorepo || false
+    const isMicroservices = codeStructure.isMicroservices || false
+
+    // Create a robust fallback diagram based on detected patterns
+    if (isMonorepo) {
+      return `graph TB
+    subgraph MONOREPO["${name || 'Repository'} Monorepo"]
+        SHARED_LIBS["Shared Libraries"]
+        PACKAGE_A["Package A"]
+        PACKAGE_B["Package B"]
+        PACKAGE_C["Package C"]
+
+        style SHARED_LIBS fill:#e1f5fe
+        style PACKAGE_A fill:#f3e5f5
+        style PACKAGE_B fill:#f3e5f5
+        style PACKAGE_C fill:#f3e5f5
+    end
+
+    subgraph INFRASTRUCTURE["Infrastructure"]
+        BUILD_SYSTEM["Build System"]
+        CI_CD["CI/CD Pipeline"]
+
+        style BUILD_SYSTEM fill:#fff3e0
+        style CI_CD fill:#fff3e0
+    end
+
+    PACKAGE_A --> SHARED_LIBS
+    PACKAGE_B --> SHARED_LIBS
+    PACKAGE_C --> SHARED_LIBS
+    BUILD_SYSTEM --> MONOREPO
+    CI_CD --> BUILD_SYSTEM`
+    }
+
+    if (isMicroservices) {
+      return `graph LR
+    subgraph CLIENTS["Client Layer"]
+        WEB_CLIENT["Web Client"]
+        MOBILE_CLIENT["Mobile Client"]
+
+        style WEB_CLIENT fill:#e1f5fe
+        style MOBILE_CLIENT fill:#e1f5fe
+    end
+
+    subgraph SERVICES["Microservices"]
+        API_GATEWAY["API Gateway"]
+        SERVICE_A["Service A"]
+        SERVICE_B["Service B"]
+        SERVICE_C["Service C"]
+
+        style API_GATEWAY fill:#f3e5f5
+        style SERVICE_A fill:#f3e5f5
+        style SERVICE_B fill:#f3e5f5
+        style SERVICE_C fill:#f3e5f5
+    end
+
+    subgraph DATA_LAYER["Data Layer"]
+        DATABASE["Database"]
+        CACHE["Cache"]
+
+        style DATABASE fill:#e8f5e8
+        style CACHE fill:#e8f5e8
+    end
+
+    WEB_CLIENT --> API_GATEWAY
+    MOBILE_CLIENT --> API_GATEWAY
+    API_GATEWAY --> SERVICE_A
+    API_GATEWAY --> SERVICE_B
+    API_GATEWAY --> SERVICE_C
+    SERVICE_A --> DATABASE
+    SERVICE_B --> DATABASE
+    SERVICE_C --> CACHE`
+    }
+
+    // Default fallback for any repository type
+    const frontendTech = frameworks.find(f => ['React', 'Vue', 'Angular'].includes(f)) || 'Frontend'
+    const backendTech = technologies.find(t => ['Node.js', 'Python', 'Java', 'Go'].includes(t)) || language || 'Backend'
+    const dbTech = databases[0] || 'Database'
+
+    return `graph LR
+    subgraph CLIENT_LAYER["Client Layer"]
+        USER["Users"]
+
+        style USER fill:#e1f5fe
+    end
+
+    subgraph APPLICATION_LAYER["Application Layer"]
+        FRONTEND_APP["${frontendTech} Application"]
+        BACKEND_API["${backendTech} API"]
+
+        style FRONTEND_APP fill:#f3e5f5
+        style BACKEND_API fill:#f3e5f5
+    end
+
+    subgraph DATA_LAYER["Data Layer"]
+        DATABASE_STORE["${dbTech}"]
+
+        style DATABASE_STORE fill:#e8f5e8
+    end
+
+    subgraph EXTERNAL_LAYER["External Services"]
+        EXTERNAL_API["External APIs"]
+
+        style EXTERNAL_API fill:#fff3e0
+    end
+
+    USER --> FRONTEND_APP
+    FRONTEND_APP --> |HTTP REST| BACKEND_API
+    BACKEND_API --> |Database Query| DATABASE_STORE
+    BACKEND_API --> |API Calls| EXTERNAL_API`
   }
 
   // Generate architecture diagram via OpenRouter (primary)

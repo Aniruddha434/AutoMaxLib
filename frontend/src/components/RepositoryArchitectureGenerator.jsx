@@ -104,33 +104,30 @@ const RepositoryArchitectureGenerator = () => {
       // Skip empty lines and comments
       if (!cleaned || cleaned.startsWith('%%')) return cleaned
 
-      // Fix node IDs with spaces or special characters
-      // Pattern: "User/Client" -> "User_Client"
-      cleaned = cleaned.replace(/([A-Za-z][A-Za-z0-9\s\/\-]*)\s*\[/g, (match, id) => {
-        const cleanId = id.trim()
-          .replace(/\s+/g, '_')           // Replace spaces with underscores
-          .replace(/[\/\-\(\)]/g, '_')    // Replace slashes, dashes, parentheses with underscores
-          .replace(/[^a-zA-Z0-9_]/g, '')  // Remove any other special characters
+      // Fix edge labels with problematic characters first
+      // Pattern: |HTTP/REST (Axios)| -> |HTTP REST|
+      cleaned = cleaned.replace(/\|([^|]*)\|/g, (match, label) => {
+        const cleanLabel = label
+          .replace(/[()]/g, '')           // Remove parentheses
+          .replace(/[\/]/g, ' ')          // Replace slashes with spaces
+          .replace(/\s+/g, ' ')           // Replace multiple spaces with single
+          .trim()
+        return `|${cleanLabel}|`
+      })
+
+      // Fix node definitions - be more specific to avoid cross-line matching
+      // Look for patterns like: NODE_ID["Label"] or NODE_ID[Label]
+      cleaned = cleaned.replace(/\b([A-Z][A-Z0-9_]*)\s*\[([^\]]+)\]/g, (match, id, label) => {
+        // Clean the node ID
+        const cleanId = id
+          .replace(/[^a-zA-Z0-9_]/g, '')  // Remove special characters
           .replace(/_+/g, '_')            // Replace multiple underscores with single
           .replace(/^_|_$/g, '')          // Remove leading/trailing underscores
-        return `${cleanId}[`
-      })
 
-      // Fix node syntax: spaces in node names with brackets
-      // Pattern: "API Gateway[Spring Boot]" -> "API_Gateway[\"Spring Boot\"]"
-      cleaned = cleaned.replace(/([A-Za-z][A-Za-z\s]*[A-Za-z])\[([^\]]+)\]/g, (match, id, label) => {
-        const cleanId = id.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')
-        return `${cleanId}["${label}"]`
-      })
-
-      // Fix all node labels - remove problematic characters
-      cleaned = cleaned.replace(/\[([^\]]*)\]/g, (match, content) => {
-        // Remove quotes first if they exist
-        let label = content.replace(/^["']|["']$/g, '')
-
-        // Remove or replace problematic characters in labels
-        const cleanLabel = label
-          .replace(/[()]/g, '')           // Remove parentheses completely
+        // Clean the label
+        let cleanLabel = label.replace(/^["']|["']$/g, '') // Remove existing quotes
+        cleanLabel = cleanLabel
+          .replace(/[()]/g, '')           // Remove parentheses
           .replace(/['"]/g, '')           // Remove quotes
           .replace(/[{}]/g, '')           // Remove curly braces
           .replace(/[<>]/g, '')           // Remove angle brackets
@@ -138,8 +135,14 @@ const RepositoryArchitectureGenerator = () => {
           .replace(/\s+/g, ' ')           // Replace multiple spaces with single space
           .trim()
 
-        return `["${cleanLabel}"]`
+        return `${cleanId}["${cleanLabel}"]`
       })
+
+      // Fix arrows and connections - ensure proper spacing
+      cleaned = cleaned.replace(/\s*-->\s*/g, ' --> ')
+      cleaned = cleaned.replace(/\s*---\s*/g, ' --- ')
+      cleaned = cleaned.replace(/\s*-\.-\s*/g, ' -.- ')
+      cleaned = cleaned.replace(/\s*==>\s*/g, ' ==> ')
 
       // Fix subgraph names with spaces or special characters
       cleaned = cleaned.replace(/subgraph\s+([^{}\n]+)/g, (match, name) => {
@@ -152,14 +155,48 @@ const RepositoryArchitectureGenerator = () => {
         return `subgraph ${cleanName}`
       })
 
-      // Fix simple arrows
-      cleaned = cleaned.replace(/\s*-->\s*/g, ' --> ')
-      cleaned = cleaned.replace(/\s*---\s*/g, ' --- ')
+      // Fix style declarations
+      cleaned = cleaned.replace(/style\s+([A-Z][A-Z0-9_]*)\s+/g, (match, nodeId) => {
+        const cleanId = nodeId.replace(/[^a-zA-Z0-9_]/g, '')
+        return `style ${cleanId} `
+      })
 
       return cleaned
     })
 
     return lines.filter(line => line.length > 0).join('\n')
+  }
+
+  // Validate Mermaid syntax for common issues
+  const validateMermaidSyntax = (code) => {
+    const errors = []
+    const lines = code.split('\n')
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim()
+      if (!line || line.startsWith('%%')) continue
+
+      // Check for invalid node IDs (should be UPPERCASE with underscores only)
+      const nodeIdMatch = line.match(/^\s*([a-z][a-zA-Z0-9_]*)\s*\[/)
+      if (nodeIdMatch) {
+        errors.push(`Line ${i + 1}: Node ID "${nodeIdMatch[1]}" should be UPPERCASE (e.g., "${nodeIdMatch[1].toUpperCase()}")`)
+      }
+
+      // Check for problematic characters in edge labels
+      const edgeLabelMatch = line.match(/\|([^|]*)\|/)
+      if (edgeLabelMatch && (edgeLabelMatch[1].includes('/') || edgeLabelMatch[1].includes('('))) {
+        errors.push(`Line ${i + 1}: Edge label "${edgeLabelMatch[1]}" contains problematic characters (/ or parentheses)`)
+      }
+
+      // Check for unclosed brackets
+      const openBrackets = (line.match(/\[/g) || []).length
+      const closeBrackets = (line.match(/\]/g) || []).length
+      if (openBrackets !== closeBrackets) {
+        errors.push(`Line ${i + 1}: Mismatched brackets`)
+      }
+    }
+
+    return { isValid: errors.length === 0, errors }
   }
 
   const renderMermaid = async (mermaidCode) => {
@@ -174,6 +211,13 @@ const RepositoryArchitectureGenerator = () => {
       console.log('Original Mermaid code:', mermaidCode.substring(0, 200) + '...')
       console.log('Cleaned Mermaid code:', cleanedCode.substring(0, 200) + '...')
 
+      // Validate the cleaned code
+      const validation = validateMermaidSyntax(cleanedCode)
+      if (!validation.isValid) {
+        console.warn('Mermaid validation warnings:', validation.errors)
+        // Continue with rendering but log warnings
+      }
+
       const { svg } = await mermaid.render(`arch_${Date.now()}`, cleanedCode)
       console.log('Mermaid rendered successfully, SVG length:', svg.length)
       svgContainerRef.current.innerHTML = svg
@@ -184,14 +228,14 @@ const RepositoryArchitectureGenerator = () => {
       // Try with a fallback simple diagram
       try {
         const fallbackDiagram = `graph TD
-    A[Frontend] --> B[Backend]
-    B --> C[Database]
-    B --> D[External Services]
+    FRONTEND_APP["Frontend Application"] --> BACKEND_API["Backend API"]
+    BACKEND_API --> DATABASE["Database"]
+    BACKEND_API --> EXTERNAL_SERVICES["External Services"]
 
-    style A fill:#e1f5fe
-    style B fill:#f3e5f5
-    style C fill:#e8f5e8
-    style D fill:#fff3e0`
+    style FRONTEND_APP fill:#e1f5fe
+    style BACKEND_API fill:#f3e5f5
+    style DATABASE fill:#e8f5e8
+    style EXTERNAL_SERVICES fill:#fff3e0`
 
         const { svg } = await mermaid.render(`arch_fallback_${Date.now()}`, fallbackDiagram)
         svgContainerRef.current.innerHTML = `
