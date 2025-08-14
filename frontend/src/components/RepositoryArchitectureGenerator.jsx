@@ -200,9 +200,20 @@ const RepositoryArchitectureGenerator = () => {
   }
 
   const renderMermaid = async (mermaidCode) => {
-    if (!svgContainerRef.current || !mermaidCode) {
-      console.log('Missing container or mermaid code:', { container: !!svgContainerRef.current, code: !!mermaidCode })
-      return
+    if (!svgContainerRef.current) {
+      console.error('SVG container ref is not available')
+      throw new Error('SVG container not ready. Please try again.')
+    }
+
+    if (!mermaidCode) {
+      console.error('No mermaid code provided')
+      throw new Error('No diagram code to render.')
+    }
+
+    // Ensure mermaid is ready
+    if (!mermaid || typeof mermaid.render !== 'function') {
+      console.error('Mermaid is not properly initialized')
+      throw new Error('Diagram renderer not ready. Please refresh the page and try again.')
     }
 
     try {
@@ -220,6 +231,11 @@ const RepositoryArchitectureGenerator = () => {
 
       const { svg } = await mermaid.render(`arch_${Date.now()}`, cleanedCode)
       console.log('Mermaid rendered successfully, SVG length:', svg.length)
+
+      if (!svg || svg.length < 100) {
+        throw new Error('Generated SVG is empty or too small')
+      }
+
       svgContainerRef.current.innerHTML = svg
     } catch (e) {
       console.error('Mermaid render error:', e)
@@ -290,15 +306,21 @@ const RepositoryArchitectureGenerator = () => {
         style
       )
       if (resp?.success) {
-        setDiagram(resp.diagram)
-        setCurrentAction('Rendering diagram...')
-
-        // Check if diagram actually has content
-        if (!resp.diagram.mermaid || resp.diagram.mermaid.trim().length < 10) {
+        // Check if diagram actually has content before setting it
+        if (!resp.diagram || !resp.diagram.mermaid || resp.diagram.mermaid.trim().length < 10) {
           setError('Generated diagram is empty or too short. Please try again.')
-          setDiagram(null)
+          setLoading(false)
+          setCurrentAction('')
+          addToast({
+            title: 'Generation Failed',
+            description: 'Generated diagram is empty. Please try again.',
+            variant: 'error'
+          })
           return
         }
+
+        setDiagram(resp.diagram)
+        setCurrentAction('Rendering diagram...')
 
         try {
           await renderMermaid(resp.diagram.mermaid)

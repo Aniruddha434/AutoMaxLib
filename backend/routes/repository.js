@@ -466,6 +466,15 @@ router.post('/architecture/generate', [
       }
     }
 
+    // Validate the generated mermaid content before saving
+    if (!result.mermaid || result.mermaid.trim().length < 10) {
+      console.error('Generated mermaid content is empty or too short:', result.mermaid)
+      return res.status(500).json({
+        success: false,
+        message: 'Generated diagram content is empty. Please try again.'
+      })
+    }
+
     // Save to user history and increment usage
     const saved = user.addGeneratedArchitectureDiagram({
       style,
@@ -475,6 +484,15 @@ router.post('/architecture/generate', [
       generatedAt: result.generatedAt
     })
     await user.save()
+
+    // Double-check the saved content
+    if (!saved.mermaid || saved.mermaid.trim().length < 10) {
+      console.error('Saved mermaid content is empty or corrupted:', saved.mermaid)
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to save diagram content. Please try again.'
+      })
+    }
 
     res.json({
       success: true,
