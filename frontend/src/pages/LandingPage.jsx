@@ -3,7 +3,9 @@ import { useAuth } from '@clerk/clerk-react'
 import { useEffect, useRef, useState } from 'react'
 import FeatureShowcase from '../components/FeatureShowcase'
 import { PricingCard } from '../components/ui/pricing'
-import { CircularTestimonials } from '../components/ui/circular-testimonials'
+import { AnimatedTestimonials } from '../components/ui/animated-testimonials'
+import ScrollytellingFeatureShowcase from '../components/ui/ScrollytellingFeatureShowcase'
+import { HeroScrollDemo } from '../components/ui/HeroScrollDemo'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import { CompareSection } from '../components/CompareShowcase'
 import SEOHead from '../components/SEOHead'
@@ -40,6 +42,7 @@ const LandingPage = () => {
   const { isSignedIn } = useAuth()
   const [repositoryUrl, setRepositoryUrl] = useState('')
   const [validationError, setValidationError] = useState('')
+  const [counters, setCounters] = useState({ 0: 0, 1: 0, 2: 0, 3: 0 })
 
   // Scroll animation refs
   const heroRef = useScrollAnimation()
@@ -125,12 +128,84 @@ const LandingPage = () => {
     }
   ]
 
-  const stats = [
-    { number: "100+", label: "Active Developers", icon: Users },
-    { number: "1000+", label: "Commits Generated", icon: GitBranch },
-    { number: "99.9%", label: "Uptime Reliability", icon: Shield },
-    { number: "365", label: "Days Automated", icon: Calendar }
+  const scrollytellingSteps = [
+    {
+      id: "smart-automation",
+      title: "Smart Commit Automation",
+      description: "Our AI analyzes your coding patterns and generates meaningful commits that maintain your GitHub streak. Never worry about breaking your consistency again - AutoMaxLib intelligently schedules commits based on your workflow and preferences.",
+      visualAsset: {
+        type: "placeholder",
+        src: "/placeholder-feature-1.jpg",
+        altText: "Smart commit automation dashboard"
+      }
+    },
+    {
+      id: "flexible-scheduling",
+      title: "Flexible Scheduling",
+      description: "Set your preferred commit times and let AutoMaxLib adapt to your schedule. Whether you're a night owl or early bird, our intelligent scheduling ensures your commits happen when it makes sense for your workflow.",
+      visualAsset: {
+        type: "placeholder",
+        src: "/placeholder-feature-2.jpg",
+        altText: "Flexible scheduling interface"
+      }
+    },
+    {
+      id: "advanced-analytics",
+      title: "Advanced Analytics",
+      description: "Track your coding patterns, streak statistics, and productivity metrics with beautiful, detailed insights. Understand your development habits and optimize your workflow with data-driven decisions.",
+      visualAsset: {
+        type: "placeholder",
+        src: "/placeholder-feature-3.jpg",
+        altText: "Advanced analytics dashboard"
+      }
+    },
+    {
+      id: "secure-reliable",
+      title: "Secure & Reliable",
+      description: "Enterprise-grade security with 99.9% uptime ensures your automation runs smoothly. Your code and data are protected with industry-standard encryption and security practices.",
+      visualAsset: {
+        type: "placeholder",
+        src: "/placeholder-feature-4.jpg",
+        altText: "Security and reliability features"
+      }
+    }
   ]
+
+  const stats = [
+    { number: "100+", label: "Active Developers", icon: Users, target: 100 },
+    { number: "1000+", label: "Commits Generated", icon: GitBranch, target: 1000 },
+    { number: "99.9%", label: "Uptime Reliability", icon: Shield, target: 99.9 },
+    { number: "365", label: "Days Automated", icon: Calendar, target: 365 }
+  ]
+
+  // Count animation effect
+  useEffect(() => {
+    const animateCounters = () => {
+      stats.forEach((stat, index) => {
+        const duration = 2000 // 2 seconds
+        const steps = 60
+        const increment = stat.target / steps
+        let current = 0
+
+        const timer = setInterval(() => {
+          current += increment
+          if (current >= stat.target) {
+            current = stat.target
+            clearInterval(timer)
+          }
+
+          setCounters(prev => ({
+            ...prev,
+            [index]: current
+          }))
+        }, duration / steps)
+      })
+    }
+
+    // Start animation after component mounts with delay
+    const timeout = setTimeout(animateCounters, 1000)
+    return () => clearTimeout(timeout)
+  }, [])
 
   const testimonials = [
     {
@@ -161,7 +236,7 @@ const LandingPage = () => {
       period: "15 days",
       description: "Perfect for testing the automated commit experience",
       buttonText: "Start 15-Day Free Trial",
-      buttonVariant: "outline",
+      buttonVariant: "default",
       cta: "Start 15-Day Free Trial",
       popular: false,
       features: [
@@ -244,8 +319,10 @@ const LandingPage = () => {
       />
       <div className="min-h-screen">
       {/* Hero Section */}
-      <section ref={heroRef} className="bg-gray-50 py-16 md:py-32 dark:bg-transparent">
-        <div className="mx-auto max-w-3xl lg:max-w-5xl px-6">
+      <section ref={heroRef} className="bg-gray-50 py-16 md:py-32 dark:bg-transparent relative overflow-hidden">
+        {/* Left Side Gradient Glow */}
+        <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-sky-400/40 via-blue-500/30 to-orange-400/20 dark:from-blue-600/30 dark:via-indigo-600/20 dark:to-orange-600/15 blur-3xl opacity-80 dark:opacity-40"></div>
+        <div className="mx-auto max-w-3xl lg:max-w-5xl px-6 relative z-10">
           <div className="text-center space-y-8">
             {/* Main Headline */}
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 dark:text-white leading-tight animate-fade-in-up">
@@ -263,10 +340,10 @@ const LandingPage = () => {
               {isSignedIn ? (
                 <Link
                   to="/dashboard"
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-lg font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover-glow px-8 py-4"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-lg font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover-glow px-8 py-4 group"
                 >
                   Go to Dashboard
-                  <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1 animate-arrow-bounce" />
                 </Link>
               ) : (
                 <>
@@ -296,8 +373,10 @@ const LandingPage = () => {
                   className="text-center transform transition-all duration-300 hover:scale-105 animate-fade-in-up"
                   style={{ animationDelay: `${0.8 + index * 0.1}s` }}
                 >
-                  <div className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-1 bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                    {stat.number}
+                  <div className="text-2xl md:text-3xl font-semibold mb-1 bg-gradient-to-r from-primary-600 to-secondary-600 dark:from-primary-400 dark:to-secondary-400 bg-clip-text text-transparent">
+                    {index === 2 ? `${counters[index].toFixed(1)}%` :
+                     index === 0 || index === 1 ? `${Math.floor(counters[index])}+` :
+                     Math.floor(counters[index])}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     {stat.label}
@@ -310,46 +389,16 @@ const LandingPage = () => {
 
       </section>
 
-      {/* Features Section */}
-      <section ref={featuresRef} className="bg-gray-50 py-16 md:py-32 dark:bg-transparent">
-        <div className="mx-auto max-w-3xl lg:max-w-5xl px-6">
-          <div className="text-center mb-16 animate-fade-in-up">
-            <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6">
-              Everything You Need to Succeed
-            </h2>
-            <p className="text-lg text-foreground max-w-2xl mx-auto">
-              From intelligent automation to beautiful analytics, AutoMaxLib provides all the tools
-              you need to maintain consistency and build a professional developer profile.
-            </p>
-          </div>
+      {/* Features Section - Scrollytelling */}
+      <ScrollytellingFeatureShowcase
+        ref={featuresRef}
+        features={features}
+        title="Everything You Need to Succeed"
+        subtitle="From intelligent automation to beautiful analytics, AutoMaxLib provides all the tools you need to maintain consistency and build a professional developer profile."
+      />
 
-          <div className="grid grid-cols-6 gap-3">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="col-span-full sm:col-span-3 lg:col-span-2 animate-fade-in-up"
-                style={{ animationDelay: `${0.2 + index * 0.1}s` }}
-              >
-                <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 hover-glow group h-full flex flex-col">
-                  <div className="p-6 pt-6 flex-1 flex flex-col">
-                    <div className="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5 mb-6 group-hover:scale-110 transition-transform duration-300">
-                      <feature.icon className="m-auto size-5 group-hover:text-primary-600 transition-colors duration-300" strokeWidth={1} />
-                    </div>
-                    <div className="space-y-2 flex-1 flex flex-col">
-                      <h3 className="text-lg font-medium transition group-hover:text-primary-600">
-                        {feature.title}
-                      </h3>
-                      <p className="text-foreground text-sm flex-1">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Hero Scroll Animation Section */}
+      <HeroScrollDemo />
 
       {/* Repository README Generation Section */}
       <section className="py-16 md:py-24 bg-gray-50 dark:bg-transparent">
@@ -504,7 +553,7 @@ const LandingPage = () => {
       {/* Testimonials Section */}
       <section className="section bg-gradient-to-br from-neutral-50 to-primary-50/30 dark:from-neutral-900 dark:to-primary-950/30">
         <div className="container-custom">
-          <div className="text-center mb-20">
+          <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full px-4 py-2 mb-6">
               <Quote className="w-4 h-4" />
               <span className="text-sm font-semibold">What Developers Say</span>
@@ -519,25 +568,10 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <CircularTestimonials
+          <AnimatedTestimonials
             testimonials={testimonials}
             autoplay={true}
-            autoplayInterval={6000}
-            colors={{
-              name: "rgb(10, 10, 10)",
-              designation: "rgb(115, 115, 115)",
-              testimony: "rgb(64, 64, 64)",
-              arrowBackground: "transparent",
-              arrowForeground: "rgb(0, 0, 0)",
-              arrowHoverBackground: "rgb(255, 255, 255)",
-            }}
-            fontSizes={{
-              name: "24px",
-              designation: "16px",
-              quote: "18px",
-            }}
             className="animate-fade-in-up"
-            hideDots={true}
           />
         </div>
       </section>
@@ -631,7 +665,7 @@ const LandingPage = () => {
                 </Link>
                 <Link
                   to="/sign-in"
-                  className="border border-white/30 text-white hover:bg-white/10 font-medium py-3 px-6 rounded-md transition-colors duration-150 text-base inline-flex items-center gap-2"
+                  className="border border-gray-300 dark:border-white/30 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 font-medium py-3 px-6 rounded-md transition-colors duration-150 text-base inline-flex items-center gap-2 bg-white/80 dark:bg-transparent"
                 >
                   <Github className="w-4 h-4" />
                   Sign In
