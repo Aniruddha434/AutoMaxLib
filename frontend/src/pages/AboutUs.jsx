@@ -1,5 +1,7 @@
 import { ArrowLeft, Users, Target, Award, GitBranch, Zap, Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import SEOHead from '../components/SEOHead'
+import { seoData } from '../utils/seoData'
 
 const AboutUs = () => {
   const values = [
@@ -31,7 +33,15 @@ const AboutUs = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <>
+      <SEOHead
+        title="About AutoMaxLib - AI-Powered GitHub Automation Platform"
+        description="Learn about AutoMaxLib's mission to help developers maintain consistent coding habits with AI-powered GitHub automation tools, README generators, and contribution management."
+        keywords="about AutoMaxLib, GitHub automation platform, developer tools company, AI README generator company, GitHub contribution tools"
+        canonicalUrl="/about"
+        structuredData={seoData.about?.structuredData}
+      />
+      <div className="min-h-screen bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-12">
@@ -232,6 +242,7 @@ const AboutUs = () => {
         </section>
       </div>
     </div>
+    </>
   )
 }
 

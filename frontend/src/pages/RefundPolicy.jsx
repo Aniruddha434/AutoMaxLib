@@ -1,9 +1,18 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import SEOHead from '../components/SEOHead'
 
 const RefundPolicy = () => {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <>
+      <SEOHead
+        title="Refund Policy - AutoMaxLib GitHub Automation Platform"
+        description="AutoMaxLib Refund Policy - Learn about our refund terms and conditions for GitHub automation tools and premium developer services."
+        keywords="AutoMaxLib refund policy, GitHub automation refund, developer tools refund, service refund terms"
+        canonicalUrl="/refund-policy"
+        noIndex={false}
+      />
+      <div className="min-h-screen bg-white dark:bg-gray-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
@@ -248,6 +257,7 @@ const RefundPolicy = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

@@ -1,6 +1,8 @@
 import { ArrowLeft, Mail, Phone, MapPin, Clock, MessageCircle, Bug, CreditCard } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import SEOHead from '../components/SEOHead'
+import { seoData } from '../utils/seoData'
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -26,7 +28,15 @@ const ContactUs = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <>
+      <SEOHead
+        title="Contact AutoMaxLib - Get Support for GitHub Automation Tools"
+        description="Contact AutoMaxLib support team for help with GitHub README AI, auto commit tools, and developer automation. Get expert assistance within 24 hours."
+        keywords="contact AutoMaxLib, GitHub automation support, README generator help, auto commit support, developer tools assistance"
+        canonicalUrl="/contact"
+        structuredData={seoData.contact?.structuredData}
+      />
+      <div className="min-h-screen bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-12">
@@ -326,6 +336,7 @@ const ContactUs = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

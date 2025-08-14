@@ -1,9 +1,18 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import SEOHead from '../components/SEOHead'
 
 const TermsOfService = () => {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <>
+      <SEOHead
+        title="Terms of Service - AutoMaxLib GitHub Automation Platform"
+        description="AutoMaxLib Terms of Service - Read our terms and conditions for using GitHub automation tools, README generators, and developer services."
+        keywords="AutoMaxLib terms of service, GitHub automation terms, developer tools terms, service agreement"
+        canonicalUrl="/terms-of-service"
+        noIndex={false}
+      />
+      <div className="min-h-screen bg-white dark:bg-gray-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
@@ -268,6 +277,7 @@ const TermsOfService = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

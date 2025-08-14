@@ -1,9 +1,18 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import SEOHead from '../components/SEOHead'
 
 const PrivacyPolicy = () => {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <>
+      <SEOHead
+        title="Privacy Policy - AutoMaxLib GitHub Automation Platform"
+        description="AutoMaxLib Privacy Policy - Learn how we protect your data and privacy when using our GitHub automation tools, README generators, and developer services."
+        keywords="AutoMaxLib privacy policy, GitHub automation privacy, data protection, developer tools privacy"
+        canonicalUrl="/privacy-policy"
+        noIndex={false}
+      />
+      <div className="min-h-screen bg-white dark:bg-gray-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
@@ -205,6 +214,7 @@ const PrivacyPolicy = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

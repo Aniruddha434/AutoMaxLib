@@ -157,6 +157,49 @@ export const seoData = {
         "ratingCount": "200"
       }
     }
+  },
+
+  about: {
+    title: 'About AutoMaxLib - AI-Powered GitHub Automation Platform',
+    description: 'Learn about AutoMaxLib\'s mission to help developers maintain consistent coding habits with AI-powered GitHub automation tools, README generators, and contribution management.',
+    keywords: 'about AutoMaxLib, GitHub automation platform, developer tools company, AI README generator company, GitHub contribution tools',
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "name": "About AutoMaxLib",
+      "description": "Learn about AutoMaxLib's mission to help developers maintain consistent coding habits with AI-powered GitHub automation tools",
+      "url": "https://automaxlib.online/about",
+      "mainEntity": {
+        "@type": "Organization",
+        "name": "AutoMaxLib",
+        "url": "https://automaxlib.online",
+        "description": "Leading provider of AI-powered GitHub automation tools and developer productivity solutions"
+      }
+    }
+  },
+
+  contact: {
+    title: 'Contact AutoMaxLib - Get Support for GitHub Automation Tools',
+    description: 'Contact AutoMaxLib support team for help with GitHub README AI, auto commit tools, and developer automation. Get expert assistance within 24 hours.',
+    keywords: 'contact AutoMaxLib, GitHub automation support, README generator help, auto commit support, developer tools assistance',
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      "name": "Contact AutoMaxLib",
+      "description": "Contact AutoMaxLib support team for help with GitHub automation tools",
+      "url": "https://automaxlib.online/contact",
+      "mainEntity": {
+        "@type": "Organization",
+        "name": "AutoMaxLib",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "email": "supportautomaxlib@gmail.com",
+          "telephone": "+91-8624829427",
+          "url": "https://automaxlib.online/contact"
+        }
+      }
+    }
   }
 }
 
