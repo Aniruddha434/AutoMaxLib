@@ -1,23 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUserData } from '../contexts/UserContext'
 import { paymentService } from '../services/paymentService'
-import { 
-  Crown, 
-  Check, 
-  Zap, 
-  Star, 
+import geolocationService from '../services/geolocationService'
+import {
+  Crown,
+  Check,
+  Zap,
+  Star,
   Clock,
   GitBranch,
   Mail,
   BarChart3,
   Shield,
-  Sparkles
+  Sparkles,
+  Globe
 } from 'lucide-react'
 
 const Upgrade = () => {
   const { userData, isPremium } = useUserData()
   const [loading, setLoading] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState('monthly')
+  const [pricingData, setPricingData] = useState(null)
+  const [locationData, setLocationData] = useState(null)
+  const [loadingPricing, setLoadingPricing] = useState(true)
 
   const features = {
     free: [
@@ -46,23 +51,60 @@ const Upgrade = () => {
     ]
   }
 
-  const plans = {
+  // Load international pricing on component mount
+  useEffect(() => {
+    const loadPricing = async () => {
+      try {
+        setLoadingPricing(true)
+
+        // Get user's location and pricing
+        const [locationInfo, pricingInfo] = await Promise.all([
+          geolocationService.getCompleteLocation(),
+          paymentService.getInternationalPricing()
+        ])
+
+        setLocationData(locationInfo)
+        setPricingData(pricingInfo)
+      } catch (error) {
+        console.error('Error loading pricing:', error)
+        // Set fallback pricing
+        setPricingData({
+          pricing: {
+            currency: 'USD',
+            currencyInfo: { symbol: '$', position: 'before', decimals: 2 },
+            monthly: { id: 'premium_monthly', name: 'Premium Monthly', price: 6, period: 'month', description: 'Perfect for individual developers' },
+            yearly: { id: 'premium_yearly', name: 'Premium Yearly', price: 60, period: 'year', description: 'Best value - 2 months free!', discount: '17% off' }
+          },
+          location: { country: 'United States', countryCode: 'US', currency: 'USD' },
+          paymentMethods: { card: true, netbanking: false, wallet: false, upi: false, emi: false }
+        })
+      } finally {
+        setLoadingPricing(false)
+      }
+    }
+
+    loadPricing()
+  }, [])
+
+  // Get plans from pricing data or fallback
+  const plans = pricingData ? {
+    monthly: pricingData.pricing.monthly,
+    yearly: pricingData.pricing.yearly
+  } : {
     monthly: {
       id: 'premium_monthly',
       name: 'Premium Monthly',
-      price: 500, // Temporarily using INR for testing
+      price: 6,
       period: 'month',
-      description: 'Perfect for individual developers',
-      currency: '₹'
+      description: 'Perfect for individual developers'
     },
     yearly: {
       id: 'premium_yearly',
       name: 'Premium Yearly',
-      price: 5000, // Temporarily using INR for testing
+      price: 60,
       period: 'year',
       description: 'Best value - 2 months free!',
-      discount: '17% off',
-      currency: '₹'
+      discount: '17% off'
     }
   }
 
@@ -70,10 +112,12 @@ const Upgrade = () => {
     try {
       setLoading(true)
       const plan = plans[selectedPlan]
-      
-      // Create Razorpay order
-      const order = await paymentService.createOrder(plan.price, plan.id)
-      
+
+      // Create Razorpay order with international support
+      const orderResponse = await paymentService.createOrder(plan.price, plan.id)
+      const order = orderResponse.order
+      const pricingConfig = orderResponse.pricingConfig
+
       // Initialize Razorpay checkout with international payment support
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -97,7 +141,7 @@ const Upgrade = () => {
           name: userData?.fullName || '',
           email: userData?.email || '',
         },
-        theme: {
+        theme: pricingConfig?.razorpayConfig?.theme || {
           color: '#3B82F6'
         },
         modal: {
@@ -105,20 +149,20 @@ const Upgrade = () => {
             setLoading(false)
           }
         },
-        // Enable Indian payment methods for INR
-        config: {
+        // Configure payment methods based on user's region
+        config: pricingConfig?.razorpayConfig?.config || {
           display: {
             preferences: {
               show_default_blocks: true
             }
           }
         },
-        // Enable Indian payment methods
-        method: {
+        // Enable payment methods based on user's location
+        method: pricingConfig?.paymentMethods || {
           card: true,
-          netbanking: true,
-          wallet: true,
-          upi: true,
+          netbanking: false,
+          wallet: false,
+          upi: false,
           emi: false
         }
       }
@@ -130,6 +174,37 @@ const Upgrade = () => {
       alert('Failed to initiate payment. Please try again.')
       setLoading(false)
     }
+  }
+
+  // Helper function to format price with currency
+  const formatPrice = (price) => {
+    if (!pricingData) return `$${price}`
+
+    const currencyInfo = pricingData.pricing.currencyInfo
+    const formattedPrice = price.toLocaleString('en-US', {
+      minimumFractionDigits: currencyInfo.decimals,
+      maximumFractionDigits: currencyInfo.decimals
+    })
+
+    if (currencyInfo.position === 'before') {
+      return `${currencyInfo.symbol}${formattedPrice}`
+    } else {
+      return `${formattedPrice} ${currencyInfo.symbol}`
+    }
+  }
+
+  // Show loading state while fetching pricing
+  if (loadingPricing) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50/20 dark:from-neutral-950 dark:to-primary-950/10 py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Loading pricing for your region...</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (isPremium) {
@@ -181,10 +256,25 @@ const Upgrade = () => {
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Unlock the Full Power of AutoMaxLib
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Take your GitHub automation to the next level with advanced features, 
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-4">
+            Take your GitHub automation to the next level with advanced features,
             multiple repositories, and AI-powered commit messages.
           </p>
+
+          {/* Location indicator */}
+          {pricingData && pricingData.location && (
+            <div className="inline-flex items-center space-x-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-lg text-sm">
+              <Globe className="h-4 w-4" />
+              <span>
+                Pricing for {pricingData.location.country} ({pricingData.pricing.currency})
+                {pricingData.fallbackUsed && (
+                  <span className="text-blue-600 dark:text-blue-400 ml-1">
+                    (using {pricingData.pricing.currency} for payment compatibility)
+                  </span>
+                )}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Feature Comparison */}
@@ -196,7 +286,7 @@ const Upgrade = () => {
                 Free Plan
               </h3>
               <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                ₹0<span className="text-lg text-gray-500">/forever</span>
+                {formatPrice(0)}<span className="text-lg text-gray-500">/forever</span>
               </div>
             </div>
             
@@ -258,7 +348,7 @@ const Upgrade = () => {
               </div>
               
               <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                {plans[selectedPlan].currency || '₹'}{plans[selectedPlan].price}
+                {formatPrice(plans[selectedPlan].price)}
                 <span className="text-sm text-slate-500 dark:text-slate-400">/{plans[selectedPlan].period}</span>
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">

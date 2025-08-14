@@ -42,7 +42,13 @@ class PaymentService {
       amount,
       planId
     })
-    return response.order
+    return response
+  }
+
+  // Get international pricing based on user's location
+  async getInternationalPricing() {
+    const response = await this.api.get('/payment/pricing')
+    return response
   }
 
   // Verify payment

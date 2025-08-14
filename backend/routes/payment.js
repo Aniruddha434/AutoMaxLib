@@ -2,6 +2,7 @@ import express from 'express'
 import { body, validationResult } from 'express-validator'
 import User from '../models/User.js'
 import paymentService from '../services/paymentService.js'
+import pricingService from '../services/pricingService.js'
 
 const router = express.Router()
 
@@ -37,17 +38,44 @@ router.post('/create-order', [
       console.log('User auto-created for payment:', user._id)
     }
 
+    // Get user's pricing configuration based on location
+    const pricingConfig = await pricingService.getCompatiblePricingForUser(req)
+
+    if (!pricingConfig.success) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to determine pricing for your location'
+      })
+    }
+
+    // Get the plan pricing in user's currency
+    const plan = pricingConfig.pricing[planId.includes('monthly') ? 'monthly' : 'yearly']
+    if (!plan) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid plan ID'
+      })
+    }
+
     // Create order with user info in receipt (max 40 chars for Razorpay)
     const shortUserId = user.clerkId.slice(-8) // Last 8 chars of user ID
     const shortPlanId = planId === 'premium_monthly' ? 'PM' : 'PY' // PM or PY
     const timestamp = Date.now().toString().slice(-8) // Last 8 digits of timestamp
     const receipt = `${shortUserId}_${shortPlanId}_${timestamp}` // Max ~20 chars
-    // Using INR for testing since international payments not enabled
-    const order = await paymentService.createOrder(amount, 'INR', receipt)
+
+    // Use the currency and amount from pricing configuration
+    const order = await paymentService.createOrder(plan.price, pricingConfig.pricing.currency, receipt)
 
     res.json({
       success: true,
-      order: order.order
+      order: order.order,
+      pricingConfig: {
+        currency: pricingConfig.pricing.currency,
+        currencyInfo: pricingConfig.pricing.currencyInfo,
+        paymentMethods: pricingConfig.paymentMethods,
+        razorpayConfig: pricingConfig.razorpayConfig,
+        location: pricingConfig.location
+      }
     })
   } catch (error) {
     console.error('Error creating payment order:', error)
@@ -123,7 +151,7 @@ router.post('/verify', [
   }
 })
 
-// Get pricing plans
+// Get pricing plans (legacy endpoint - deprecated)
 router.get('/plans', (req, res) => {
   try {
     const plans = paymentService.getPricingPlans()
@@ -134,6 +162,36 @@ router.get('/plans', (req, res) => {
     })
   } catch (error) {
     console.error('Error fetching pricing plans:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    })
+  }
+})
+
+// Get international pricing based on user's location
+router.get('/pricing', async (req, res) => {
+  try {
+    const pricingConfig = await pricingService.getCompatiblePricingForUser(req)
+
+    if (!pricingConfig.success) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to determine pricing for your location'
+      })
+    }
+
+    res.json({
+      success: true,
+      pricing: pricingConfig.pricing,
+      location: pricingConfig.location,
+      paymentMethods: pricingConfig.paymentMethods,
+      razorpayConfig: pricingConfig.razorpayConfig,
+      fallbackUsed: pricingConfig.fallbackUsed || false,
+      originalCurrency: pricingConfig.originalCurrency || pricingConfig.pricing.currency
+    })
+  } catch (error) {
+    console.error('Error fetching international pricing:', error)
     res.status(500).json({
       success: false,
       message: 'Internal server error'
