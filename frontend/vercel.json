@@ -25,6 +25,13 @@
       }
     },
     {
+      "src": "/site-name.txt",
+      "headers": {
+        "content-type": "text/plain",
+        "cache-control": "public, max-age=86400"
+      }
+    },
+    {
       "src": "/favicon.ico",
       "headers": {
         "content-type": "image/x-icon",

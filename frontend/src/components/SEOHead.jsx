@@ -35,7 +35,12 @@ const SEOHead = ({
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content="AutoMaxLib" />
-      
+
+      {/* Site Name and Branding */}
+      <meta name="application-name" content="AutoMaxLib" />
+      <meta name="apple-mobile-web-app-title" content="AutoMaxLib" />
+      <meta name="msapplication-tooltip" content="AutoMaxLib - AI-Powered GitHub Tools" />
+
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={fullUrl} />
