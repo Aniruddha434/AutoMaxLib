@@ -86,17 +86,23 @@ const SignUpPage = () => {
       verificationCodeField: 'space-x-2',
       verificationCodeFieldInput:
         'w-12 h-12 text-center border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-lg rounded-md',
+      // Hide "Secured by Clerk" footer
+      footer: 'hidden',
+      footerAction: 'hidden',
+      footerActionText: 'hidden',
+      footerActionLink: 'hidden',
     },
   }), [isDark])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-400/10 dark:bg-indigo-400/5 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400/10 dark:bg-purple-400/5 rounded-full blur-3xl"></div>
       </div>
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+
+      <div className="w-full max-w-md mx-auto relative z-10">
         <div className="flex justify-center mb-8">
           <Logo variant="auth" size="xl" />
         </div>
@@ -109,10 +115,8 @@ const SignUpPage = () => {
             Start automating your GitHub commits today - it's free!
           </p>
         </div>
-      </div>
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-white dark:bg-slate-800 py-8 px-6 shadow-xl border border-slate-200 dark:border-slate-700 sm:rounded-xl sm:px-10 backdrop-blur-sm">
+        <div className="bg-white dark:bg-slate-800 py-8 px-6 shadow-xl border border-slate-200 dark:border-slate-700 rounded-xl backdrop-blur-sm">
           {clerkError ? (
             <div className="text-center">
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
