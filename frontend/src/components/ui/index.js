@@ -41,7 +41,13 @@ export {
   SkeletonList,
   SkeletonChart,
   SkeletonDashboard,
-  SkeletonWrapper
+  SkeletonWrapper,
+  SkeletonStatCard,
+  SkeletonFeatureCard,
+  SkeletonInsightCard,
+  SkeletonRepository,
+  SkeletonRepositoryGrid,
+  SkeletonBackfillForm
 } from './Skeleton'
 
 export {
