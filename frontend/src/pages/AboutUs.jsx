@@ -22,9 +22,9 @@ const AboutUs = () => {
 
   const team = [
     {
-      name: "Your Name",
+      name: "Aniruddha Gayki",
       role: "Founder & CEO",
-      description: "Passionate developer with 5+ years of experience in building developer tools and automation platforms.",
+      description: "Passionate developer with  years of experience in building developer tools and automation platforms.",
       image: "/api/placeholder/150/150"
     }
     // Add more team members as needed
