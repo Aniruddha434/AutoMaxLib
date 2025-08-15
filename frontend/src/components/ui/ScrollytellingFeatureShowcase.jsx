@@ -11,18 +11,16 @@ const ScrollytellingFeatureShowcase = forwardRef(({ features, title, subtitle },
   const scrollTimeout = useRef(null)
   const isContinuousScrolling = useRef(false)
 
-  // Map features to their corresponding images (exact order from LandingPage.jsx)
+  // Map features to their corresponding images (updated order after removing Contribution Analytics & Smart Notifications)
   const getFeatureImage = (index) => {
     const imageMap = {
       0: '/Feature_images/Auto_Commit_AI_Scheduling.png', // Auto Commit AI Scheduling ✅
       1: '/Feature_images/Multi-Repository_Github_Tools.png', // Multi-Repository GitHub Tools ✅
       2: '/Feature_images/Github_README_AI.png', // GitHub README AI ✅
-      3: '/Feature_images/Contribution_Analytics.png', // Contribution Analytics ✅
-      4: '/Feature_images/Enterprise_Security.png', // Enterprise Security ✅
-      5: '/Feature_images/Goal_Tracking.png', // Goal Tracking ✅
-      6: '/Feature_images/Analytics_Dashboard.png', // Analytics Dashboard ✅
-      7: '/Feature_images/Smart Notifications.png', // Smart Notifications ✅
-      8: '/Feature_images/README_Generation.png', // README Generation ✅
+      3: '/Feature_images/Enterprise_Security.png', // Enterprise Security ✅
+      4: '/Feature_images/Goal_Tracking.png', // Goal Tracking ✅
+      5: '/Feature_images/Analytics_Dashboard.png', // Analytics Dashboard ✅
+      6: '/Feature_images/README_Generation.png', // README Generation ✅
     }
     return imageMap[index] || '/Feature_images/Analytics_Dashboard.png' // Default fallback
   }
