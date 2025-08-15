@@ -60,9 +60,9 @@ const Logo = ({
       text: 'text-foreground'
     },
     auth: {
-      container: 'bg-white/90 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-600 rounded-xl shadow-lg backdrop-blur-sm',
-      icon: 'text-blue-600 dark:text-blue-400',
-      text: 'text-gray-900 dark:text-white font-bold'
+      container: 'bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-200 dark:border-neutral-700 rounded-lg',
+      icon: 'text-neutral-600 dark:text-neutral-400',
+      text: 'text-neutral-900 dark:text-neutral-100'
     }
   }
 
