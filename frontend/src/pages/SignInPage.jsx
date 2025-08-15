@@ -68,78 +68,60 @@ const SignInPage = () => {
           fontFamily: '"Inter", "Poppins", sans-serif',
         },
     elements: {
-      // Main card styling
-      card: 'shadow-none border-0 bg-transparent',
+      formButtonPrimary: 'bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm hover:shadow-md',
+      card: 'shadow-none border-0',
       headerTitle: 'hidden',
       headerSubtitle: 'hidden',
-
-      // Primary button (Continue/Sign In) - Better mobile sizing
-      formButtonPrimary: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg sm:rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 w-full text-base sm:text-lg',
-
-      // Social buttons (GitHub, Google, etc.) - Better mobile sizing
       socialButtonsBlockButton:
-        'border-2 border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg sm:rounded-xl transition-all duration-300 hover:shadow-md py-3 sm:py-4 px-4 w-full',
-      socialButtonsBlockButtonText: 'text-gray-700 dark:text-gray-300 font-medium',
-
-      // Form inputs - Better mobile sizing
+        'border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md transition-all duration-200 hover:shadow-sm',
+      socialButtonsBlockButtonText: 'text-slate-600 dark:text-slate-300 font-medium',
       formFieldInput:
-        'border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700/50 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg sm:rounded-xl transition-all duration-200 py-3 sm:py-4 px-3 sm:px-4 text-base w-full',
-      formFieldLabel: 'text-gray-700 dark:text-gray-300 font-semibold text-sm sm:text-base mb-2',
-
-      // Links and text
-      footerActionLink: 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors duration-200',
-
-      // Divider
-      dividerLine: 'bg-gray-200 dark:bg-gray-600',
-      dividerText: 'text-gray-500 dark:text-gray-400 text-sm font-medium',
-
-      // OTP/Verification inputs
+        'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md transition-colors duration-200',
+      formFieldLabel: 'text-slate-700 dark:text-slate-300 font-medium text-sm',
+      footerActionLink: 'text-indigo-600 hover:text-indigo-700 font-medium transition-colors duration-200',
+      dividerLine: 'bg-slate-200 dark:bg-slate-700',
+      dividerText: 'text-slate-500 dark:text-slate-400 text-sm',
+      // Specific styling for OTP inputs to prevent disappearing
       otpCodeFieldInput:
-        'border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700/50 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono rounded-xl',
-      verificationCodeField: 'space-x-3',
+        'border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-center font-mono rounded-md',
+      verificationCodeField: 'space-x-2',
       verificationCodeFieldInput:
-        'w-14 h-14 text-center border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700/50 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-xl rounded-xl transition-all duration-200',
-
-      // Hide Clerk branding
-      footer: 'hidden',
-      footerAction: 'hidden',
-      footerActionText: 'hidden',
-      footerActionLink: 'hidden',
+        'w-12 h-12 text-center border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-lg rounded-md',
     },
   }), [isDark])
 
-  // Mobile Design
-  const MobileDesign = () => (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 flex flex-col">
-      {/* Mobile Header */}
-      <div className="flex-shrink-0 pt-12 pb-8 px-6 text-center">
-        <div className="flex justify-center mb-6">
-          <div className="bg-blue-600 dark:bg-blue-500 p-4 rounded-2xl shadow-lg">
-            <GitBranch className="h-8 w-8 text-white" />
-          </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-400/10 dark:bg-indigo-400/5 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400/10 dark:bg-purple-400/5 rounded-full blur-3xl"></div>
+      </div>
+      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <div className="flex justify-center mb-8">
+          <Logo variant="auth" size="xl" />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Welcome back
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
-          Sign in to continue
-        </p>
+
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+            Welcome back
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Sign in to your account to continue automating your GitHub commits
+          </p>
+        </div>
       </div>
 
-      {/* Mobile Auth Card */}
-      <div className="flex-1 bg-white dark:bg-gray-800 rounded-t-3xl shadow-2xl px-6 py-8 relative flex flex-col items-center">
-        {/* Handle bar */}
-        <div className="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mb-8"></div>
-
-        <div className="w-full max-w-sm mx-auto">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <div className="bg-white dark:bg-slate-800 py-8 px-6 shadow-xl border border-slate-200 dark:border-slate-700 sm:rounded-xl sm:px-10 backdrop-blur-sm">
           {clerkError ? (
             <div className="text-center">
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
                 <p className="text-red-600 dark:text-red-400 text-sm">{clerkError}</p>
               </div>
               <button
                 onClick={() => window.location.reload()}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl text-sm font-medium transition-colors duration-200 w-full"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
               >
                 Refresh Page
               </button>
@@ -147,29 +129,7 @@ const SignInPage = () => {
           ) : (
             <ClerkErrorBoundary>
               <SignIn
-                appearance={{
-                  ...clerkAppearance,
-                  elements: {
-                    ...clerkAppearance.elements,
-                    // Mobile-specific overrides with centering
-                    card: 'shadow-none border-0 bg-transparent w-full',
-                    formButtonPrimary: 'bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 w-full text-base shadow-lg',
-                    socialButtonsBlockButton: 'border-2 border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl py-4 px-4 w-full mb-3',
-                    socialButtonsBlock: 'w-full',
-                    formFieldInput: 'border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700/50 dark:text-white rounded-xl py-4 px-4 text-base w-full',
-                    formFieldLabel: 'text-gray-700 dark:text-gray-300 font-medium text-base mb-2',
-                    dividerText: 'text-gray-500 dark:text-gray-400 text-sm text-center',
-                    dividerLine: 'bg-gray-200 dark:bg-gray-600',
-                    form: 'w-full',
-                    // Hide Clerk branding completely
-                    footer: 'hidden !important',
-                    footerAction: 'hidden !important',
-                    footerActionText: 'hidden !important',
-                    footerActionLink: 'hidden !important',
-                    footerPages: 'hidden !important',
-                    footerPagesLink: 'hidden !important',
-                  }
-                }}
+                appearance={clerkAppearance}
                 signUpUrl="/sign-up"
                 routing="path"
                 path="/sign-in"
@@ -177,117 +137,8 @@ const SignInPage = () => {
             </ClerkErrorBoundary>
           )}
         </div>
-
-        {/* Mobile Footer */}
-        <div className="text-center mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Don't have an account?{' '}
-            <Link
-              to="/sign-up"
-              className="text-blue-600 dark:text-blue-400 font-semibold"
-            >
-              Sign up
-            </Link>
-          </p>
-        </div>
       </div>
     </div>
-  )
-
-  // Desktop Design
-  const DesktopDesign = () => (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-6 lg:px-8 relative overflow-hidden">
-      {/* Enhanced Background Effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Primary gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/20 to-purple-400/20 dark:from-blue-500/10 dark:to-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-indigo-400/20 to-cyan-400/20 dark:from-indigo-500/10 dark:to-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-
-        {/* Grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
-      </div>
-
-      {/* Main Container */}
-      <div className="w-full max-w-lg mx-auto relative z-10">
-        {/* Logo Section */}
-        <div className="text-center mb-10">
-          <div className="flex justify-center mb-6">
-            <Logo variant="auth" size="xl" />
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
-            Welcome back
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
-            Sign in to your account to continue automating your GitHub commits
-          </p>
-        </div>
-
-        {/* Auth Card */}
-        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-2xl shadow-gray-500/10 dark:shadow-black/20 p-8 relative">
-          {/* Card glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 dark:from-blue-400/5 dark:to-purple-400/5 rounded-2xl"></div>
-
-          <div className="relative z-10">
-            {clerkError ? (
-              <div className="text-center">
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-4">
-                  <p className="text-red-600 dark:text-red-400 text-sm">{clerkError}</p>
-                </div>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl text-sm font-medium transition-colors duration-200 w-full"
-                >
-                  Refresh Page
-                </button>
-              </div>
-            ) : (
-              <ClerkErrorBoundary>
-                <SignIn
-                  appearance={clerkAppearance}
-                  signUpUrl="/sign-up"
-                  routing="path"
-                  path="/sign-in"
-                />
-              </ClerkErrorBoundary>
-            )}
-          </div>
-        </div>
-
-        {/* Desktop Footer */}
-        <div className="text-center mt-8">
-          <p className="text-gray-500 dark:text-gray-400 text-base">
-            Don't have an account?{' '}
-            <Link
-              to="/sign-up"
-              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors duration-200"
-            >
-              Sign up for free
-            </Link>
-          </p>
-          <div className="flex items-center justify-center mt-4 space-x-4 text-sm text-gray-400 dark:text-gray-500">
-            <span>Secure</span>
-            <span>•</span>
-            <span>Reliable</span>
-            <span>•</span>
-            <span>Fast</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-
-  return (
-    <>
-      {/* Mobile Design - Hidden on SM and up */}
-      <div className="sm:hidden">
-        <MobileDesign />
-      </div>
-
-      {/* Desktop Design - Hidden on mobile */}
-      <div className="hidden sm:block">
-        <DesktopDesign />
-      </div>
-    </>
   )
 }
 

@@ -72,7 +72,12 @@ const LandingPage = () => {
       description: "Create stunning GitHub profile READMEs with our advanced GitHub README AI. The best README AI generator for professional GitHub profiles.",
       color: "from-amber-500 to-orange-500"
     },
-
+    {
+      icon: Activity,
+      title: "Contribution Analytics",
+      description: "Track your coding consistency with beautiful visualizations and insights that help you stay motivated.",
+      color: "from-green-500 to-emerald-500"
+    },
     {
       icon: Shield,
       title: "Enterprise Security",
@@ -91,7 +96,12 @@ const LandingPage = () => {
       description: "Get detailed insights into your coding patterns, streak statistics, and productivity trends with charts.",
       color: "from-teal-500 to-cyan-500"
     },
-
+    {
+      icon: Mail,
+      title: "Smart Notifications",
+      description: "Receive intelligent email alerts about your streaks, achievements, and important repository updates.",
+      color: "from-orange-500 to-red-500"
+    },
     {
       icon: FileText,
       title: "README Generation",
