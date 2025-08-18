@@ -16,8 +16,6 @@ import {
   Clock,
   Zap,
   Shield,
-  BarChart3,
-  Mail,
   Check,
   ArrowRight,
   Calendar,
@@ -89,18 +87,6 @@ const LandingPage = () => {
       title: "Goal Tracking",
       description: "Set coding goals, track milestones, and celebrate achievements as you build consistent development habits.",
       color: "from-indigo-500 to-purple-500"
-    },
-    {
-      icon: BarChart3,
-      title: "Analytics Dashboard",
-      description: "Get detailed insights into your coding patterns, streak statistics, and productivity trends with charts.",
-      color: "from-teal-500 to-cyan-500"
-    },
-    {
-      icon: Mail,
-      title: "Smart Notifications",
-      description: "Receive intelligent email alerts about your streaks, achievements, and important repository updates.",
-      color: "from-orange-500 to-red-500"
     },
     {
       icon: FileText,

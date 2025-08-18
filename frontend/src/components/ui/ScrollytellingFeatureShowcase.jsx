@@ -20,11 +20,9 @@ const ScrollytellingFeatureShowcase = forwardRef(({ features, title, subtitle },
       3: '/Feature_images/Contribution_Analytics.png', // Contribution Analytics ✅
       4: '/Feature_images/Enterprise_Security.png', // Enterprise Security ✅
       5: '/Feature_images/Goal_Tracking.png', // Goal Tracking ✅
-      6: '/Feature_images/Analytics_Dashboard.png', // Analytics Dashboard ✅
-      7: '/Feature_images/Smart Notifications.png', // Smart Notifications ✅
-      8: '/Feature_images/README_Generation.png', // README Generation ✅
+      6: '/Feature_images/README_Generation.png', // README Generation ✅
     }
-    return imageMap[index] || '/Feature_images/Analytics_Dashboard.png' // Default fallback
+    return imageMap[index] || '/Feature_images/Auto_Commit_AI_Scheduling.png' // Default fallback
   }
 
   // Preload images
