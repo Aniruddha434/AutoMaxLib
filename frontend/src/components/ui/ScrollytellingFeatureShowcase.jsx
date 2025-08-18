@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, forwardRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const ScrollytellingFeatureShowcase = forwardRef(({ features, title, subtitle }, ref) => {
+  const ASSETS_VER = import.meta.env.VITE_ASSETS_VERSION || '1'
   const [activeFeature, setActiveFeature] = useState(0)
   const [imageLoaded, setImageLoaded] = useState({})
   const containerRef = useRef(null)
@@ -13,16 +14,17 @@ const ScrollytellingFeatureShowcase = forwardRef(({ features, title, subtitle },
 
   // Map features to their corresponding images (exact order from LandingPage.jsx)
   const getFeatureImage = (index) => {
+    const q = `?v=${ASSETS_VER}`
     const imageMap = {
-      0: '/Feature_images/Auto_Commit_AI_Scheduling.png', // Auto Commit AI Scheduling ✅
-      1: '/Feature_images/Multi-Repository_Github_Tools.png', // Multi-Repository GitHub Tools ✅
-      2: '/Feature_images/Github_README_AI.png', // GitHub README AI ✅
-      3: '/Feature_images/Contribution_Analytics.png', // Contribution Analytics ✅
-      4: '/Feature_images/Enterprise_Security.png', // Enterprise Security ✅
-      5: '/Feature_images/Goal_Tracking.png', // Goal Tracking ✅
-      6: '/Feature_images/README_Generation.png', // README Generation ✅
+      0: `/Feature_images/Auto_Commit_AI_Scheduling.png${q}`,
+      1: `/Feature_images/Multi-Repository_Github_Tools.png${q}`,
+      2: `/Feature_images/Github_README_AI.png${q}`,
+      3: `/Feature_images/Contribution_Analytics.png${q}`,
+      4: `/Feature_images/Enterprise_Security.png${q}`,
+      5: `/Feature_images/Goal_Tracking.png${q}`,
+      6: `/Feature_images/README_Generation.png${q}`,
     }
-    return imageMap[index] || '/Feature_images/Auto_Commit_AI_Scheduling.png' // Default fallback
+    return imageMap[index] || `/Feature_images/Auto_Commit_AI_Scheduling.png${q}`
   }
 
   // Preload images

@@ -6,6 +6,7 @@ import { Crown, GitBranch, FileText, ArrowRight, Sparkles } from 'lucide-react'
 import PremiumFeaturePreview from './PremiumFeaturePreview'
 
 const FeatureShowcase = ({ onUpgrade }) => {
+  const ASSETS_VER = import.meta.env.VITE_ASSETS_VERSION || '1'
   const [previewModal, setPreviewModal] = useState({ isOpen: false, featureType: null })
 
   const features = [
@@ -13,7 +14,7 @@ const FeatureShowcase = ({ onUpgrade }) => {
       id: 'pattern',
       title: 'GitHub Contribution Patterns',
       description: 'Create stunning visual patterns in your GitHub contribution graph that spell out words, create designs, and showcase your coding dedication.',
-      image: '/patternEX.png',
+      image: `/patternEX.png?v=${ASSETS_VER}`,
       imageAlt: 'GitHub contribution pattern example showing AUTOMAX text pattern',
       icon: GitBranch,
       isPremium: true,
@@ -29,7 +30,7 @@ const FeatureShowcase = ({ onUpgrade }) => {
       id: 'readme',
       title: 'AI-Powered README Generation',
       description: 'Generate professional GitHub profile READMEs with AI assistance, featuring modern templates, statistics, and personalized content.',
-      image: '/ReadmiEX.png',
+      image: `/ReadmiEX.png?v=${ASSETS_VER}`,
       imageAlt: 'Professional GitHub README example with modern design and statistics',
       icon: FileText,
       isPremium: true,
