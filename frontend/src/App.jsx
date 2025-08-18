@@ -17,6 +17,7 @@ import Upgrade from './pages/Upgrade'
 import PublicBadge from './pages/PublicBadge'
 import SignInPage from './pages/SignInPage'
 import SignUpPage from './pages/SignUpPage'
+import ForgotPassword from './pages/ForgotPassword'
 import PatternGenerator from './components/PatternGenerator'
 import ReadmeGeneratorPage from './pages/ReadmeGeneratorPage'
 import RepositoryReadmeGeneratorPage from './pages/RepositoryReadmeGeneratorPage'
@@ -48,6 +49,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/sign-in/*" element={<SignInPage />} />
               <Route path="/sign-up/*" element={<SignUpPage />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/badge/:userId" element={<PublicBadge />} />
               <Route path="/image-test" element={<ImageTest />} />
               <Route path="/premium-test" element={<PremiumFeatureTest />} />
@@ -58,7 +60,7 @@ function App() {
               <Route path="/refund-policy" element={<RefundPolicy />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/about" element={<AboutUs />} />
-              
+
               {/* Protected routes */}
               <Route path="/dashboard" element={
                 <ProtectedRoute>
