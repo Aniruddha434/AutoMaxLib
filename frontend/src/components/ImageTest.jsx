@@ -1,6 +1,7 @@
 import React from 'react'
 
 const ImageTest = () => {
+  const ASSETS_VER = import.meta.env.VITE_ASSETS_VERSION || '1'
   return (
     <div className="p-8 space-y-8">
       <h1 className="text-3xl font-bold">Image Test Page</h1>
@@ -9,7 +10,7 @@ const ImageTest = () => {
         <h2 className="text-2xl font-semibold">Pattern Example Image</h2>
         <div className="border rounded-lg overflow-hidden max-w-2xl">
           <img 
-            src="/patternEX.png" 
+            src={`/patternEX.png?v=${ASSETS_VER}` }
             alt="GitHub contribution pattern example"
             className="w-full h-auto"
             onError={(e) => {
@@ -26,7 +27,7 @@ const ImageTest = () => {
         <h2 className="text-2xl font-semibold">README Example Image</h2>
         <div className="border rounded-lg overflow-hidden max-w-2xl">
           <img 
-            src="/ReadmiEX.png" 
+            src={`/ReadmiEX.png?v=${ASSETS_VER}` }
             alt="GitHub README example"
             className="w-full h-auto"
             onError={(e) => {
