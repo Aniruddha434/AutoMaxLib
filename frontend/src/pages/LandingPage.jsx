@@ -326,7 +326,7 @@ const LandingPage = () => {
           <div className="text-center space-y-8">
             {/* Main Headline */}
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 dark:text-white leading-tight animate-fade-in-up">
-              GitHub README AI -README Generator & Auto Commit Tools
+              GitHub README AI -README & Archicture Diagram Generator
             </h1>
 
             {/* Subheadline */}
