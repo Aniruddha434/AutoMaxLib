@@ -248,7 +248,7 @@ const ScrollytellingFeatureShowcase = forwardRef(({ features, title, subtitle },
                 <motion.img
                   key={index}
                   src={getFeatureImage(index)}
-                  alt={feature?.title || 'Feature preview'}
+                  alt={`${feature?.title || 'Feature preview'} - AutoMaxLib GitHub automation tool demonstration`}
                   className="absolute inset-0 w-full h-full object-cover rounded-2xl"
                   initial={{ opacity: 0 }}
                   animate={{

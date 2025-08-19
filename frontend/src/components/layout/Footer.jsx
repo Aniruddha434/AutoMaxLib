@@ -9,15 +9,18 @@ const Footer = () => {
 
   const productLinks = [
     { label: 'Dashboard', href: '/dashboard' },
+    { label: 'GitHub README AI', href: '/github-readme-ai-landing' },
+    { label: 'Repository README', href: '/repository-readme-generator-landing' },
+    { label: 'Architecture Generator', href: '/repository-architecture-generator-landing' },
     { label: 'Pricing', href: '/upgrade' },
     { label: 'Features', href: '/#features' },
-    { label: 'README AI', href: '/readme-generator' },
     { label: 'Patterns', href: '/patterns' }
   ]
 
   const supportLinks = [
     { label: 'About Us', href: '/about' },
     { label: 'Contact Us', href: '/contact' },
+    { label: 'Business Verification', href: '/business-verification' },
     { label: 'Privacy Policy', href: '/privacy-policy' },
     { label: 'Terms of Service', href: '/terms-of-service' },
     { label: 'Refund Policy', href: '/refund-policy' }

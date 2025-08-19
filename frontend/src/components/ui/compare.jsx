@@ -195,7 +195,7 @@ export const Compare = ({
               transition={{ duration: 0 }}
             >
               <img
-                alt="first image"
+                alt="Before using AutoMaxLib - Basic GitHub profile"
                 src={firstImage}
                 className={cn(
                   "absolute inset-0  z-20 rounded-2xl flex-shrink-0 w-full h-full select-none",
@@ -215,7 +215,7 @@ export const Compare = ({
               "absolute top-0 left-0 z-[19]  rounded-2xl w-full h-full select-none",
               secondImageClassname
             )}
-            alt="second image"
+            alt="After using AutoMaxLib - Professional GitHub profile with AI-generated content"
             src={secondImage}
             draggable={false}
           />

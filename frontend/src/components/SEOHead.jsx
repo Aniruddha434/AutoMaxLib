@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async'
+import { organizationSchema, websiteSchema, softwareApplicationSchema } from '../utils/schemaMarkup'
 
 const SEOHead = ({ 
   title, 
@@ -59,6 +60,17 @@ const SEOHead = ({
           {JSON.stringify(structuredData)}
         </script>
       )}
+
+      {/* Global Schema Markup */}
+      <script type="application/ld+json">
+        {JSON.stringify(organizationSchema)}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify(websiteSchema)}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify(softwareApplicationSchema)}
+      </script>
     </Helmet>
   )
 }

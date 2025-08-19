@@ -5,6 +5,7 @@ import { BrowserRouter, useNavigate } from "react-router-dom"
 import App from "./App.jsx"
 import "./index.css"
 import "./services/errorLogger.js" // Initialize error logger
+import { initPerformanceOptimizations } from "./utils/performance.js"
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -43,6 +44,9 @@ const ClerkWithRouter = ({ children }) => {
     </ClerkProvider>
   )
 }
+
+// Initialize performance optimizations
+initPerformanceOptimizations()
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

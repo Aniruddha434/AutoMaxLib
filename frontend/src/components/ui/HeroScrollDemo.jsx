@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { ContainerScroll } from "./container-scroll-animation";
+import LazyImage from "../LazyImage";
 
 export function HeroScrollDemo() {
   return (
@@ -21,14 +22,14 @@ export function HeroScrollDemo() {
         }
       >
         {/* Desktop Image */}
-        <img
+        <LazyImage
           src="/images/Frameweb.png"
           alt="AutoMaxLib dashboard showing GitHub analytics, commit automation, and README generation tools"
           className="mx-auto rounded-2xl object-contain h-full w-full hidden md:block"
           draggable={false}
         />
         {/* Mobile Image */}
-        <img
+        <LazyImage
           src="/images/Framemobile.png"
           alt="AutoMaxLib mobile dashboard"
           className="mx-auto rounded-2xl object-contain h-full w-full block md:hidden"
