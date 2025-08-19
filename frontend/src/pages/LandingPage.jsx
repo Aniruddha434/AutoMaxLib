@@ -319,8 +319,8 @@ const LandingPage = () => {
 
             {/* Subheadline */}
             <p className="text-lg text-foreground max-w-2xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              AutoMaxLib is the leading <Link to="/github-readme-ai-landing" className="text-primary-600 hover:text-primary-700 underline">GitHub README AI platform</Link>. Create professional GitHub READMEs with our advanced <Link to="/repository-readme-generator-landing" className="text-primary-600 hover:text-primary-700 underline">README AI generator</Link>,
-              plus <Link to="/dashboard" className="text-primary-600 hover:text-primary-700 underline">auto commit tools</Link> and <Link to="/repository-architecture-generator-landing" className="text-primary-600 hover:text-primary-700 underline">GitHub contribution features</Link> to boost your developer profile.
+              AutoMaxLib is the leading GitHub README AI platform. Create professional GitHub READMEs with our advanced README AI generator,
+              plus auto commit tools and GitHub contribution features to boost your developer profile.
             </p>
 
             {/* CTA Buttons */}
