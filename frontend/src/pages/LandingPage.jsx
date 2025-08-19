@@ -11,6 +11,8 @@ import { CompareSection } from '../components/CompareShowcase'
 import SEOHead from '../components/SEOHead'
 import { seoData } from '../utils/seoData'
 import SEOFAQSection from '../components/SEOFAQSection'
+import TrustIndicators from '../components/TrustIndicators'
+import EnhancedTestimonials from '../components/EnhancedTestimonials'
 import {
   GitBranch,
   Clock,
@@ -554,11 +556,7 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <AnimatedTestimonials
-            testimonials={testimonials}
-            autoplay={true}
-            className="animate-fade-in-up"
-          />
+          <EnhancedTestimonials variant="compact" />
         </div>
       </section>
 
@@ -660,24 +658,7 @@ const LandingPage = () => {
             )}
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-gray-600 dark:text-gray-400">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4" />
-                <span className="text-sm">Secure & Private</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4" />
-                <span className="text-sm">Instant Setup</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                <span className="text-sm">100+ Happy Users</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Award className="w-4 h-4" />
-                <span className="text-sm">30-Day Guarantee</span>
-              </div>
-            </div>
+            <TrustIndicators variant="compact" />
           </div>
         </div>
 

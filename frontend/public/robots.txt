@@ -8,6 +8,12 @@ Allow: /privacy-policy
 Allow: /terms-of-service
 Allow: /refund-policy
 
+# Allow public feature landing pages
+Allow: /github-readme-ai-landing
+Allow: /repository-readme-generator-landing
+Allow: /repository-architecture-generator-landing
+Allow: /business-verification
+
 # Allow static assets
 Allow: /og-image.svg
 Allow: /logo.svg

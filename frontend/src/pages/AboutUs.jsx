@@ -2,6 +2,8 @@ import { ArrowLeft, Users, Target, Award, GitBranch, Zap, Shield } from 'lucide-
 import { Link } from 'react-router-dom'
 import SEOHead from '../components/SEOHead'
 import { seoData } from '../utils/seoData'
+import TrustIndicators from '../components/TrustIndicators'
+import SecurityBadges from '../components/SecurityBadges'
 
 const AboutUs = () => {
   const values = [
@@ -206,6 +208,25 @@ const AboutUs = () => {
               </div>
             </div>
           </div>
+        </section>
+
+        {/* Trust & Security Section */}
+        <section className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Security & Trust
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+              Your security and privacy are our top priorities. We maintain the highest standards
+              of data protection and business transparency.
+            </p>
+          </div>
+          <SecurityBadges variant="grid" />
+        </section>
+
+        {/* Business Information */}
+        <section className="mb-16">
+          <TrustIndicators />
         </section>
 
         {/* Contact CTA */}

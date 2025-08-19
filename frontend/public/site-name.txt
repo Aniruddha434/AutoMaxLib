@@ -1,1 +1,1 @@
-AutoMaxLib
+AutoMaxLib - AI-Powered GitHub Tools & Auto Commit Generator

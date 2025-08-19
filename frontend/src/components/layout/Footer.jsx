@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { GitBranch, Heart, Github, Twitter, Mail, ExternalLink } from 'lucide-react'
 import { cn } from '../../utils/cn'
 import Logo from '../ui/Logo'
+import TrustIndicators from '../TrustIndicators'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -147,6 +148,11 @@ const Footer = () => {
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             </div>
           </div>
+        </div>
+
+        {/* Trust Indicators Section */}
+        <div className="border-t border-neutral-200 dark:border-neutral-700 pt-8">
+          <TrustIndicators variant="footer" />
         </div>
       </div>
     </footer>

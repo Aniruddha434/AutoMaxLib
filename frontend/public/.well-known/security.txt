@@ -1,0 +1,8 @@
+Contact: mailto:supportautomaxlib@gmail.com
+Contact: tel:+91-8624829427
+Expires: 2025-12-31T23:59:59.000Z
+Encryption: https://automaxlib.online/pgp-key.txt
+Acknowledgments: https://automaxlib.online/security-acknowledgments
+Preferred-Languages: en, hi
+Canonical: https://automaxlib.online/.well-known/security.txt
+Policy: https://automaxlib.online/security-policy

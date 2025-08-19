@@ -23,6 +23,10 @@ import ReadmeGeneratorPage from './pages/ReadmeGeneratorPage'
 import RepositoryReadmeGeneratorPage from './pages/RepositoryReadmeGeneratorPage'
 import RepositoryArchitectureGeneratorPage from './pages/RepositoryArchitectureGeneratorPage'
 import GitHubReadmeAI from './pages/GitHubReadmeAI'
+import GitHubReadmeAILanding from './pages/features/GitHubReadmeAILanding'
+import RepositoryReadmeGeneratorLanding from './pages/features/RepositoryReadmeGeneratorLanding'
+import RepositoryArchitectureGeneratorLanding from './pages/features/RepositoryArchitectureGeneratorLanding'
+import BusinessVerification from './pages/BusinessVerification'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 
 import ImageTest from './components/ImageTest'
@@ -60,6 +64,12 @@ function App() {
               <Route path="/refund-policy" element={<RefundPolicy />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/about" element={<AboutUs />} />
+
+              {/* Public feature landing pages */}
+              <Route path="/github-readme-ai-landing" element={<GitHubReadmeAILanding />} />
+              <Route path="/repository-readme-generator-landing" element={<RepositoryReadmeGeneratorLanding />} />
+              <Route path="/repository-architecture-generator-landing" element={<RepositoryArchitectureGeneratorLanding />} />
+              <Route path="/business-verification" element={<BusinessVerification />} />
 
               {/* Protected routes */}
               <Route path="/dashboard" element={
