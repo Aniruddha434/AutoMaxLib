@@ -186,9 +186,9 @@ export const PageHeader = ({
     
     <div className="flex items-start justify-between">
       <div className="min-w-0 flex-1">
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">
+        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">
           {title}
-        </h1>
+        </h2>
         {description && (
           <p className="mt-2 text-neutral-600 dark:text-neutral-400">
             {description}

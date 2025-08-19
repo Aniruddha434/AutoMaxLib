@@ -131,14 +131,32 @@ export const inlineCriticalCSS = (css) => {
 
 // Service Worker registration
 export const registerServiceWorker = async () => {
-  if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+  if ('serviceWorker' in navigator && (process.env.NODE_ENV === 'production' || location.protocol === 'https:')) {
     try {
-      const registration = await navigator.serviceWorker.register('/sw.js')
-      console.log('SW registered: ', registration)
+      const registration = await navigator.serviceWorker.register('/sw.js', {
+        scope: '/'
+      })
+      console.log('SW registered successfully:', registration.scope)
+
+      // Handle updates
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing
+        if (newWorker) {
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('New service worker available')
+              // Optionally notify user about update
+            }
+          })
+        }
+      })
+
       return registration
     } catch (registrationError) {
-      console.log('SW registration failed: ', registrationError)
+      console.warn('SW registration failed:', registrationError)
     }
+  } else {
+    console.log('Service Worker not supported or not in production')
   }
 }
 
@@ -146,11 +164,52 @@ export const registerServiceWorker = async () => {
 export const trackWebVitals = () => {
   if (typeof window !== 'undefined') {
     import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-      getCLS(console.log)
-      getFID(console.log)
-      getFCP(console.log)
-      getLCP(console.log)
-      getTTFB(console.log)
+      // Track Core Web Vitals
+      getCLS((metric) => {
+        console.log('CLS:', metric)
+        sendToAnalytics('CLS', metric)
+      })
+      getFID((metric) => {
+        console.log('FID:', metric)
+        sendToAnalytics('FID', metric)
+      })
+      getFCP((metric) => {
+        console.log('FCP:', metric)
+        sendToAnalytics('FCP', metric)
+      })
+      getLCP((metric) => {
+        console.log('LCP:', metric)
+        sendToAnalytics('LCP', metric)
+      })
+      getTTFB((metric) => {
+        console.log('TTFB:', metric)
+        sendToAnalytics('TTFB', metric)
+      })
+    }).catch(error => {
+      console.warn('Web Vitals tracking failed:', error)
+    })
+  }
+}
+
+// Send metrics to analytics
+const sendToAnalytics = (metricName, metric) => {
+  // Send to Google Analytics if available
+  if (window.gtag) {
+    window.gtag('event', metricName, {
+      event_category: 'Web Vitals',
+      event_label: metricName,
+      value: Math.round(metric.value),
+      non_interaction: true
+    })
+  }
+
+  // Send to other analytics services if needed
+  if (window.analytics) {
+    window.analytics.track('Web Vital', {
+      metric: metricName,
+      value: metric.value,
+      id: metric.id,
+      delta: metric.delta
     })
   }
 }

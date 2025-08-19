@@ -9,12 +9,12 @@ export function HeroScrollDemo() {
       <ContainerScroll
         titleComponent={
           <>
-            <h1 className="text-4xl font-semibold text-black dark:text-white">
+            <h2 className="text-4xl font-semibold text-black dark:text-white">
               Experience the power of <br />
               <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none gradient-text">
                 AutoMaxLib
               </span>
-            </h1>
+            </h2>
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mt-6 max-w-2xl mx-auto">
               Transform your GitHub presence with intelligent automation, beautiful analytics, and professional README generation.
             </p>

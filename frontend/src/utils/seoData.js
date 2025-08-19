@@ -1,8 +1,8 @@
 // SEO data for different pages and features
 export const seoData = {
   home: {
-    title: 'GitHub README AI - Best AI-Powered README Generator & Auto Commit Tools',
-    description: 'AutoMaxLib is the leading GitHub README AI platform offering intelligent README generation, auto commit AI, and GitHub contribution tools. Create professional GitHub READMEs with our advanced AI technology.',
+    title: 'GitHub README AI - Best AI README Generator',
+    description: 'AutoMaxLib offers AI-powered README generation, auto commit tools, and GitHub contribution features. Create professional READMEs instantly.',
     keywords: 'GitHub README AI, README AI generator, GitHub README generator AI, auto commit AI, GitHub contribution tools, AI commit generator, GitHub streak maintainer, profile generation AI, repository README generator, GitHub automation, coding streak, developer tools',
     structuredData: {
       "@context": "https://schema.org",
@@ -122,8 +122,8 @@ export const seoData = {
   },
 
   autoCommit: {
-    title: 'Auto Commit AI - GitHub Streak Maintainer & Contribution Tools',
-    description: 'Maintain your GitHub contribution streak with our intelligent auto commit AI. Smart scheduling, meaningful commits, and automated GitHub contributions to boost your developer profile.',
+    title: 'Auto Commit AI - GitHub Streak Maintainer',
+    description: 'Maintain your GitHub streak with intelligent auto commit AI. Smart scheduling and automated contributions to boost your profile.',
     keywords: 'auto commit AI, GitHub streak maintainer, auto contribution GitHub, AI commit generator, GitHub contribution tools, coding streak automation, GitHub activity booster',
     structuredData: {
       "@context": "https://schema.org",
@@ -160,8 +160,8 @@ export const seoData = {
   },
 
   about: {
-    title: 'About AutoMaxLib - AI-Powered GitHub Automation Platform',
-    description: 'Learn about AutoMaxLib\'s mission to help developers maintain consistent coding habits with AI-powered GitHub automation tools, README generators, and contribution management.',
+    title: 'About AutoMaxLib - GitHub Automation Platform',
+    description: 'Learn about AutoMaxLib\'s mission to help developers with AI-powered GitHub tools, README generators, and contribution management.',
     keywords: 'about AutoMaxLib, GitHub automation platform, developer tools company, AI README generator company, GitHub contribution tools',
     structuredData: {
       "@context": "https://schema.org",

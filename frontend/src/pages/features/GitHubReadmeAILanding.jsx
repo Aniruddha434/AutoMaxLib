@@ -76,8 +76,8 @@ const GitHubReadmeAILanding = () => {
   return (
     <>
       <SEOHead
-        title="GitHub README AI Generator - Best AI-Powered README Creator"
-        description="Create professional GitHub README files with our advanced AI generator. Analyze repositories, generate documentation, and improve project discoverability with intelligent README creation."
+        title="GitHub README AI Generator - Best AI Creator"
+        description="Create professional GitHub README files with AI. Analyze repositories, generate docs, and improve project discoverability instantly."
         keywords="GitHub README AI, README AI generator, AI README creator, GitHub documentation generator, repository README AI, automated README generation, GitHub README maker"
         canonicalUrl="/github-readme-ai"
         structuredData={{

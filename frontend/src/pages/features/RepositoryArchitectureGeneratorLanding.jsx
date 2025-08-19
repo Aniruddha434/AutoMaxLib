@@ -75,8 +75,8 @@ const RepositoryArchitectureGeneratorLanding = () => {
   return (
     <>
       <SEOHead
-        title="Repository Architecture Generator - AI System Architecture Diagrams"
-        description="Generate system architecture diagrams from your GitHub repositories with AI. Visualize code structure, dependencies, and component relationships automatically."
+        title="Architecture Generator - AI System Diagrams"
+        description="Generate system architecture diagrams from GitHub repos with AI. Visualize code structure and dependencies automatically."
         keywords="repository architecture generator, system architecture AI, code architecture diagrams, GitHub architecture generator, system design AI, architecture visualization"
         canonicalUrl="/repository-architecture-generator"
         structuredData={{
